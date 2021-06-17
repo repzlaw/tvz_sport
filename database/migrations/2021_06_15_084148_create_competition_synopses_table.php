@@ -17,7 +17,7 @@ class CreateCompetitionSynopsesTable extends Migration
             $table->id();
             $table->foreignId('competition_id')->references('id')->on('competitions');
             $table->longText('synopsis');
-            $table->string('posted_by');
+            $table->foreignId('posted_by')->references('id')->on('users');
             $table->timestamps();
         });
     }

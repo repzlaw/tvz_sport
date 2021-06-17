@@ -18,11 +18,11 @@ class CreateMatchesTable extends Migration
             $table->foreignId('competition_id')->references('id')->on('competitions');
             $table->foreignId('home_team_id')->references('id')->on('teams');
             $table->foreignId('away_team_id')->references('id')->on('teams');
-            $table->string('home_team_score');
-            $table->string('away_team_score');
+            $table->string('home_team_score')->nullable();
+            $table->string('away_team_score')->nullable();
             $table->date('match_date');
             $table->time('match_time');
-            $table->string('posted_by');
+            $table->foreignId('posted_by')->references('id')->on('users');
             $table->timestamps();
         });
     }

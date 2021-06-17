@@ -19,7 +19,7 @@ class CreateCompetitionNewsTable extends Migration
             $table->string('headline');
             $table->longText('content');
             $table->string('url_slug');
-            $table->string('posted_by');
+            $table->foreignId('posted_by')->references('id')->on('users');
             $table->timestamps();
         });
     }

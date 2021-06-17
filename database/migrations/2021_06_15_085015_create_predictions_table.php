@@ -16,9 +16,11 @@ class CreatePredictionsTable extends Migration
         Schema::create('predictions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('match_id')->references('id')->on('matches');
-            $table->string('home_team_score');
-            $table->string('away_team_score');
-            $table->string('posted_by');
+            $table->string('prediction_type');
+            $table->string('prediction');
+            $table->foreignId('posted_by')->references('id')->on('users');
+            $table->integer('upvotes');
+            $table->integer('accuracy');
             $table->timestamps();
         });
     }
