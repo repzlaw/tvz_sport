@@ -11,11 +11,6 @@ use App\Models\Admin;
 class LoginController extends Controller
 {
     /**
-     * This trait has all the login throttling functionality.
-     */
-    // use ThrottlesLogins;
-    
-    /**
      * Only guests for "admin" guard are allowed except
      * for logout.
      * 
