@@ -18,9 +18,26 @@ use App\Http\Controllers\Admin\HomeController;
 |
 */
 
+//websites homepage
 Route::get('/', function () {
     return view('welcome');
 });
+
+//websites events page
+Route::get('/events', function () {
+    return view('events');
+});
+
+//websites matches page
+Route::get('/matches', function () {
+    return view('matches');
+});
+
+//websites players page
+Route::get('/players', function () {
+    return view('players');
+});
+
 
 Route::view('home','home')->middleware(['verified']);;
 
@@ -39,7 +56,7 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
         Route::get('/logout',[LoginController::class,'logout'])->name('logout');
     });
     
-    // //home
+    // admin home
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 

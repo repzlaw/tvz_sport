@@ -18,7 +18,7 @@ class CreatePlayerFollowersTable extends Migration
             $table->foreignId('player_id')->references('id')->on('players');
             $table->foreignId('user_id')->references('id')->on('users');
             $table->date('follow_date');
-            $table->string('updates_enabled');
+            $table->string('updates_enabled')->nullable();
             $table->timestamps();
         });
     }
