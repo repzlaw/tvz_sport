@@ -15,7 +15,11 @@
                             <div class="card-body">
                                 <div class="mb-4">
                                     <h6>JUNE 2021</h6>
-                                    <p> UEFA EURO</p>
+                                    <p> 
+                                    <a href="#">
+                                    UEFA EURO
+                                    </a>
+                                    </p>
                                 </div>
                                 <div class="mb-2">
                                     <h6>JULY 2021</h6>
@@ -50,7 +54,11 @@
                             </div> 
                             <div class="card-body">
                                 <div class="mb-4">
-                                    <p> Realmadrid vs Chelsea, June 24, 2021</p>
+                                    <p>
+                                        <a href="#">
+                                        Realmadrid vs Chelsea, June 24, 2021
+                                        </a> 
+                                    </p>
                                 </div>
                                 <div class="mb-2">
                                     <p> Arsenal vs Liverpool, June 24, 2021</p>
