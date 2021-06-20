@@ -38,6 +38,16 @@ Route::get('/players', function () {
     return view('players');
 });
 
+//individual series event page
+Route::get('/euro-2020-1', function () {
+    return view('individual-event');
+});
+
+//individual match page
+Route::get('/poland-vs-belguim-1', function () {
+    return view('individual-match');
+});
+
 
 Route::view('home','home')->middleware(['verified']);;
 

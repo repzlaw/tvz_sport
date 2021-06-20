@@ -16,7 +16,7 @@
                                 <div class="mb-4">
                                     <h6>JUNE 2021</h6>
                                     <p> 
-                                    <a href="#">
+                                    <a href="/euro-2020-1">
                                     UEFA EURO
                                     </a>
                                     </p>
@@ -55,9 +55,7 @@
                             <div class="card-body">
                                 <div class="mb-4">
                                     <p>
-                                        <a href="#">
-                                        Realmadrid vs Chelsea, June 24, 2021
-                                        </a> 
+                                    <a href="/poland-vs-belguim-1" >Poland vs Belguim, 16th jun 2021</a> 
                                     </p>
                                 </div>
                                 <div class="mb-2">
