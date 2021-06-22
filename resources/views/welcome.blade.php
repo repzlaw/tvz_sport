@@ -16,9 +16,12 @@
                                 <div class="mb-4">
                                     <h6>JUNE 2021</h6>
                                     <p> 
-                                    <a href="/euro-2020-1">
-                                    UEFA EURO
+                                    @foreach ($events as $event )
+                                    <a href="/event/get/{{$event->url_slug}}/{{$event->id}}">
+                                        {{$event->competition_name}}
                                     </a>
+                                    @endforeach
+                                    <!-- UEFA EURO {{$events}} -->
                                     </p>
                                 </div>
                                 <div class="mb-2">

@@ -2,10 +2,15 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EventsController;
+use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\TeamFollowersController;
+use App\Http\Controllers\PlayerFollowersController;
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\CompetitionFollowersController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
-use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\HomeController as ControllersHomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +24,34 @@ use App\Http\Controllers\Admin\HomeController;
 */
 
 //websites homepage
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', [ControllersHomeController::class,'index'])->name('home');
+
+//event routes
+Route::prefix('/event')->name('event.')->group(function(){
+    //get individual event details
+    Route::get('/get/{eventname}/{id}', [EventsController::class,'index'])->name('get.single');
+
+    //follow or unfollow event
+    Route::get('/followers/{id}', [CompetitionFollowersController::class,'followCompetition'])->name('follow');
+
 });
+
+//team routes
+Route::prefix('/team')->name('team.')->group(function(){
+
+    //follow or unfollow team
+    Route::get('/followers/{id}', [TeamFollowersController::class,'followTeam'])->name('follow');
+
+});
+
+//players routes
+Route::prefix('/player')->name('player.')->group(function(){
+
+    //follow or unfollow player
+    Route::get('/followers/{id}', [PlayerFollowersController::class,'followPlayer'])->name('follow');
+
+});
+
 
 //websites events page
 Route::get('/events', function () {
@@ -38,10 +68,6 @@ Route::get('/players', function () {
     return view('players');
 });
 
-//individual series event page
-Route::get('/euro-2020-1', function () {
-    return view('individual-event');
-});
 
 //individual match page
 Route::get('/poland-vs-belguim-1', function () {

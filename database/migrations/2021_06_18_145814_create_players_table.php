@@ -24,7 +24,7 @@ class CreatePlayersTable extends Migration
             $table->string('role');
             $table->string('signature_hero');
             $table->string('total_earnings');
-            $table->string('event_category');
+            $table->foreignId('sport_type_id')->references('id')->on('sport_types');
             $table->string('followers');
             $table->date('active_since');
             $table->timestamps();

@@ -9,13 +9,30 @@
                     <div class="card-hover-shadow-2x mb-3 mt-3 card">
                         <div class="card-header-tab card-header">
                             <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                            Euro 2020
+                                {{$event->competition_name}}
                             </div>
+                            @guest
+                                <!-- <div class="btn-actions-pane-right text-right">
+                                        <p><a href="/event/followers/{{$event->id}}" class="btn btn-primary btn-sm"  id="follow">Follow</a></p>
+                                </div> -->
+                            @else
+                                <div class="btn-actions-pane-right text-right">
+                                    @if(Auth::user()->isFollowingCompetition(Auth::user()->id, $event->id))
+                                        <p><a href="#" class="btn btn-primary btn-sm" onclick="follow({{$event->id}})" id="follow">Unfollow</a></p>
+                                    @else
+                                        <p><a href="#" class="btn btn-primary btn-sm" onclick="follow({{$event->id}})" id="follow">Follow</a></p>
+                                    @endif
+                                </div>
+
+                            @endguest
                         </div> 
                         <div class="card-body">
                             <div class="row first">
                                 <div class="col-4">
-                                <p>Date: 16/06/21 - 22/06/21</p>
+                                <p>Date: 16/06/21 - 22/06/21
+                                
+
+                                </p>
                                 </div>
                                 <div class="col-sm-4">
                                     <p><strong>Location:  <a href="#" > Europe</a></strong></p>
@@ -104,4 +121,31 @@
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+    <script>
+        function follow(userId){
+            var token = $("meta[name='csrf-token']").attr("content");
+                $.ajax({
+                    url: '{{ url('event/followers')}}'+'/'+userId,
+                    type: 'GET',
+                    // data: {
+                    //     _token: token,
+                    // },
+                    success: function (response)
+                    {
+                        if(response==true){
+                            $("#follow").text("Unfollow")
+                        }
+                        if(response==false){
+                            $("#follow").text("Follow")
+                        }
+                    },
+                    error: function (error){
+                        console.log(error)
+                    }
+                });
+        }
+    </script>
 @endsection
