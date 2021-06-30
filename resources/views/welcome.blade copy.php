@@ -243,7 +243,24 @@
 
             </div>
         </div>
-        
+        <div class="card-body">
+                                <div class="mb-4">
+                                    <h6>JUNE 2021</h6>
+                                    <p> 
+                                    @foreach ($events as $event )
+                                    <a href="/event/{{$event->url_slug}}">
+                                        {{$event->competition_name}}
+                                    </a>
+                                    @endforeach
+                                    <!-- UEFA EURO {{$events}} -->
+                                    </p>
+                                </div>
+                                <div class="mb-2">
+                                    <h6>JULY 2021</h6>
+                                    <p> Champions league</p>
+                                </div>
+                                
+                            </div>
         <script src="js/app.js"></script>
     </body>
 </html>

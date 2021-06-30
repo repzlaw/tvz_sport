@@ -128,11 +128,8 @@
         function follow(userId){
             var token = $("meta[name='csrf-token']").attr("content");
                 $.ajax({
-                    url: '{{ url('event/followers')}}'+'/'+userId,
+                    url: '{{ url('event/follow')}}'+'/'+userId,
                     type: 'GET',
-                    // data: {
-                    //     _token: token,
-                    // },
                     success: function (response)
                     {
                         if(response==true){

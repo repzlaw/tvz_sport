@@ -9,24 +9,21 @@
                         <div class="card-hover-shadow-2x mb-3 mt-3 card">
                             <div class="card-header-tab card-header">
                                 <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                                football
+                                Today's News
                                 </div>
                             </div> 
                             <div class="card-body">
                                 <div class="mb-4">
-                                    <h6>JUNE 2021</h6>
+                                    @foreach ($latestnews as $news )
                                     <p> 
-                                    @foreach ($events as $event )
-                                    <a href="/event/get/{{$event->url_slug}}/{{$event->id}}">
-                                        {{$event->competition_name}}
+                                    <a href="#"> 
+                                        <h6>{{$news->headline}} 
+                                        <small> - by {{$news->user->username}} </small>
+                                        </h6>
                                     </a>
-                                    @endforeach
-                                    <!-- UEFA EURO {{$events}} -->
                                     </p>
-                                </div>
-                                <div class="mb-2">
-                                    <h6>JULY 2021</h6>
-                                    <p> Champions league</p>
+                                    @endforeach
+                                    
                                 </div>
                                 
                             </div>
@@ -35,13 +32,21 @@
                         <div class="card-hover-shadow-2x mb-3 mt-3 card">
                             <div class="card-header-tab card-header">
                                 <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                                BasketBall
+                                Previous News
                                 </div>
                             </div> 
                             <div class="card-body">
                                 <div class="mb-4">
-                                    <h6>JUNE 2021</h6>
-                                    <p> NBA Finals</p>
+                                    @foreach ($previousnews as $news )
+                                        <p> 
+                                        <a href="#"> 
+                                            <h6>{{$news->headline}} 
+                                            <small> - by {{$news->user->username}} </small>
+                                            </h6>
+                                        </a>
+                                        </p>
+                                    @endforeach
+                                    
                                 </div>
                                 
                             </div>
@@ -52,17 +57,27 @@
                         <div class="card-hover-shadow-2x mb-3 mt-3 card">
                             <div class="card-header-tab card-header">
                                 <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                                latest football matches
+                                Today's events
                                 </div>
                             </div> 
                             <div class="card-body">
                                 <div class="mb-4">
-                                    <p>
-                                    <a href="/poland-vs-belguim-1" >Poland vs Belguim, 16th jun 2021</a> 
-                                    </p>
-                                </div>
-                                <div class="mb-2">
-                                    <p> Arsenal vs Liverpool, June 24, 2021</p>
+                                <!-- {{$upcomingevents}} -->
+                                    @foreach ($upcomingevents as $event )
+                                        <a href="#"> 
+                                            <div>
+                                            <small>
+                                             {{$event->match_time}} 
+                                            </small>
+                                           <h4>
+                                           {{$event->homeTeam->team_name}} vs {{$event->awayTeam->team_name}} 
+                                           </h4> 
+                                           <h5>
+                                                {{$event->home_team_score}}  {{$event->away_team_score}}
+                                           </h5>  
+                                            </div>
+                                        </a>
+                                    @endforeach
                                 </div>
                                 
                             </div>
@@ -71,12 +86,26 @@
                         <div class="card-hover-shadow-2x mb-3 mt-3 card">
                             <div class="card-header-tab card-header">
                                 <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                                latest basket ball matches
+                                Previous events
                                 </div>
                             </div> 
                             <div class="card-body">
                                 <div class="mb-4">
-                                    <p> LA Lakers vs Clevland Cavaliers,  June 24, 2021</p>
+                                    @foreach ($previousevents as $event )
+                                        <a href="#"> 
+                                            <div>
+                                            <small>
+                                             {{$event->match_time}} 
+                                            </small>
+                                           <h4>
+                                           {{$event->homeTeam->team_name}} vs {{$event->awayTeam->team_name}} 
+                                           </h4> 
+                                           <h5>
+                                                {{$event->home_team_score}}  {{$event->away_team_score}}
+                                           </h5>  
+                                            </div>
+                                        </a>
+                                    @endforeach
                                 </div>
                                 
                             </div>

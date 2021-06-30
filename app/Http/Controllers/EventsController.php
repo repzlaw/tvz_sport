@@ -12,9 +12,9 @@ class EventsController extends Controller
     //     $this->middleware('auth');
     // }
     //event view page
-    public function index(Request $request, $event, $id)
+    public function index($slug)
     {
-        $event = Competitions::findorFail($id);
+        $event = Competitions::where('url_slug',$slug)->firstOrFail();
 
         return view('individual-event')->with(['event' =>  $event]);
 

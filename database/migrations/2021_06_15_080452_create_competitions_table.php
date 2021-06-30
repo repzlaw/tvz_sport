@@ -16,7 +16,7 @@ class CreateCompetitionsTable extends Migration
         Schema::create('competitions', function (Blueprint $table) {
             $table->id();
             $table->string('competition_name');
-            $table->string('url_slug');
+            $table->string('url_slug')->unique();
             $table->foreignId('sport_type_id')->references('id')->on('sport_types');
             $table->timestamps();
         });

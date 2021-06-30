@@ -16,6 +16,7 @@ class CreateTeamsTable extends Migration
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
             $table->string('team_name');
+            $table->string('url_slug')->unique();
             $table->foreignId('sport_type_id')->references('id')->on('sport_types');
             $table->timestamps();
         });

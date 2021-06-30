@@ -11,6 +11,7 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/fortify": "^1.7",
         "laravel/framework": "^8.40",
+        "laravel/telescope": "^4.5",
         "laravel/tinker": "^2.5",
         "ramsey/uuid": "^4.1"
     },
@@ -52,7 +53,8 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+            ]
         }
     },
     "config": {

@@ -11,6 +11,7 @@ use App\Http\Controllers\CompetitionFollowersController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
+use App\Http\Controllers\TeamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,26 +30,30 @@ Route::get('/', [ControllersHomeController::class,'index'])->name('home');
 //event routes
 Route::prefix('/event')->name('event.')->group(function(){
     //get individual event details
-    Route::get('/get/{eventname}/{id}', [EventsController::class,'index'])->name('get.single');
+    Route::get('/{eventslug}', [EventsController::class,'index'])->name('get.single');
 
     //follow or unfollow event
-    Route::get('/followers/{id}', [CompetitionFollowersController::class,'followCompetition'])->name('follow');
+    Route::get('/follow/{id}', [CompetitionFollowersController::class,'followCompetition'])->name('follow');
 
 });
 
 //team routes
 Route::prefix('/team')->name('team.')->group(function(){
+    //get individual team details
+    Route::get('/{teamslug}', [TeamController::class,'index'])->name('get.single');
 
     //follow or unfollow team
-    Route::get('/followers/{id}', [TeamFollowersController::class,'followTeam'])->name('follow');
+    Route::get('/follow/{id}', [TeamFollowersController::class,'followTeam'])->name('follow');
 
 });
 
 //players routes
 Route::prefix('/player')->name('player.')->group(function(){
+    //get individual player details
+    Route::get('/{playerslug}', [Controller::class,'index'])->name('get.single');
 
     //follow or unfollow player
-    Route::get('/followers/{id}', [PlayerFollowersController::class,'followPlayer'])->name('follow');
+    Route::get('/follow/{id}', [PlayerFollowersController::class,'followPlayer'])->name('follow');
 
 });
 
@@ -94,6 +99,5 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     
     // admin home
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-
 
   });
