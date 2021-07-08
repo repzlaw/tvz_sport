@@ -11,6 +11,10 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    
+    <!-- jquery cdn -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -18,6 +22,8 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+
     <style>
             body {
                 font-family: 'Nunito', sans-serif;
@@ -79,6 +85,12 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                @if ( Auth::user()->user_type === 'editor' )
+                                    <a class="dropdown-item" href="/news/editor">
+                                        {{ __('Post News') }}
+                                    </a>
+                                @endif
+
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -97,10 +109,12 @@
         </nav>
 
         <main class="py-4">
+            @include('inc.message')
+
             @yield('content')
         </main>
     </div>
-    <!-- <script src="{{asset('js/jquery.min.js')}}"></script> -->
+    <!-- <script src="{{asset('js/.min.js')}}"></script> -->
     @yield('scripts')
 </body>
 </html>

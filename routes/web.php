@@ -11,6 +11,8 @@ use App\Http\Controllers\CompetitionFollowersController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\TeamController;
 
 /*
@@ -50,10 +52,26 @@ Route::prefix('/team')->name('team.')->group(function(){
 //players routes
 Route::prefix('/player')->name('player.')->group(function(){
     //get individual player details
-    Route::get('/{playerslug}', [Controller::class,'index'])->name('get.single');
+    Route::get('/{playerslug}', [PlayerController::class,'index'])->name('get.single');
 
     //follow or unfollow player
     Route::get('/follow/{id}', [PlayerFollowersController::class,'followPlayer'])->name('follow');
+
+});
+
+//editors post, edit and delete news route
+Route::prefix('/news')->name('news.')->group(function(){
+    //get news page
+    Route::get('/editor', [NewsController::class,'index'])->name('editor.all');
+
+    //create news
+    Route::post('/create', [NewsController::class,'createNews'])->name('editor.create');
+
+    //edit news
+    Route::post('/edit', [NewsController::class,'editNews'])->name('editor.edit');
+
+    //delete news
+    Route::get('/delete/{id}', [NewsController::class,'deleteNews'])->name('editor.delete');
 
 });
 

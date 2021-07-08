@@ -9,6 +9,8 @@ class CompetitionNews extends Model
 {
     use HasFactory;
 
+    protected $guarded =[];
+
     /**
      * Get the user that posted the news.
      */

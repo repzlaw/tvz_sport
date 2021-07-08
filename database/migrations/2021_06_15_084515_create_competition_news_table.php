@@ -15,10 +15,13 @@ class CreateCompetitionNewsTable extends Migration
     {
         Schema::create('competition_news', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('competition_id')->references('id')->on('competitions');
+            $table->foreignId('sport_type_id')->references('id')->on('sport_types');
             $table->string('headline');
             $table->longText('content');
-            $table->string('url_slug');
+            $table->string('url_slug')->unique();
+            $table->string('page_title')->nullable();
+            $table->string('meta_description')->nullable();
+            $table->string('meta_keywords')->nullable();
             $table->foreignId('posted_by')->references('id')->on('users');
             $table->timestamps();
         });
