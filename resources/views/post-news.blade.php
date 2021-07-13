@@ -32,7 +32,19 @@
                                         @endforeach                          
                                     </select>
                                 </div>
-                            <input style="width: 80%; margin: auto;" type="text" name="news_title" id="new-title" class="form-control" placeholder="News Title ..." required>
+                                <div class="input-group mb-4" style="width: 80%; margin: auto;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Page Title</span>
+                                    </div>
+                                    <input style="width: 80%; margin: auto;" type="text" name="page_title" class="form-control" placeholder="Page Title ...">
+                                </div>
+                                <div class="input-group mb-4" style="width: 80%; margin: auto;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Meta description</span>
+                                    </div>
+                                    <input style="width: 80%; margin: auto;" type="text" name="meta_description"  class="form-control" placeholder="Meta description ...">
+                                </div>
+                            <input style="width: 80%; margin: auto;" type="text" name="news_title"  class="form-control" placeholder="News Title ..." required>
                             <br>
                             <textarea style="width: 80%; margin: auto;" name="news_body" id="new-post"  rows="5" class="form-control" placeholder="Write News Body here ..." required></textarea>
                             <br>
@@ -52,9 +64,7 @@
                             
                                 <article class="post" data-postid="{{ $post->id }}">
 
-                                    <a style="text-decoration: none;" href="#" >
                                         <h5>{{$post->headline}} </h5>
-                                    </a> 
                                         <span  data-competitionId="{{ $post->sport_type_id }}">
                                     <p>{{$post->content}}</p>
                                     <input type="hidden" name="sport_type_id" value="{{$post->sport_type_id}}">
@@ -65,6 +75,8 @@
                                         <a href="{{route('news.editor.delete',['id'=>$post->id])}}">Delete</a>
 
                                     </div>
+                                    <input type="hidden" name="page_title" id="post_page_title" value="{{$post->page_title}}">
+                                    <input type="hidden" name="meta_description" id="post_meta_description" value="{{$post->meta_description}}">
                                     
                                 </article>
                             @endforeach
@@ -102,6 +114,18 @@
                         @endforeach                          
                     </select>
                 </div>
+                <div class="input-group mb-4" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Page Title</span>
+                    </div>
+                    <input  type="text" name="page_title" id="page-title" class="form-control" placeholder="Page Title ...">
+                </div>
+                <div class="input-group mb-4" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Meta description</span>
+                    </div>
+                    <input  type="text" name="meta_description" id="meta-description" class="form-control" placeholder="Meta description ...">
+                </div>
                 <input type="text" name="news_title" id="post-title" class="form-control" placeholder="News Title ..." required>
                 <br>
                   <textarea name="post-body" id="post-body" rows="5" class="form-control"  placeholder="Write News Body here ..." required></textarea>
@@ -132,17 +156,25 @@
 $('.post').find('.interaction').find('.edit').on('click',function(event){
     event.preventDefault();
 
-    postTitleElement = event.target.parentNode.parentNode.parentNode.childNodes[1].childNodes[1];
+    postTitleElement = event.target.parentNode.parentNode.parentNode.childNodes[1];
     postBodyElement = event.target.parentNode.parentNode.childNodes[1];
     postId = event.target.parentNode.parentNode.parentNode.dataset['postid'];
     competitionId = event.target.parentNode.parentNode.dataset['competitionid'];
 
+
+
     var postTitle = postTitleElement.textContent;
     var postBody = postBodyElement.textContent;
+    var pageTitle = $('#post_page_title').val();
+    var metaDescription = $('#post_meta_description').val();
+
+    console.log(pageTitle);
 
     $('#sport-type').val(competitionId);
     $('#post-title').val(postTitle);
     $('#post-body').val(postBody);
+    $('#page-title').val(pageTitle);
+    $('#meta-description').val(metaDescription);
     $('#edit-modal').modal();
 });
 
@@ -152,7 +184,9 @@ $('#modal-save').on('click', function(){
         method: 'POST',
         url: '{{ route('news.editor.edit')}}',
         data:{news_body: $('#post-body').val(), postId: postId, _token: token,
-             news_title:$('#post-title').val(), sport_type:$('#sport-type').val() }
+             news_title:$('#post-title').val(), sport_type:$('#sport-type').val(),
+             page_title:$('#page-title').val(), meta_description:$('#meta-description').val(),
+             }
 
     })
     .done(function(msg){

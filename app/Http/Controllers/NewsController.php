@@ -13,7 +13,7 @@ class NewsController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except('getSingleNews');
     }
 
     //return post news page
@@ -28,12 +28,15 @@ class NewsController extends Controller
             
             return view('post-news')->with(['posts' => $editorsNews, 'sports'=> $sport_types]);
         }
-        return view('welcome');
+        return abort(404,"Page not found");
     }
 
     //create news function
     public function createNews(StoreNewsRequest $request)
     {
+        $pagetitle = $request->page_title ? $request->page_title : $request->news_title;
+        $metadescription = $request->meta_description ? $request->meta_description : $request->news_title;
+
         $slug = Str::slug($request->news_title, "-");
 
         $post = CompetitionNews::create([
@@ -42,6 +45,9 @@ class NewsController extends Controller
                 'headline'=> $request->news_title,
                 'content'=> $request->news_body,
                 'posted_by'=> Auth::user()->id,
+                'page_title'=> $pagetitle,
+                'meta_description'=> $metadescription,
+
         ]);
         if ( $post) {
             $message = 'Post Successfully Created!';
@@ -60,12 +66,17 @@ class NewsController extends Controller
         ]);
         $post = CompetitionNews::findOrFail($request->postId);
 
+        $pagetitle = $request->page_title ? $request->page_title : $request->news_title;
+        $metadescription = $request->meta_description ? $request->meta_description : $request->news_title;
+
         $post->update([
             'sport_type_id'=> $request->sport_type,
             'headline'=> $request->news_title,
             'content'=> $request->news_body,
+            'page_title'=> $pagetitle,
+            'meta_description'=> $metadescription,
         ]);
-        if ( $post) {
+        if ($post) {
             $message = 'Post Successfully Updated!';
         }
 
@@ -86,6 +97,14 @@ class NewsController extends Controller
         $post->delete();
         return redirect('/news/editor')->with('message','Post Deleted');
     
+    }
+
+    //get individual news page
+    public function getSingleNews($id, $news_slug)
+    {
+        $news = CompetitionNews::where(['id'=>$id, 'url_slug'=> $news_slug])->with('user')->firstOrFail();
+
+        return view('individual-news')->with(['news'=>$news]);
     }
 
 }

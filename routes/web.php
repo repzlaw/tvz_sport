@@ -60,9 +60,9 @@ Route::prefix('/player')->name('player.')->group(function(){
 });
 
 //editors post, edit and delete news route
-Route::prefix('/news')->name('news.')->group(function(){
+Route::prefix('/news/editor')->name('news.')->group(function(){
     //get news page
-    Route::get('/editor', [NewsController::class,'index'])->name('editor.all');
+    Route::get('/', [NewsController::class,'index'])->name('editor.all');
 
     //create news
     Route::post('/create', [NewsController::class,'createNews'])->name('editor.create');
@@ -72,6 +72,13 @@ Route::prefix('/news')->name('news.')->group(function(){
 
     //delete news
     Route::get('/delete/{id}', [NewsController::class,'deleteNews'])->name('editor.delete');
+
+});
+
+//individual news route
+Route::prefix('/news')->name('news.')->group(function(){
+    //get news page
+    Route::get('/{id}/{news_slug}', [NewsController::class,'getSingleNews'])->name('get.single');
 
 });
 

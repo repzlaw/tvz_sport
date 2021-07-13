@@ -7,7 +7,10 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>TVZ Sports</title>
+    <title>@yield('title','TVZ Sports')</title>
+    <!-- <meta name="keywords" content="@yield('meta_keywords','some default keywords')"> -->
+    <meta name="description" content="@yield('meta_description','TVZ Sports')">
+    <link rel="canonical" href="{{url()->current()}}"/>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
