@@ -16,16 +16,14 @@
                                 <div class="mb-4">
                                     @foreach ($latestnews as $news )
                                     <p> 
-                                    <a href="{{route('news.get.single',['id'=>$news->id, 'news_slug'=>$news->url_slug])}}"> 
+                                    <a href="{{route('news.get.single',['news_slug'=>$news->url_slug.'-'.$news->id])}}"> 
                                         <h6>{{$news->headline}} 
                                         <small> - by {{$news->user->username}} </small>
                                         </h6>
                                     </a>
                                     </p>
                                     @endforeach
-                                    
                                 </div>
-                                
                             </div>
                         </div>
 
@@ -40,16 +38,14 @@
                                 <!-- {{$previousnews}} -->
                                     @foreach ($previousnews as $news )
                                         <p> 
-                                        <a href="{{route('news.get.single',['id'=>$news->id, 'news_slug'=>$news->url_slug])}}"> 
+                                        <a href="{{route('news.get.single',['news_slug'=>$news->url_slug.'-'.$news->id])}}"> 
                                             <h6>{{$news->headline}} 
                                             <small> - by {{$news->user->username}} </small>
                                             </h6>
                                         </a>
                                         </p>
                                     @endforeach
-                                    
                                 </div>
-                                
                             </div>
                         </div>
                     </div>

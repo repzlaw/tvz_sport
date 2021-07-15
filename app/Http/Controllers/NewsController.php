@@ -100,9 +100,12 @@ class NewsController extends Controller
     }
 
     //get individual news page
-    public function getSingleNews($id, $news_slug)
+    public function getSingleNews($news_slug)
     {
-        $news = CompetitionNews::where(['id'=>$id, 'url_slug'=> $news_slug])->with('user')->firstOrFail();
+        $explode = explode('-',$news_slug);
+        $id = end($explode);
+
+        $news = CompetitionNews::where(['id'=>$id])->with('user')->firstOrFail();
 
         return view('individual-news')->with(['news'=>$news]);
     }

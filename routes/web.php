@@ -78,7 +78,7 @@ Route::prefix('/news/editor')->name('news.')->group(function(){
 //individual news route
 Route::prefix('/news')->name('news.')->group(function(){
     //get news page
-    Route::get('/{id}/{news_slug}', [NewsController::class,'getSingleNews'])->name('get.single');
+    Route::get('/{news_slug}', [NewsController::class,'getSingleNews'])->name('get.single');
 
 });
 
