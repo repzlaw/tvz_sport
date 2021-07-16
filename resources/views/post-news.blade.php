@@ -92,7 +92,7 @@
 </div>
 
 
-
+<!-- edit news modal -->
 <div class="modal fade" tabindex="-1" role="dialog" id= "edit-modal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">

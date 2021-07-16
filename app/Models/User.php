@@ -65,7 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isFollowingPlayer($userId, $player_id)
     {
-        $following =  PlayerFollower::where(['user_id'=>$this->id, 'team_id'=>$player_id])->pluck('user_id')->toArray();
+        $following =  PlayerFollower::where(['user_id'=>$this->id, 'player_id'=>$player_id])->pluck('user_id')->toArray();
         if (in_array($userId, $following)){
             return true;
         }

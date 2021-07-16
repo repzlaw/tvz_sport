@@ -11,6 +11,7 @@
     <!-- <meta name="keywords" content="@yield('meta_keywords','some default keywords')"> -->
     <meta name="description" content="@yield('meta_description','TVZ Sports')">
     <link rel="canonical" href="{{url()->current()}}"/>
+    @yield('links')
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -22,6 +23,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -63,6 +65,10 @@
 
                         <li class="nav-item">
                             <a class="nav-link" href="/matches">{{ __('Matches') }}</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/teams">{{ __('Teams') }}</a>
                         </li>
 
                         <li class="nav-item">

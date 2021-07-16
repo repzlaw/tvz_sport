@@ -39,10 +39,16 @@ Route::prefix('/event')->name('event.')->group(function(){
 
 });
 
-//team routes
-Route::prefix('/team')->name('team.')->group(function(){
+//team routes 
+Route::prefix('/teams')->name('team.')->group(function(){
+    //get all teams
+    Route::get('/', [TeamController::class,'index'])->name('get.all');
+
+    //create team
+    Route::post('/create', [TeamController::class,'create'])->name('create')->middleware(['auth']);
+
     //get individual team details
-    Route::get('/{teamslug}', [TeamController::class,'index'])->name('get.single');
+    Route::get('/{team_slug}', [TeamController::class,'getSingle'])->name('get.single');
 
     //follow or unfollow team
     Route::get('/follow/{id}', [TeamFollowersController::class,'followTeam'])->name('follow');
@@ -50,9 +56,15 @@ Route::prefix('/team')->name('team.')->group(function(){
 });
 
 //players routes
-Route::prefix('/player')->name('player.')->group(function(){
+Route::prefix('/players')->name('player.')->group(function(){
+    //get all players
+    Route::get('/', [PlayerController::class,'index'])->name('get.all');
+
+    //create player
+    Route::post('/create', [PlayerController::class,'create'])->name('create')->middleware(['auth']);
+
     //get individual player details
-    Route::get('/{playerslug}', [PlayerController::class,'index'])->name('get.single');
+    Route::get('/{player_slug}', [PlayerController::class,'getSingle'])->name('get.single');
 
     //follow or unfollow player
     Route::get('/follow/{id}', [PlayerFollowersController::class,'followPlayer'])->name('follow');
@@ -93,10 +105,6 @@ Route::get('/matches', function () {
     return view('matches');
 });
 
-//websites players page
-Route::get('/players', function () {
-    return view('players');
-});
 
 
 //individual match page

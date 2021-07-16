@@ -18,6 +18,10 @@ class CreateTeamsTable extends Migration
             $table->string('team_name');
             $table->string('url_slug')->unique();
             $table->foreignId('sport_type_id')->references('id')->on('sport_types');
+            $table->longText('summary')->nullable();
+            $table->string('featured_image')->nullable();
+            $table->string('page_title')->nullable();
+            $table->string('meta_description')->nullable();
             $table->timestamps();
         });
     }
