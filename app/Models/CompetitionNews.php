@@ -26,4 +26,20 @@ class CompetitionNews extends Model
     {
         return $this->belongsTo(Competitions::class);
     }
+
+    /**
+     * Get the player the news was written for.
+     */
+    public function playernews()
+    {
+        return $this->hasMany(PlayerNews::class,'competition_news_id');
+    }
+
+     /**
+     * Get the team the news was written for.
+     */
+    public function teamnews()
+    {
+        return $this->hasMany(TeamNews::class,'competition_news_id');
+    }
 }

@@ -33,6 +33,12 @@
                                 <li class="list-group-item">
                                     <a href="{{route('player.get.single',['player_slug'=>$player->url_slug.'-'.$player->id])}}" 
                                         style="text-decoration: none;">
+                                        <img 
+                                            src="/storage/images/player_images/{{$player->featured_image}}"
+                                            alt="player"
+                                            class="mr-2"
+                                            style="height: 30px; width:30px; border: 2px solid #eee; border-radius: 100px;"
+                                        >
                                             {{$player->full_name}}
                                         <i class="fa fa-angle-right fa-lg float-right"></i>
                                     </a>
@@ -59,7 +65,7 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
-            <form action="{{ route('player.create')}}" method="post" class="form-group" enctype="multipart/form-data">
+            <form action="{{ route('player.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
                     {{ csrf_field() }}
               <div class="form-group row">
                 
@@ -169,12 +175,8 @@
                     <input  type="number" name="followers" id="followers" class="form-control" placeholder="Status" value="{{ old('followers') }}" >
                 </div>
 
-
-
-
-
                 <div class="input-group col-12 mb-4" >
-                  <textarea name="summary" id="player_summary" rows="5" class="form-control"  placeholder="Player Summary ..." value="{{ old('player_summary') }}" ></textarea>
+                  <textarea name="summary" id="player_summary" rows="5" class="form-control"  placeholder="Player Summary ..." value="{{ old('summary') }}" ></textarea>
                 </div>
               </div>
               <div class="modal-footer">

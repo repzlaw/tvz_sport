@@ -48,7 +48,30 @@
                             <br>
                             <textarea style="width: 80%; margin: auto;" name="news_body" id="new-post"  rows="5" class="form-control" placeholder="Write News Body here ..." required></textarea>
                             <br>
-                            <button style="margin-left: 10%;" type="submit" class="btn btn-primary" >Create Post</button>
+                            <div style="width: 80%; margin: auto;" class="col-12 col-md-12">
+                                <div class="row">
+                                    <div  class="col-6 col-md-6">
+                                        <div id="player-bagde" class="mb-2"></div>
+                                        <input placeholder="search Players" type="text" size="30" class="form-control" id="search-input" onkeyup="showResult(this.value)">
+                                        <ul id="livesearch" class="list-group"></ul>
+
+                                    </div>
+
+                                    <div  class="col-6 col-md-6">
+                                        <div id="team-bagde" class="mb-2"></div>
+                                        <input placeholder="search Teams" type="text" size="30" class="form-control" id="search-team" onkeyup="showTeamResult(this.value)">
+                                        <ul id="liveteamsearch" class="list-group"></ul>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                            <input type="hidden" name="teams" id="teams_id">
+                            <input type="hidden" name="players" id="players_id">
+
+                            
+                            
+                            <button style="margin-left: 10%;" type="submit" class="btn btn-primary mt-3" >Create Post</button>
                             {{-- <input type="hidden" value="{{session::token()}}" name="_token"> --}}
                         </form>
                         
@@ -68,9 +91,27 @@
                                         <span  data-competitionId="{{ $post->sport_type_id }}">
                                     <p>{{$post->content}}</p>
                                     <input type="hidden" name="sport_type_id" value="{{$post->sport_type_id}}">
+                                @foreach ($post->teamnews as $teamnews)
+                                <!-- {{$teamnews}} -->
+                                    <span class="badge badge-secondary mr-1 mb-2">
+                                        {{$teamnews->team->team_name}}
+                                        <a href="{{route('news.editor.team.delete',['id'=>$teamnews->id])}}">
+                                            <i class="text-danger fa fa-trash fa-1x" style="cursor:pointer;"></i>
+                                        </a>
+                                    </span>
+                                @endforeach
+                                @foreach ($post->playernews as $playernews)
+                                    <span  class="badge badge-secondary mr-1 mb-2">
+                                        {{$playernews->player->name}}
+                                        <a href="{{route('news.editor.player.delete',['id'=>$playernews->id])}}">
+                                            <i class="text-danger fa fa-trash fa-1x" style="cursor:pointer;"></i>
+                                        </a>
+                                    </span>
+                                @endforeach
                                     <br>
                                     <div class="interaction">
                                         | 
+                                        <a href="{{route('news.get.single',['news_slug'=>$post->url_slug.'-'.$post->id])}}">View </a> |
                                         <a href="#" class="edit">Edit</a> |
                                         <a href="{{route('news.editor.delete',['id'=>$post->id])}}">Delete</a>
 
@@ -129,6 +170,27 @@
                 <input type="text" name="news_title" id="post-title" class="form-control" placeholder="News Title ..." required>
                 <br>
                   <textarea name="post-body" id="post-body" rows="5" class="form-control"  placeholder="Write News Body here ..." required></textarea>
+                  <br>
+                  <div  class="col-12 col-md-12">
+                    <div class="row">
+                        <div  class="col-6 col-md-6">
+                            <div id="modal_player-bagde" class="mb-2"></div>
+                            <input placeholder="search Players" type="text" size="30" class="form-control" id="modal_search-input" onkeyup="showResultModal(this.value)">
+                            <ul id="modal_livesearch" class="list-group"></ul>
+
+                        </div>
+
+                        <div  class="col-6 col-md-6">
+                            <div id="modal_team-bagde" class="mb-2"></div>
+                            <input placeholder="search Teams" type="text" size="30" class="form-control" id="modal_search-team" onkeyup="showTeamResultModal(this.value)">
+                            <ul id="modal_liveteamsearch" class="list-group"></ul>
+
+                        </div>
+                    </div>
+
+                </div>
+                <input type="hidden" name="teams" id="modal_teams_id">
+                <input type="hidden" name="players" id="modal_players_id">
               </div>
           </form>
         </div>
@@ -168,7 +230,6 @@ $('.post').find('.interaction').find('.edit').on('click',function(event){
     var pageTitle = $('#post_page_title').val();
     var metaDescription = $('#post_meta_description').val();
 
-    console.log(pageTitle);
 
     $('#sport-type').val(competitionId);
     $('#post-title').val(postTitle);
@@ -186,10 +247,12 @@ $('#modal-save').on('click', function(){
         data:{news_body: $('#post-body').val(), postId: postId, _token: token,
              news_title:$('#post-title').val(), sport_type:$('#sport-type').val(),
              page_title:$('#page-title').val(), meta_description:$('#meta-description').val(),
+             teams:teamsIDmodal, players:playersIDModal,
              }
-
     })
     .done(function(msg){
+        location.reload();
+
         // console.log(msg);
         $(postTitleElement).text(msg.post.headline);
         $(postBodyElement).text(msg.post.content);
@@ -199,6 +262,305 @@ $('#modal-save').on('click', function(){
         alert(error)
     });;
 });
+
+//function for player live search
+function showResult(str) {
+    $.ajax({
+        method: 'POST',
+        url: '{{ route('news.editor.search.player')}}',
+        data:{q: str, _token: token, from:'editor'}
+
+    })
+    .done(function(msg){
+        if (msg.length) {
+            $('#livesearch').html(msg);
+        }
+    })
+    .fail(function(xhr, status, error) {
+        // alert(error)
+    });
+
+}
+
+var players = [];
+var playersID = [];
+//on select of a player
+function selectPlayer(p){
+    if (players.length === 0) {
+        players.push(p);
+        playersID.push(p.id);
+        
+    }else{
+        if (!playersID.includes(p.id)) {
+            players.push(p);
+            playersID.push(p.id);
+        }
+    }
+    var h = '';
+    players.forEach((play,i) => {
+        h += `<span  class="badge badge-secondary mr-2">
+                ${play.full_name}
+                <i class="text-danger fa fa-trash fa-1x" onclick="removePlayer(${i})" style="cursor:pointer;"></i>
+            </span>
+            `;
+            // <input type="hidden" name="players[]" value="${play.id}" />
+        $('#player-bagde').html(h);
+        $('#search-input').val('');
+        $('#livesearch').html('');
+    });
+    
+    $('#players_id').val(playersID)
+}
+
+//remove a player from selection
+function removePlayer (index) {
+    players.splice(index, 1);
+    playersID.splice(index, 1);
+    var h = '';
+    if (!players.length) {
+        $('#player-bagde').html('');
+    }else{
+        players.forEach((play,i) => {
+            h += `<span  class="badge badge-secondary mr-2">
+                    ${play.full_name}
+                    <i class="text-danger fa fa-trash fa-1x" onclick="removePlayer(${i})" style="cursor:pointer;"></i>
+                </span>`;
+            $('#player-bagde').html(h);
+            $('#search-input').val('');
+            $('#livesearch').html('');
+        });
+    }
+    $('#players_id').val(playersID)  
+}
+
+//delete player from a post
+function deletePlayer(params) {
+    
+}
+
+
+
+//function for team live search
+function showTeamResult(str) {
+    $.ajax({
+        method: 'POST',
+        url: '{{ route('news.editor.search.team')}}',
+        data:{q: str, _token: token, from:'editor'}
+
+    })
+    .done(function(msg){
+        if (msg.length) {
+            $('#liveteamsearch').html(msg);
+        }
+    })
+    .fail(function(xhr, status, error) {
+        // alert(error)
+    });
+
+}
+
+var teams = [];
+var teamsID = [];
+//on select of a team
+function selectteam(p){
+    if (teams.length === 0) {
+        teams.push(p);
+        teamsID.push(p.id);
+        
+    }else{
+        if (!teamsID.includes(p.id)) {
+            teams.push(p);
+            teamsID.push(p.id);
+        }
+    }
+    var h = '';
+    teams.forEach((team,i) => {
+        h += `<span  class="badge badge-primary mr-2">
+                ${team.team_name}
+                <i class="text-danger fa fa-trash fa-1x" onclick="removeteam(${i})" style="cursor:pointer;"></i>
+            </span>`;
+        $('#team-bagde').html(h);
+        $('#search-team').val('');
+        $('#liveteamsearch').html('');
+    });
+    $('#teams_id').val(teamsID)
+
+}
+
+//remove a team from selection
+function removeteam (index) {
+    teams.splice(index, 1);
+    teamsID.splice(index, 1);
+    var h = '';
+    if (!teams.length) {
+        $('#team-bagde').html('');
+    }else{
+        teams.forEach((team,i) => {
+            h += `<span  class="badge badge-primary mr-2">
+                    ${team.team_name}
+                    <i class="text-danger fa fa-trash fa-1x" onclick="removeteam(${i})" style="cursor:pointer;"></i>
+                </span>`;
+            $('#team-bagde').html(h);
+            $('#search-team').val('');
+            $('#liveteamsearch').html('');
+        });
+    }
+    $('#teams_id').val(teamsID)
+    
+}
+
+//delete team from a post
+function deleteTeam(params) {
+    
+}
+
+//modal functions
+// 
+// 
+// modal functions
+
+
+//function for player live search modal
+function showResultModal(str) {
+    $.ajax({
+        method: 'POST',
+        url: '{{ route('news.editor.search.player')}}',
+        data:{q: str, _token: token, from:'modal'}
+
+    })
+    .done(function(msg){
+        if (msg.length) {
+            $('#modal_livesearch').html(msg);
+        }
+    })
+    .fail(function(xhr, status, error) {
+        // alert(error)
+    });
+
+}
+
+var playersModal = [];
+var playersIDModal = [];
+//on select of a player
+function selectPlayerModal(p){
+    if (playersModal.length === 0) {
+        playersModal.push(p);
+        playersIDModal.push(p.id);
+        
+    }else{
+        if (!playersIDModal.includes(p.id)) {
+            playersModal.push(p);
+            playersIDModal.push(p.id);
+        }
+    }
+    var h = '';
+    playersModal.forEach((play,i) => {
+        h += `<span  class="badge badge-secondary mr-2">
+                ${play.full_name}
+                <i class="text-danger fa fa-trash fa-1x" onclick="removePlayerModal(${i})" style="cursor:pointer;"></i>
+            </span>
+            `;
+            // <input type="hidden" name="players[]" value="${play.id}" />
+        $('#modal_player-bagde').html(h);
+        $('#modal_search-input').val('');
+        $('#modal_livesearch').html('');
+    });
+    
+    $('#modal_players_id').val(playersIDModal)
+}
+
+//remove a player from selection
+function removePlayerModal (index) {
+    playersModal.splice(index, 1);
+    playersIDModal.splice(index, 1);
+    var h = '';
+    if (!playersModal.length) {
+        $('#modal_player-bagde').html('');
+    }else{
+        playersModal.forEach((play,i) => {
+            h += `<span  class="badge badge-secondary mr-2">
+                    ${play.full_name}
+                    <i class="text-danger fa fa-trash fa-1x" onclick="removePlayerModal(${i})" style="cursor:pointer;"></i>
+                </span>`;
+            $('#modal_player-bagde').html(h);
+            $('#modal_search-input').val('');
+            $('#modal_livesearch').html('');
+        });
+    }
+    $('#modal_players_id').val(playersIDModal)
+
+    
+}
+
+
+
+//function for team live search
+function showTeamResultModal(str) {
+    $.ajax({
+        method: 'POST',
+        url: '{{ route('news.editor.search.team')}}',
+        data:{q: str, _token: token, from:'modal'}
+
+    })
+    .done(function(msg){
+        if (msg.length) {
+            $('#modal_liveteamsearch').html(msg);
+        }
+    })
+    .fail(function(xhr, status, error) {
+        // alert(error)
+    });
+
+}
+
+var teamsModal = [];
+var teamsIDmodal = [];
+//on select of a team
+function selectteamModal(p){
+    if (teamsModal.length === 0) {
+        teamsModal.push(p);
+        teamsIDmodal.push(p.id);
+        
+    }else{
+        if (!teamsIDmodal.includes(p.id)) {
+            teamsModal.push(p);
+            teamsIDmodal.push(p.id);
+        }
+    }
+    var h = '';
+    teamsModal.forEach((team,i) => {
+        h += `<span  class="badge badge-primary mr-2">
+                ${team.team_name}
+                <i class="text-danger fa fa-trash fa-1x" onclick="removeteamModal(${i})" style="cursor:pointer;"></i>
+            </span>`;
+        $('#modal_team-bagde').html(h);
+        $('#modal_search-team').val('');
+        $('#modal_liveteamsearch').html('');
+    });
+    $('#modal_teams_id').val(teamsIDmodal)
+
+}
+
+//remove a team from selection Modal
+function removeteamModal(index) {
+    teamsModal.splice(index, 1);
+    teamsIDmodal.splice(index, 1);
+    var h = '';
+    if (!teamsModal.length) {
+        $('#modal_team-bagde').html('');
+    }else{
+        teamsModal.forEach((team,i) => {
+            h += `<span  class="badge badge-primary mr-2">
+                    ${team.team_name}
+                    <i class="text-danger fa fa-trash fa-1x" onclick="removeteamModal(${i})" style="cursor:pointer;"></i>
+                </span>`;
+            $('#modal_team-bagde').html(h);
+            $('#modal_search-team').val('');
+            $('#modal_liveteamsearch').html('');
+        });
+    }
+    $('#modal_teams_id').val(teamsIDmodal)
+}
 
 
 </script>

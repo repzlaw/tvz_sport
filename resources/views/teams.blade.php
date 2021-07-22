@@ -21,9 +21,17 @@
                             </div> 
                             <ul class="list-group list-group-flush">
                                 @foreach ($teams as $team)
+                                <!-- {{$teams}} -->
                                 <li class="list-group-item">
                                     <a href="{{route('team.get.single',['team_slug'=>$team->url_slug.'-'.$team->id])}}" 
-                                        style="text-decoration: none;">{{$team->team_name}}
+                                        style="text-decoration: none;">
+                                        <img 
+                                            src="/storage/images/team_images/{{$team->featured_image}}"
+                                            alt="team"
+                                            class="mr-2"
+                                            style="height: 30px; width:30px; border: 2px solid #eee; border-radius: 100px;"
+                                        >
+                                        {{$team->team_name}}
                                         <i class="fa fa-angle-right fa-lg float-right"></i>
                                     </a>
                                 </li>

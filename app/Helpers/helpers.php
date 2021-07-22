@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Team;
+use App\Models\Player;
 use App\Models\TeamFollower;
 use App\Models\PlayerFollower;
 use App\Models\CompetitionFollower;
@@ -60,4 +62,78 @@ function teamFollowSystem($team_id)
         $follow->follow_date = $date;
         $follow->save();
         return true;
+}
+
+//process image function
+function process_image($image)
+{
+    // Get filename with the extension
+    $filenameWithExt = $image->getClientOriginalName();
+    //get file name with the extension
+    $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+    //get just extension
+    $extension = $image->getClientOriginalExtension();
+    
+    //filename to store
+    $fileNameToStore = $filename.'_'.time().'.'.$extension;
+
+    return $fileNameToStore;
+}
+
+// fun to search player
+function searchPlayer($query, $from)
+{
+        $q = $query;
+        $output= ' ';
+        if ($q != null) {
+            $player = Player::where('full_name', 'like', "%$q%")->limit(5)->get();
+            if (count($player)) {
+                if ($from === 'editor') {
+                    foreach ($player as $key => $p) {
+                        $output .= "
+                        <li class='list-group-item' onclick='selectPlayer($p)'>".$p->full_name."</li>
+                        ";
+                    }
+                }elseif ($from === 'modal') {
+                    foreach ($player as $key => $p) {
+                        $output .= "
+                        <li class='list-group-item' onclick='selectPlayerModal($p)'>".$p->full_name."</li>
+                        ";
+                    }
+                }
+            } else {
+                $output = 'No Result';
+            }
+        } 
+        return $output;
+        
+}
+
+// fun to search team
+function searchTeam($query, $from)
+{
+    $q = $query;
+    $output= ' ';
+    if ($q != null) {
+        $team = Team::where('team_name', 'like', "%$q%")->limit(5)->get();
+        if (count($team)) {
+            if ($from === 'editor') {
+                foreach ($team as $key => $p) {
+                    $output .= "
+                    <li class='list-group-item' onclick='selectteam($p)'>".$p->team_name."</li>
+                    ";
+                }
+            }elseif ($from === 'modal') {
+                foreach ($team as $key => $p) {
+                    $output .= "
+                    <li class='list-group-item' onclick='selectteamModal($p)'>".$p->team_name."</li>
+                    ";
+                }
+            }
+        } else {
+            $output = 'No Result';
+        }
+    } 
+    return $output;
+        
 }

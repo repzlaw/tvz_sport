@@ -47,6 +47,12 @@ Route::prefix('/teams')->name('team.')->group(function(){
     //create team
     Route::post('/create', [TeamController::class,'create'])->name('create')->middleware(['auth']);
 
+    //edit team
+    Route::post('/edit', [TeamController::class,'edit'])->name('edit')->middleware(['auth']);
+
+    //edit team image
+    Route::post('/edit-image', [TeamController::class,'editImage'])->name('edit.image')->middleware(['auth']);
+
     //get individual team details
     Route::get('/{team_slug}', [TeamController::class,'getSingle'])->name('get.single');
 
@@ -62,6 +68,12 @@ Route::prefix('/players')->name('player.')->group(function(){
 
     //create player
     Route::post('/create', [PlayerController::class,'create'])->name('create')->middleware(['auth']);
+
+    //edit player
+    Route::post('/edit', [PlayerController::class,'edit'])->name('edit')->middleware(['auth']);
+
+    //edit player image
+    Route::post('/edit-image', [PlayerController::class,'editImage'])->name('edit.image')->middleware(['auth']);
 
     //get individual player details
     Route::get('/{player_slug}', [PlayerController::class,'getSingle'])->name('get.single');
@@ -84,6 +96,18 @@ Route::prefix('/news/editor')->name('news.')->group(function(){
 
     //delete news
     Route::get('/delete/{id}', [NewsController::class,'deleteNews'])->name('editor.delete');
+
+    //player search
+    Route::post('/player-search', [NewsController::class,'searchPlayer'])->name('editor.search.player');
+
+    //team search
+    Route::post('/team-search', [NewsController::class,'searchTeam'])->name('editor.search.team');
+
+    //delete player related to news
+    Route::get('/player/delete/{id}', [NewsController::class,'deletePlayer'])->name('editor.player.delete');
+
+    //delete team related to news
+    Route::get('/team/delete/{id}', [NewsController::class,'deleteTeam'])->name('editor.team.delete');
 
 });
 
