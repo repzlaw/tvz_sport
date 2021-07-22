@@ -426,7 +426,10 @@
                         }
                     },
                     error: function (error){
-                        console.log(error)
+                        if (error.status === 403) {
+                            window.location.href = "{{url('/email/verify')}}";
+                            // console.log(error.status)
+                        }
                     }
                 });
         }

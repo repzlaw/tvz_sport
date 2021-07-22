@@ -35,7 +35,7 @@ Route::prefix('/event')->name('event.')->group(function(){
     Route::get('/{eventslug}', [EventsController::class,'index'])->name('get.single');
 
     //follow or unfollow event
-    Route::get('/follow/{id}', [CompetitionFollowersController::class,'followCompetition'])->name('follow');
+    Route::get('/follow/{id}', [CompetitionFollowersController::class,'followCompetition'])->name('follow')->middleware(['auth','verified']);
 
 });
 
@@ -45,19 +45,19 @@ Route::prefix('/teams')->name('team.')->group(function(){
     Route::get('/', [TeamController::class,'index'])->name('get.all');
 
     //create team
-    Route::post('/create', [TeamController::class,'create'])->name('create')->middleware(['auth']);
+    Route::post('/create', [TeamController::class,'create'])->name('create')->middleware(['auth','verified']);
 
     //edit team
-    Route::post('/edit', [TeamController::class,'edit'])->name('edit')->middleware(['auth']);
+    Route::post('/edit', [TeamController::class,'edit'])->name('edit')->middleware(['auth','verified']);
 
     //edit team image
-    Route::post('/edit-image', [TeamController::class,'editImage'])->name('edit.image')->middleware(['auth']);
+    Route::post('/edit-image', [TeamController::class,'editImage'])->name('edit.image')->middleware(['auth','verified']);
 
     //get individual team details
     Route::get('/{team_slug}', [TeamController::class,'getSingle'])->name('get.single');
 
     //follow or unfollow team
-    Route::get('/follow/{id}', [TeamFollowersController::class,'followTeam'])->name('follow');
+    Route::get('/follow/{id}', [TeamFollowersController::class,'followTeam'])->name('follow')->middleware(['auth','verified']);
 
 });
 
@@ -67,35 +67,35 @@ Route::prefix('/players')->name('player.')->group(function(){
     Route::get('/', [PlayerController::class,'index'])->name('get.all');
 
     //create player
-    Route::post('/create', [PlayerController::class,'create'])->name('create')->middleware(['auth']);
+    Route::post('/create', [PlayerController::class,'create'])->name('create')->middleware(['auth','verified']);
 
     //edit player
-    Route::post('/edit', [PlayerController::class,'edit'])->name('edit')->middleware(['auth']);
+    Route::post('/edit', [PlayerController::class,'edit'])->name('edit')->middleware(['auth','verified']);
 
     //edit player image
-    Route::post('/edit-image', [PlayerController::class,'editImage'])->name('edit.image')->middleware(['auth']);
+    Route::post('/edit-image', [PlayerController::class,'editImage'])->name('edit.image')->middleware(['auth','verified']);
 
     //get individual player details
     Route::get('/{player_slug}', [PlayerController::class,'getSingle'])->name('get.single');
 
     //follow or unfollow player
-    Route::get('/follow/{id}', [PlayerFollowersController::class,'followPlayer'])->name('follow');
+    Route::get('/follow/{id}', [PlayerFollowersController::class,'followPlayer'])->name('follow')->middleware(['auth','verified']);
 
 });
 
 //editors post, edit and delete news route
 Route::prefix('/news/editor')->name('news.')->group(function(){
     //get news page
-    Route::get('/', [NewsController::class,'index'])->name('editor.all');
+    Route::get('/', [NewsController::class,'index'])->name('editor.all')->middleware(['auth','verified']);
 
     //create news
-    Route::post('/create', [NewsController::class,'createNews'])->name('editor.create');
+    Route::post('/create', [NewsController::class,'createNews'])->name('editor.create')->middleware(['auth','verified']);
 
     //edit news
-    Route::post('/edit', [NewsController::class,'editNews'])->name('editor.edit');
+    Route::post('/edit', [NewsController::class,'editNews'])->name('editor.edit')->middleware(['auth','verified']);
 
     //delete news
-    Route::get('/delete/{id}', [NewsController::class,'deleteNews'])->name('editor.delete');
+    Route::get('/delete/{id}', [NewsController::class,'deleteNews'])->name('editor.delete')->middleware(['auth','verified']);
 
     //player search
     Route::post('/player-search', [NewsController::class,'searchPlayer'])->name('editor.search.player');
@@ -104,10 +104,10 @@ Route::prefix('/news/editor')->name('news.')->group(function(){
     Route::post('/team-search', [NewsController::class,'searchTeam'])->name('editor.search.team');
 
     //delete player related to news
-    Route::get('/player/delete/{id}', [NewsController::class,'deletePlayer'])->name('editor.player.delete');
+    Route::get('/player/delete/{id}', [NewsController::class,'deletePlayer'])->name('editor.player.delete')->middleware(['auth','verified']);
 
     //delete team related to news
-    Route::get('/team/delete/{id}', [NewsController::class,'deleteTeam'])->name('editor.team.delete');
+    Route::get('/team/delete/{id}', [NewsController::class,'deleteTeam'])->name('editor.team.delete')->middleware(['auth','verified']);
 
 });
 
