@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StorePlayerRequest;
+use App\Models\PlayerUserEdit;
 
 class PlayerController extends Controller
 {
@@ -48,7 +49,7 @@ class PlayerController extends Controller
                 $fileNameToStore = '';
             }
 
-            $team = Player::create([
+            $player = Player::create([
                 'sport_type_id'=> $request->sport_type_id,
                 'team_id'=> $request->team_id,
                 'url_slug'=> $slug,
@@ -69,7 +70,7 @@ class PlayerController extends Controller
 
             ]);
 
-            if ($team) {
+            if ($player) {
                 $message = 'Player Created Successfully!';
             }
 
@@ -108,32 +109,62 @@ class PlayerController extends Controller
             'status' => 'required',
             'active_since' => 'required',
         ]);
-
         $player = Player::findOrFail($request->player_id);
 
         $pagetitle = $request->page_title ? $request->page_title : $request->full_name;
         $metadescription = $request->meta_description ? $request->meta_description : $request->full_name;
+        $slug = Str::slug($request->full_name, "-");
 
-        $update = $player->update([
-            'sport_type_id'=> $request->sport_type_id,
-            'team_id'=> $request->team_id,
-            'name'=> $request->name,
-            'full_name'=> $request->full_name,
-            'country'=> $request->country,
-            'birth_date'=> $request->birth_date,
-            'active_since'=> $request->active_since,
-            'status'=> $request->status,
-            'role'=> $request->role,
-            'signature_hero'=> $request->signature_hero,
-            'total_earnings'=> $request->total_earnings,
-            'followers'=> $request->followers,
-            'summary'=> $request->summary,
-            'page_title'=> $pagetitle,
-            'meta_description'=> $metadescription,
-        ]);
-        
-        if ($update) {
-            $message = 'Player Successfully Updated!';
+        if (Auth::user()->user_type === 'editor') {
+
+            $update = $player->update([
+                'sport_type_id'=> $request->sport_type_id,
+                'team_id'=> $request->team_id,
+                'name'=> $request->name,
+                'full_name'=> $request->full_name,
+                'country'=> $request->country,
+                'birth_date'=> $request->birth_date,
+                'active_since'=> $request->active_since,
+                'status'=> $request->status,
+                'role'=> $request->role,
+                'signature_hero'=> $request->signature_hero,
+                'total_earnings'=> $request->total_earnings,
+                'followers'=> $request->followers,
+                'summary'=> $request->summary,
+                'page_title'=> $pagetitle,
+                'meta_description'=> $metadescription,
+            ]);
+            
+            if ($update) {
+                $message = 'Player Successfully Updated!';
+            }
+        }elseif (Auth::user()->user_type === 'user') {
+            $update = PlayerUserEdit::firstOrNew([
+                'player_id' => $player->id,
+                'approval_status' => 'pending',
+                'user_id'=> Auth::user()->id,
+            ]);
+            $update->url_slug= $slug;
+            $update->sport_type_id= $request->sport_type_id;
+            $update->team_id= $request->team_id;
+            $update->name= $request->name;
+            $update->full_name= $request->full_name;
+            $update->country= $request->country;
+            $update->birth_date= $request->birth_date;
+            $update->active_since= $request->active_since;
+            $update->status= $request->status;
+            $update->role= $request->role;
+            $update->signature_hero= $request->signature_hero;
+            $update->total_earnings= $request->total_earnings;
+            $update->followers= $request->followers;
+            $update->summary= $request->summary;
+            $update->page_title= $pagetitle;
+            $update->meta_description= $metadescription;
+            $update->save();
+            
+            if ($update) {
+                $message = 'Request for Player Update Successful!';
+            }
         }
 
         return redirect()->route('player.get.single', ['player_slug' => $player->url_slug.'-'.$player->id ])->with(['message'=>$message]);
@@ -152,7 +183,7 @@ class PlayerController extends Controller
             //store image
             $path = $request->file('featured_image')->storeAs('public/images/player_images', $fileNameToStore);
 
-            //get old team image if exist
+            //get old player image if exist
             $player = Player::findOrFail($request->player_id);
             
             $player_image = $player->featured_image;

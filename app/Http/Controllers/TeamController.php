@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTeamRequest;
 use App\Models\TeamNews;
+use App\Models\TeamUserEdit;
 use Illuminate\Support\Facades\Storage;
 
 class TeamController extends Controller
@@ -91,22 +92,45 @@ class TeamController extends Controller
             'summary' => 'required',
             'sport_type_id' => 'required',
         ]);
+        // dd($request->all());
 
         $team = Team::findOrFail($request->team_id);
 
         $pagetitle = $request->page_title ? $request->page_title : $request->team_name;
         $metadescription = $request->meta_description ? $request->meta_description : $request->team_name;
+        $slug = Str::slug($request->team_name, "-");
 
-        $update = $team->update([
-            'sport_type_id'=> $request->sport_type_id,
-            'team_name'=> $request->team_name,
-            'summary'=> $request->summary,
-            'page_title'=> $pagetitle,
-            'meta_description'=> $metadescription,
-        ]);
-        
-        if ($update) {
-            $message = 'Team Successfully Updated!';
+
+        if (Auth::user()->user_type === 'editor') {
+            $update = $team->update([
+                'sport_type_id'=> $request->sport_type_id,
+                'team_name'=> $request->team_name,
+                'summary'=> $request->summary,
+                'page_title'=> $pagetitle,
+                'meta_description'=> $metadescription,
+            ]);
+            
+            if ($update) {
+                $message = 'Team Successfully Updated!';
+            }
+        }elseif (Auth::user()->user_type === 'user') {
+            $update = TeamUserEdit::firstOrNew([
+                'team_id' => $team->id,
+                'approval_status' => 'pending',
+                'user_id'=> Auth::user()->id,
+            ]);
+            $update->url_slug= $slug;
+            $update->sport_type_id= $request->sport_type_id;
+            $update->team_name= $request->team_name;
+            $update->summary= $request->summary;
+            $update->page_title= $pagetitle;
+            $update->meta_description= $metadescription;
+            $update->save();
+            
+            if ($update) {
+                $message = 'Request for Team Update Successful!';
+            }
+            
         }
 
         return redirect()->route('team.get.single', ['team_slug' => $team->url_slug.'-'.$team->id ])->with(['message'=>$message]);

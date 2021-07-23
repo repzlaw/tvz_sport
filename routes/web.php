@@ -59,6 +59,9 @@ Route::prefix('/teams')->name('team.')->group(function(){
     //follow or unfollow team
     Route::get('/follow/{id}', [TeamFollowersController::class,'followTeam'])->name('follow')->middleware(['auth','verified']);
 
+    //user editing team info
+    Route::post('user/edit', [TeamController::class,'edit'])->name('user.edit')->middleware(['auth','verified']);
+
 });
 
 //players routes
@@ -81,6 +84,8 @@ Route::prefix('/players')->name('player.')->group(function(){
     //follow or unfollow player
     Route::get('/follow/{id}', [PlayerFollowersController::class,'followPlayer'])->name('follow')->middleware(['auth','verified']);
 
+    //user editing player info
+    Route::post('user/edit', [PlayerController::class,'edit'])->name('user.edit')->middleware(['auth','verified']);
 });
 
 //editors post, edit and delete news route

@@ -24,9 +24,13 @@
                                     </div>
                                     <div class="btn-actions-pane-right float-right">
 
-                                        @if(Auth::user()->user_type === 'editor')
-                                            <p><a href="#" class="btn btn-warning btn-sm mr-3"  id="edit-button">Edit Team</a></p>
-                                        @endif
+                                        <p><a href="#" class="btn btn-warning btn-sm mr-3"  id="edit-button">Edit Team</a></p>
+                                        <!-- @if(Auth::user()->user_type === 'editor') -->
+                                        <!-- @endif -->
+
+                                        <!-- @if(Auth::user()->user_type === 'user')
+                                            <p><a href="#" class="btn btn-warning btn-sm mr-3"  id="edit-button-user">Edit Team</a></p>
+                                        @endif -->
                                     </div>
 
                                 @endauth
@@ -228,7 +232,14 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
-            <form action="{{ route('team.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
+        @auth
+            @if(Auth::user()->user_type === 'editor')
+                <form action="{{ route('team.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
+            @endif
+            @if(Auth::user()->user_type === 'user')
+                <form action="{{ route('team.user.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
+            @endif
+        @endauth
                     {{ csrf_field() }}
               <div class="form-group">
                 
