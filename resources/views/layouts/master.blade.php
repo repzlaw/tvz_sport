@@ -45,7 +45,7 @@
     <nav class="navbar navbar-expand-md bg-dark navbar-dark shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">
-                {{ config('app.name', 'Laravel') }}
+                TVZ Sports
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                 <span class="navbar-toggler-icon"></span>
@@ -62,6 +62,25 @@
                             <a class="nav-link" href="{{ route('admin.login') }}">{{ __('Login') }}</a>
                         </li>
                     @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.sport.all') }}">{{ __('Sports') }}</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.competition.all') }}">{{ __('Competitions') }}</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/matches">{{ __('Matches') }}</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/teams">{{ __('Teams') }}</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/players">{{ __('Players') }}</a>
+                        </li>
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 {{ Auth::guard('admin')->user()->username }}
@@ -78,10 +97,12 @@
         </div>
     </nav>
     <main class="py-4">
+        @include('inc.message')
+
         @yield('content')
     </main>
 </div>
-<script src="{{asset('js/.min.js')}}"></script>
+<!-- <script src="{{asset('js/.min.js')}}"></script> -->
 @yield('scripts')
 </body>
 </html>

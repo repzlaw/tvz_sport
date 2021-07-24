@@ -47,7 +47,7 @@
                     {{ csrf_field() }}
               <div class="form-group">
                 
-                <!-- <div class="input-group mb-4" >
+                <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text">Page Title</span>
                     </div>
@@ -58,7 +58,7 @@
                         <span class="input-group-text">Meta description</span>
                     </div>
                     <input  type="text" name="meta_description" id="meta-description" class="form-control" placeholder="Meta description ..." value="{{ old('meta_description') }}">
-                </div> -->
+                </div>
                 <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text">Sport Name</span>

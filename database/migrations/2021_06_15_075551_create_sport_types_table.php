@@ -16,6 +16,9 @@ class CreateSportTypesTable extends Migration
         Schema::create('sport_types', function (Blueprint $table) {
             $table->id();
             $table->string('sport_type');
+            $table->string('url_slug')->unique();
+            $table->string('page_title')->nullable();
+            $table->string('meta_description')->nullable();
             $table->timestamps();
         });
     }
