@@ -18,6 +18,8 @@ class CreateCompetitionsTable extends Migration
             $table->string('competition_name');
             $table->string('url_slug')->unique();
             $table->foreignId('sport_type_id')->references('id')->on('sport_types');
+            $table->string('page_title')->nullable();
+            $table->string('meta_description')->nullable();
             $table->timestamps();
         });
     }

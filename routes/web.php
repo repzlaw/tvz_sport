@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\CompetitionFollowersController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
+use App\Http\Controllers\Admin\CompetitionController;
+use App\Http\Controllers\Admin\SportsController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PlayerController;
@@ -148,9 +150,9 @@ Route::view('home','home')->middleware(['verified']);;
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-
+//All the admin routes will be defined here...
 Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
-    //All the admin routes will be defined here...
+
     Route::namespace('Auth')->group(function(){
         
         //Login Routes
@@ -162,4 +164,33 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     // admin home
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-  });
+    //sports routes
+    Route::prefix('/sports')->name('sport.')->middleware('admin')->group(function(){
+
+        // get all sports
+        Route::get('/', [SportsController::class, 'index'])->name('all');
+
+        //create sport
+        Route::post('/create', [SportsController::class,'createSport'])->name('create');
+
+        
+        //get individual sport details
+        // Route::get('/{team_slug}', [TeamController::class,'getSingle'])->name('get.single');
+
+    });
+
+    //competitions routes
+    Route::prefix('/competitions')->name('competition.')->middleware('admin')->group(function(){
+
+        // get all competitions
+        Route::get('/', [competitionController::class, 'index'])->name('all');
+
+        //create competition
+        Route::post('/create', [CompetitionController::class,'createCompetition'])->name('create');
+
+        
+        //get individual competition details
+        // Route::get('/{team_slug}', [TeamController::class,'getSingle'])->name('get.single');
+
+    });
+});
