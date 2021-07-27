@@ -4,33 +4,33 @@
 <div class="container">
     <div class="row justify-content-center">
     <div class="col-12">
-                <div class="row">
-                    <div class="col-12 col-md-6 m-auto">
-                        <div class="card-hover-shadow-2x mb-3 mt-3 card">
-                            <div class="card-header-tab card-header">
-                                <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
-                                    <h5>competitions</h5> 
-                                </div>
-                                <div class=" float-right">
-                                        <p><a href="#" class="btn btn-primary btn-sm"  id="create-button">Create Competition</a></p>
-                                </div>
-                            </div> 
-                            <ul class="list-group list-group-flush">
-                                @foreach ($competitions as $competition)
-                                <li class="list-group-item">
-                                        {{$competition->competition_name}}
-                                        <!-- <i class="fa fa-angle-right fa-lg float-right"></i> -->
-                                </li>
-                                @endforeach 
-                            </ul>
-                            
+        <div class="row">
+            <div class="col-12 col-md-6 m-auto">
+                <div class="card-hover-shadow-2x mb-3 mt-3 card">
+                    <div class="card-header-tab card-header">
+                        <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
+                            <h5>competitions</h5> 
                         </div>
-
-                    </div>
-
+                        <div class=" float-right">
+                            <p><a href="#" class="btn btn-primary btn-sm"  id="create-button">Create Competition</a></p>
+                        </div>
+                    </div> 
+                    <ul class="list-group list-group-flush">
+                        @foreach ($competitions as $competition)
+                        <li class="list-group-item">
+                                {{$competition->competition_name}}
+                                <!-- <i class="fa fa-angle-right fa-lg float-right"></i> -->
+                        </li>
+                        @endforeach 
+                    </ul>
+                    
                 </div>
 
             </div>
+
+        </div>
+
+    </div>
     </div>
 </div>
 

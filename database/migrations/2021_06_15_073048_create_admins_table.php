@@ -16,8 +16,8 @@ class CreateAdminsTable extends Migration
         Schema::create('admins', function (Blueprint $table) {
             $table->id();
             $table->string('username')->unique();
-            $table->string('fname');
-            $table->string('lname');
+            $table->string('name');
+            // $table->string('lname');
             $table->enum('user_type',['admin'])->default('admin');
             $table->enum('status',['active','suspended','inactive'])->default('active');
             $table->string('email')->unique();

@@ -10,8 +10,10 @@ use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\CompetitionFollowersController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
+use App\Http\Controllers\admin\BanPolicyController;
 use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\Admin\SportsController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\PlayerController;
@@ -183,7 +185,7 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     Route::prefix('/competitions')->name('competition.')->middleware('admin')->group(function(){
 
         // get all competitions
-        Route::get('/', [competitionController::class, 'index'])->name('all');
+        Route::get('/', [CompetitionController::class, 'index'])->name('all');
 
         //create competition
         Route::post('/create', [CompetitionController::class,'createCompetition'])->name('create');
@@ -192,5 +194,43 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
         //get individual competition details
         // Route::get('/{team_slug}', [TeamController::class,'getSingle'])->name('get.single');
 
+    });
+
+    //users routes
+    Route::prefix('/users')->name('user.')->middleware('admin')->group(function(){
+
+        // get users page
+        Route::get('/', [UserController::class, 'index'])->name('all');
+
+        // get all users
+        Route::get('/get', [UserController::class, 'getUser'])->name('get');
+
+        //create user
+        Route::post('/create', [UserController::class,'createuser'])->name('create');
+
+        //edit user
+        Route::post('/edit', [UserController::class,'edituser'])->name('edit');
+
+        //ban/unban user
+        Route::post('/status', [UserController::class,'editStatus'])->name('status');
+
+        //get individual user details
+        // Route::get('/{team_slug}', [TeamController::class,'getSingle'])->name('get.single');
+
+    });
+
+    //users routes
+    Route::prefix('/ban-policy')->name('ban-policy.')->middleware('admin')->group(function(){
+
+        // get users page
+        Route::get('/', [BanPolicyController::class, 'index'])->name('all');
+
+        //create user
+        Route::post('/create', [BanPolicyController::class,'createpolicy'])->name('create');
+
+        //edit policy
+        Route::post('/edit', [UserController::class,'editPolicy'])->name('edit');
+
+        
     });
 });

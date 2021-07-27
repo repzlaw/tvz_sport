@@ -23,6 +23,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'username',
         'email',
         'password',
+        'policy_id',
+        'ban_date',
+        'ban_till',
+        'status',
+        
     ];
     
 
@@ -34,6 +39,11 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $dates = [
+        'ban_date',
+        'ban_till'
     ];
 
     /**
