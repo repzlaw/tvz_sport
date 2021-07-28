@@ -11,6 +11,17 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
+                        @if (session('message'))
+                            <div class="col-12 col-md-12">
+                                <div class="alert alert-danger">
+                                    {{session('message')}}. 
+                                    <a href="#"> 
+                                        <b> Request a review</b>
+                                    </a>
+                                </div>
+                            </div>
+                        @endif
+
                         <div class="form-group row">
                             <label for="username" class="col-md-4 col-form-label text-md-right">{{ __('Username') }}</label>
 

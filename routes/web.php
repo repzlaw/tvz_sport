@@ -219,16 +219,31 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
 
     });
 
-    //users routes
+    //banpolicys routes
     Route::prefix('/ban-policy')->name('ban-policy.')->middleware('admin')->group(function(){
 
-        // get users page
+        // get banpolicys page
         Route::get('/', [BanPolicyController::class, 'index'])->name('all');
 
-        //create user
+        //create banpolicy
         Route::post('/create', [BanPolicyController::class,'createpolicy'])->name('create');
 
         //edit policy
+        Route::post('/edit', [BanPolicyController::class,'editPolicy'])->name('edit');
+
+        
+    });
+
+    //support department routes
+    Route::prefix('/support-department')->name('support-department.')->middleware('admin')->group(function(){
+
+        // get support department page
+        Route::get('/', [BanPolicyController::class, 'index'])->name('all');
+
+        //create support department
+        Route::post('/create', [BanPolicyController::class,'createpolicy'])->name('create');
+
+        //edit support department
         Route::post('/edit', [UserController::class,'editPolicy'])->name('edit');
 
         

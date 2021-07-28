@@ -251,7 +251,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title" id="ban_header">Ban/Unban User</h4>
+          <h4 class="modal-title" id="ban_header">Ban User</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
@@ -259,7 +259,7 @@
                     {{ csrf_field() }}
               <div class="form-group">
                 
-                <div class="input-group mb-4" >
+                <!-- <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text">Status</span>
                     </div>
@@ -268,13 +268,13 @@
                         <option value="active">Active </option>                           
                         <option value="banned">Banned </option>                           
                     </select>
-                </div>
+                </div> -->
 
                 <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text">Reason</span>
                     </div>
-                    <select class="form-control custom-select" name="policy_id">
+                    <select class="form-control custom-select" name="policy_id" required>
                         <option value="">-- select reason -- </option> 
                         @foreach($policies as $policy)
                             <option value="{{$policy->id}}">{{$policy->reason}} </option>                           
@@ -283,7 +283,7 @@
                 </div>
 
                 <div class="input-group mb-4" >
-                    <div class="input-group-prepend">
+                    <div class="input-group-prepend" required>
                         <span class="input-group-text"> Ban Date</span>
                     </div>
                     <input  type="date" name="ban_date" id="ban_date" class="form-control" placeholder="Fullname" value="{{ old('ban_date') }}">
@@ -358,9 +358,9 @@ function editUser(user){
 
 //modal to ban user
 function banUser(user){
-    $('#ban_header').text("Ban/Unban " + " "+ user.username);
+    $('#ban_header').text("Ban " + " "+ user.username);
     $('#ban_user_id').val(user.id);
-    $('#status').val(user.status);
+    // $('#status').val(user.status);
     $('#ban-modal').modal();
 
 }

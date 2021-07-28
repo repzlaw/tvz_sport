@@ -4,11 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use datatables;
 use App\Models\User;
+use App\Models\Admin;
+use App\Models\BanPolicy;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StoreUserRequest;
-use App\Models\BanPolicy;
+use App\Mail\BanUser;
+use App\Models\SuspensionHistory;
 
 class UserController extends Controller
 {
@@ -29,8 +35,8 @@ class UserController extends Controller
             return dataTables($users)
                 ->addIndexColumn()
                 ->addColumn('action', function($row){
-                    $actionBtn = "<i class='fa fa-edit text-success mr-2' style='cursor: pointer;' onclick='editUser($row)'></i> 
-                                    <a href='javascript:void(0)' class='delete btn btn-outline-info btn-sm' onclick='banUser($row)'>Ban/Unban</a>
+                    $actionBtn = "<i class='fa fa-edit text-success mr-3' style='cursor: pointer;' onclick='editUser($row)'></i> 
+                                    <a href='javascript:void(0)' class='delete btn btn-outline-danger btn-sm' onclick='banUser($row)'>Ban</a>
                     ";
                     return $actionBtn;
                 })
@@ -90,39 +96,56 @@ class UserController extends Controller
     public function editStatus(Request $request)
     {
         $request->validate([
-            'status' => 'required',
+            'policy_id' => 'required',
+            'ban_date' => 'required',
         ]);
-        // dd($request->all());
 
         $user = User::findOrFail($request->user_id);
+        $admin = Admin::findOrFail(Auth::guard('admin')->user()->id);
+        $reason = BanPolicy::findOrFail($request->policy_id);
 
-        if ($request->status === 'banned') {
-            $ban = $user->update([
-                'status'=> $request->status,
-                'policy_id'=> $request->policy_id,
-                'ban_date'=> $request->ban_date,
-                'ban_till'=> $request->ban_till,
+
+        $ban = $user->update([
+            'status'=> 'banned',
+            'policy_id'=> $request->policy_id,
+            'ban_date'=> $request->ban_date,
+            'ban_till'=> $request->ban_till,
+        ]);
+
+        if ($ban) {
+            //log suspension 
+            $log = SuspensionHistory::create([
+                'user_id'=>$request->user_id,
+                'policy_id'=>$request->policy_id,
+                'action'=>'suspension',
             ]);
-            if ($ban) {
-                $message = 'User Banned Successfully!';
+            
+            
+            
+            //send mail to user
+            $error ='';
+            if ($request->ban_till !== null) {
+                if ($request->ban_till && now()->lessThan($request->ban_till)) {
+                    $banned_days = now()->diffInDays($request->ban_till);
+        
+                    if ($banned_days > 14) {
+                        $error = "Your account has been suspended because you violated our ". $reason->reason. "  policy";
+                    } else {
+                        $error = "Your account has been suspended for ".$banned_days." ".Str::plural("day", $banned_days)
+                            ." because you violated our ". $reason->reason. "  policy";
+                    }
+                }
+                
+            }else{
+                $error = "Your account has been suspended indefinitely "." because you violated our  ". $reason->reason. " policy";
             }
-        } elseif ($request->status === 'active') {
-            $unban = $user->update([
-                'status'=> $request->status,
-                'policy_id'=> null,
-                'ban_date'=> null,
-                'ban_till'=> null,
-            ]);
-            if ($unban) {
-                $message = 'User Activated Successfully!';
-            }
+
+            Mail::to($user->email, $user->username)->queue(new BanUser($error,$user,$admin));
+            
+            $message = 'User Banned Successfully!';
         }
 
-        
-        
-        
         return redirect('/admin/users')->with(['message' => $message]);  
-
     }
 
 

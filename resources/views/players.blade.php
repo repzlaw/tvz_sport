@@ -65,7 +65,7 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
-            <form action="{{ route('player.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
+            <form action="{{ route('player.create')}}" method="post" class="form-group" enctype="multipart/form-data">
                     {{ csrf_field() }}
               <div class="form-group row">
                 
