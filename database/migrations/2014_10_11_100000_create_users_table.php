@@ -25,8 +25,11 @@ class CreateUsersTable extends Migration
             $table->text('two_factor_secret')->nullable();
             $table->text('two_factor_recovery_codes')->nullable();
             $table->date('ban_date')->nullable();
+            $table->time('ban_time')->nullable();
             $table->date('ban_till')->nullable();
             $table->foreignId('policy_id')->nullable()->references('id')->on('ban_policies');
+            $table->datetime('last_login_at')->nullable();
+            $table->string('last_login_ip')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -27,18 +27,24 @@ class CheckBanned
             
                         if ($banned_days > 14) {
                             $error = 'Your account has been suspended for '. $reason->reason;
+                            auth()->logout();
+                            return redirect()->route('login')->withMessage($error);
                         } else {
                             $error = 'Your account has been suspended for '.$banned_days.' '.Str::plural('day', $banned_days)
                                 .' for '. $reason->reason;
+                            auth()->logout();
+                            return redirect()->route('login')->withMessage($error);
                         }
                     }
                     
                 }else{
                     $error = 'Your account has been suspended indefinitely '.' for '. $reason->reason;
+                    auth()->logout();
+                    return redirect()->route('login')->withMessage($error);
                 }
-                auth()->logout();
+                // auth()->logout();
                 
-                return redirect()->route('login')->withMessage($error);
+                // return redirect()->route('login')->withMessage($error);
             }
     
         }

@@ -2,22 +2,25 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\EventsController;
+use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\SportsController;
 use App\Http\Controllers\TeamFollowersController;
+use App\Http\Controllers\Admin\BanPolicyController;
 use App\Http\Controllers\PlayerFollowersController;
 use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\CompetitionFollowersController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
+use App\Http\Controllers\Admin\SupportDepartmentsController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
-use App\Http\Controllers\admin\BanPolicyController;
-use App\Http\Controllers\Admin\CompetitionController;
-use App\Http\Controllers\Admin\SportsController;
-use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
-use App\Http\Controllers\NewsController;
-use App\Http\Controllers\PlayerController;
-use App\Http\Controllers\TeamController;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,9 +151,13 @@ Route::get('/poland-vs-belguim-1', function () {
 
 Route::view('home','home')->middleware(['verified']);;
 
+//logout route
+Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+
 // Auth::routes();
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
 
 //All the admin routes will be defined here...
 Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
@@ -175,6 +182,9 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
         //create sport
         Route::post('/create', [SportsController::class,'createSport'])->name('create');
 
+        //edit sport
+        Route::post('/edit', [SportsController::class,'editSport'])->name('edit');
+
         
         //get individual sport details
         // Route::get('/{team_slug}', [TeamController::class,'getSingle'])->name('get.single');
@@ -190,6 +200,11 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
         //create competition
         Route::post('/create', [CompetitionController::class,'createCompetition'])->name('create');
 
+        //edit competition
+        Route::post('/edit', [CompetitionController::class,'editCompetition'])->name('edit');
+
+        //delete Competition
+        // Route::get('/delete/{id}', [CompetitionController::class,'deleteCompetition'])->name('delete');
         
         //get individual competition details
         // Route::get('/{team_slug}', [TeamController::class,'getSingle'])->name('get.single');
@@ -205,17 +220,26 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
         // get all users
         Route::get('/get', [UserController::class, 'getUser'])->name('get');
 
+        // search users
+        Route::get('/search', [UserController::class, 'searchUser'])->name('search');
+
         //create user
         Route::post('/create', [UserController::class,'createuser'])->name('create');
 
         //edit user
         Route::post('/edit', [UserController::class,'edituser'])->name('edit');
 
-        //ban/unban user
-        Route::post('/status', [UserController::class,'editStatus'])->name('status');
+        //ban user
+        Route::get('/{id}/ban', [UserController::class,'banUser'])->name('ban-user');
 
-        //get individual user details
-        // Route::get('/{team_slug}', [TeamController::class,'getSingle'])->name('get.single');
+        //unban user
+        Route::get('/{id}/unban', [UserController::class,'unbanUser'])->name('unban-user');
+
+        //user profile page
+        Route::get('/{id}', [ProfileController::class,'profile'])->name('profile');
+
+        //user login logs
+        Route::get('/{id}/login-logs', [ProfileController::class,'loginLogs'])->name('log');
 
     });
 
@@ -231,21 +255,19 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
         //edit policy
         Route::post('/edit', [BanPolicyController::class,'editPolicy'])->name('edit');
 
-        
     });
 
     //support department routes
-    Route::prefix('/support-department')->name('support-department.')->middleware('admin')->group(function(){
+    Route::prefix('/support-departments')->name('support-department.')->middleware('admin')->group(function(){
 
         // get support department page
-        Route::get('/', [BanPolicyController::class, 'index'])->name('all');
+        Route::get('/', [SupportDepartmentsController::class, 'index'])->name('all');
 
         //create support department
-        Route::post('/create', [BanPolicyController::class,'createpolicy'])->name('create');
+        Route::post('/create', [SupportDepartmentsController::class,'createSupportDepartment'])->name('create');
 
         //edit support department
-        Route::post('/edit', [UserController::class,'editPolicy'])->name('edit');
-
+        Route::post('/edit', [SupportDepartmentsController::class,'editSupportDepartment'])->name('edit');
         
     });
 });

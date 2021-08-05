@@ -9,17 +9,17 @@
                 <div class="card-hover-shadow-2x mb-3 mt-3 card">
                     <div class="card-header-tab card-header">
                         <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
-                            <h5>Policies</h5> 
+                            <h5>Support Departments</h5> 
                         </div>
                         <div class="float-right">
                             <p><a href="#" class="btn btn-primary btn-sm"  id="create-button">Create Policies</a></p>
                         </div>
                     </div> 
                     <ul class="list-group list-group-flush">
-                        @foreach ($policies as $policy)
+                        @foreach ($departments as $department)
                         <li class="list-group-item">
-                                {{$policy->reason}}
-                                <i class="fa fa-edit text-info fa-lg float-right" id="edit-button" onclick="edit({{$policy}})"></i>
+                                {{$department->dept_name}}
+                                <i class="fa fa-edit text-info fa-lg float-right" id="edit-button" onclick="edit({{$department}})"></i>
                         </li>
                         @endforeach 
                     </ul>
@@ -34,20 +34,20 @@
     </div>
 </div>
 
-<!-- create team modal -->
+<!-- create support  modal -->
 <div class="modal fade" tabindex="-1" role="dialog" id= "create-modal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Create policy</h4>
+          <h4 class="modal-title">Create support departments</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
-            <form action="{{ route('admin.ban-policy.create')}}" method="post" class="form-group" enctype="multipart/form-data">
+            <form action="{{ route('admin.support-department.create')}}" method="post" class="form-group" enctype="multipart/form-data">
                     {{ csrf_field() }}
               <div class="form-group">
                 
-                  <textarea name="reason" rows="5" class="form-control"  placeholder="Write policy here ..." value="{{ old('reason') }}" required></textarea>
+                  <textarea name="dept_name" rows="5" class="form-control"  placeholder="Type department here ..." value="{{ old('dept_name') }}" required></textarea>
                 <!-- <input type="file" name="featured_image" id="featured_image" class="form-control" placeholder="Upload Team Image ..." value="{{ old('featured_image') }}" required> -->
                 <!-- <br>
               </div> -->
@@ -65,22 +65,22 @@
 </div>
   <!-- /.modal -->
 
-<!-- edit team modal -->
+<!-- edit department modal -->
 <div class="modal fade" tabindex="-1" role="dialog" id= "edit-modal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Edit policy</h4>
+          <h4 class="modal-title">Edit support departments</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
-            <form action="{{ route('admin.ban-policy.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
+            <form action="{{ route('admin.support-department.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
                     {{ csrf_field() }}
               <div class="form-group">
                 
-                  <textarea name="reason" id="reason" rows="5" class="form-control"  placeholder="Write policy here ..." value="{{ old('reason') }}" required></textarea>
+                  <textarea name="dept_name" id="dept_name" rows="5" class="form-control"  placeholder="type department here ..." value="{{ old('dept_name') }}" required></textarea>
 
-                <input  type="hidden" name="policy_id" id="policy_id" class="form-control">
+                <input  type="hidden" name="department_id" id="department_id" class="form-control">
 
                 <!-- <input type="file" name="featured_image" id="featured_image" class="form-control" placeholder="Upload Team Image ..." value="{{ old('featured_image') }}" required> -->
                 <!-- <br>
@@ -109,10 +109,10 @@ $('#create-button').on('click',function(event){
 });
 
 //modal to edit policy
-function edit(policy){
+function edit(department){
     // console.log(policy);
-    $('#reason').val(policy.reason);
-    $('#policy_id').val(policy.id);
+    $('#dept_name').val(department.dept_name);
+    $('#department_id').val(department.id);
     $('#edit-modal').modal();
 }
 

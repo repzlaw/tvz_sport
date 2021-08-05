@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TeamNews extends Model
+class TeamNewsRelationship extends Model
 {
     use HasFactory;
 
@@ -26,5 +26,4 @@ class TeamNews extends Model
     {
         return $this->belongsTo(CompetitionNews::class, 'competition_news_id');
     }
-
 }

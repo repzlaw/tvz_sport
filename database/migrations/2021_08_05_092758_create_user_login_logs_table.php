@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePlayerNewsTable extends Migration
+class CreateUserLoginLogsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreatePlayerNewsTable extends Migration
      */
     public function up()
     {
-        Schema::create('player_news', function (Blueprint $table) {
+        Schema::create('user_login_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('player_id')->references('id')->on('players');
-            $table->foreignId('competition_news_id')->references('id')->on('competition_news');
+            $table->foreignId('user_id')->references('id')->on('users');
+            $table->enum('action',['login','logout'])->default('login');
+            $table->string('last_login_ip')->nullable();
+            $table->json('browser_info')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ class CreatePlayerNewsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('player_news');
+        Schema::dropIfExists('user_login_logs');
     }
 }

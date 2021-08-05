@@ -32,7 +32,7 @@ class CompetitionNews extends Model
      */
     public function playernews()
     {
-        return $this->hasMany(PlayerNews::class,'competition_news_id');
+        return $this->hasMany(PlayerNewsRelationship::class,'competition_news_id');
     }
 
      /**
@@ -40,6 +40,6 @@ class CompetitionNews extends Model
      */
     public function teamnews()
     {
-        return $this->hasMany(TeamNews::class,'competition_news_id');
+        return $this->hasMany(TeamNewsRelationship::class,'competition_news_id');
     }
 }

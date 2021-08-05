@@ -7,25 +7,25 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class BanUser extends Mailable
+class UnbanUser extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subject = "Account Suspension";
-    public $error;
+    public $subject = "Account Unsuspension";
+    public $message;
     public $user;
     public $admin;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($error,$user,$admin)
+    public function __construct($message,$user,$admin)
     {
-        $this->error = $error;
+        $this->message = $message;
         $this->user = $user;
         $this->admin = $admin;
-
     }
 
     /**
@@ -36,6 +36,6 @@ class BanUser extends Mailable
     public function build()
     {
         $admin = $this->admin;
-        return $this->from($admin->email, $admin->username)->markdown('emails.banUser');
+        return $this->from($admin->email, $admin->username)->markdown('emails.UnbanUser');
     }
 }

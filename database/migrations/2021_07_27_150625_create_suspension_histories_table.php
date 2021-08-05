@@ -19,6 +19,7 @@ class CreateSuspensionHistoriesTable extends Migration
             $table->foreignId('policy_id')->nullable()->references('id')->on('ban_policies');
             $table->enum('action',['suspension','unsuspension'])->default('suspension');
             $table->foreignId('ticket_id')->nullable()->references('id')->on('tickets');
+            $table->string('unsuspend_reason')->nullable();
             $table->timestamps();
         });
     }

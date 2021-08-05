@@ -34,4 +34,25 @@ class BanPolicyController extends Controller
         return redirect('/admin/ban-policy')->with(['message' => $message]);
     }
 
+    //edit policy
+    public function editPolicy(Request $request)
+    {
+        $request->validate([
+            'reason' => 'required',
+            'policy_id' => 'required',
+        ]);
+
+        $policy = BanPolicy::findOrFail($request->policy_id);
+
+        $policy = $policy->update([
+            'reason' => $request->input('reason'),
+        ]);
+
+        if ($policy) {
+            $message = 'Policy Updated Successfully!';
+        }
+
+        return redirect('/admin/ban-policy')->with(['message' => $message]);
+    }
+
 }

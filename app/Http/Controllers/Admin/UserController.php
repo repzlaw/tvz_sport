@@ -4,45 +4,44 @@ namespace App\Http\Controllers\Admin;
 
 use datatables;
 use App\Models\User;
+use App\Mail\BanUser;
 use App\Models\Admin;
+use App\Mail\UnbanUser;
 use App\Models\BanPolicy;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\SuspensionHistory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\StoreUserRequest;
-use App\Mail\BanUser;
-use App\Models\SuspensionHistory;
 
 class UserController extends Controller
 {
+    //users page
     public function index()
     {
-        $users = User::all();
+        $users = User::paginate(50);
 
-        $policies = BanPolicy::all();
-
-        return view('admin/users')->with(['users'=> $users, 'policies'=>$policies]);
+        return view('admin/users')->with(['users'=> $users]);
 
     }
 
-    //get all users
-    public function getUser(Request $request)
+    //search users
+    public function searchUser()
     {
-        $users = User::all();
-            return dataTables($users)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $actionBtn = "<i class='fa fa-edit text-success mr-3' style='cursor: pointer;' onclick='editUser($row)'></i> 
-                                    <a href='javascript:void(0)' class='delete btn btn-outline-danger btn-sm' onclick='banUser($row)'>Ban</a>
-                    ";
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-                // <a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>
+        $searchData = $_GET['query'];
+        $searchColumn = $_GET['search_column'];
+        
+        $users =[];
+
+        if (!is_null($searchData)) {
+            $users = User::where($searchColumn, 'like', "%$searchData%")->paginate(50);
+        }
+
+        return view('admin/users')->with(['users'=> $users]);
+
     }
 
     //create users
@@ -81,34 +80,36 @@ class UserController extends Controller
             'name'=> $request->name,
             'email'=> $request->email,
             'user_type'=> $request->user_type,
-            'password'=> $request->password ? $user->password : Hash::make($request->password),
+            'password'=> $request->password ? Hash::make($request->password) : $user->password,
         ]);
 
         if ($update) {
             $message = 'User Updated Successfully!';
         }
 
-        return redirect('/admin/users')->with(['message' => $message]);  
+        return redirect()->back()->with(['message' => $message]);
+        // return redirect('/admin/users')->with(['message' => $message]);
 
     }
 
-    //ban or unban user
-    public function editStatus(Request $request)
+    //ban user
+    public function banUser(Request $request)
     {
         $request->validate([
             'policy_id' => 'required',
-            'ban_date' => 'required',
         ]);
 
         $user = User::findOrFail($request->user_id);
         $admin = Admin::findOrFail(Auth::guard('admin')->user()->id);
         $reason = BanPolicy::findOrFail($request->policy_id);
-
+        $ban_date =date("Y/m/d");
+        $ban_time =date("H:i:s");
 
         $ban = $user->update([
             'status'=> 'banned',
             'policy_id'=> $request->policy_id,
-            'ban_date'=> $request->ban_date,
+            'ban_date'=> $ban_date,
+            'ban_time'=> $ban_time,
             'ban_till'=> $request->ban_till,
         ]);
 
@@ -119,8 +120,6 @@ class UserController extends Controller
                 'policy_id'=>$request->policy_id,
                 'action'=>'suspension',
             ]);
-            
-            
             
             //send mail to user
             $error ='';
@@ -145,10 +144,46 @@ class UserController extends Controller
             $message = 'User Banned Successfully!';
         }
 
-        return redirect('/admin/users')->with(['message' => $message]);  
+        return redirect()->back()->with(['message' => $message]);  
     }
 
+     //unban user
+     public function unbanUser(Request $request)
+     {
+         $request->validate([
+             'reason' => 'required',
+         ]);
 
-
+         $user = User::findOrFail($request->user_id);
+         $admin = Admin::findOrFail(Auth::guard('admin')->user()->id);
+ 
+         $unban = $user->update([
+             'status'=> 'active',
+             'policy_id'=> null,
+             'unban_date'=> null,
+             'unban_time'=> null,
+             'unban_till'=> null,
+         ]);
+ 
+         if ($unban) {
+             //log unsuspension 
+             $log = SuspensionHistory::create([
+                 'user_id'=>$request->user_id,
+                 'action'=>'unsuspension',
+                 'unsuspend_reason'=>$request->reason,
+             ]);
+            
+             //send mail to user
+             $message ='Your account has been unsuspended. You can now login into your account';
+             
+             Mail::to($user->email, $user->username)->queue(new UnbanUser($message,$user,$admin));
+             
+             $message = 'User Unbanned Successfully!';
+         }else{
+            $message = 'Operation Unsuccessful!';
+         }
+ 
+         return redirect()->back()->with(['message' => $message]);  
+     }
 
 }
