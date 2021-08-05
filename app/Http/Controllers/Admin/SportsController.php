@@ -39,7 +39,46 @@ class SportsController extends Controller
 
         return redirect('/admin/sports')->with(['message' => $message]);    
         
-        // dd($request->all());
         
     }
+
+    //edit sport
+    public function editSport(StoreSportRequest $request)
+    {
+        $pagetitle = $request->page_title ? $request->page_title : $request->sport_type;
+        $metadescription = $request->meta_description ? $request->meta_description : $request->sport_type;
+        $slug = Str::slug($request->sport_type, "-");
+
+        $sport = SportType::findOrFail($request->sport_id);
+
+        $sport = $sport->update([
+            'sport_type'=>$request->sport_type,
+            'page_title'=> $pagetitle,
+            'meta_description'=> $metadescription,
+            'url_slug'=> $slug,
+
+        ]);
+
+        if ($sport) {
+            $message = 'Sport Updated Successfully!';
+        }
+
+        return redirect('/admin/sports')->with(['message' => $message]);  
+
+    }
+
+    //delete sport
+    // public function deleteSport($id)
+    // {
+    //     $sport = SportType::findOrFail($id);
+
+    //     $delete = $sport->delete();
+
+    //     if ($delete) {
+    //         return redirect('/admin/sports')->with('message','Sport Deleted Successfully!');
+    //     } else {
+    //         return redirect('/admin/sports')->with('error','You cannot delete this sport');
+    //     }
+        
+    // }
 }

@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 use App\Models\CompetitionNews;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreNewsRequest;
-use App\Models\PlayerNews;
-use App\Models\TeamNews;
+use App\Models\PlayerNewsRelationship;
+use App\Models\TeamNewsRelationship;
 
 class NewsController extends Controller
 {
@@ -69,7 +69,7 @@ class NewsController extends Controller
             //insert record into playernews table
             if ($playersID) {
                 foreach ($playersID as $key => $id) {
-                    $playernews = PlayerNews::create([
+                    $playernews = PlayerNewsRelationship::create([
                         'player_id'=>$id,
                         'competition_news_id'=> $post->id
                     ]);
@@ -78,7 +78,7 @@ class NewsController extends Controller
             //insert record into team news table
             if ($teamsID) {
                 foreach ($teamsID as $key => $id) {
-                    $playernews = TeamNews::create([
+                    $teamnews = TeamNewsRelationship::create([
                         'team_id'=>$id,
                         'competition_news_id'=> $post->id
                     ]);
@@ -116,7 +116,7 @@ class NewsController extends Controller
                 $teamsID = $request->input('teams');
 
                 foreach ($teamsID as $key => $id) {
-                    $teamnews = TeamNews::firstOrNew([
+                    $teamnews = TeamNewsRelationship::firstOrNew([
                         'team_id'=>$id,
                         'competition_news_id'=> $post->id
                     ]);
@@ -128,7 +128,7 @@ class NewsController extends Controller
                 $playersID = $request->input('players');
 
                 foreach ($playersID as $key => $id) {
-                    $playernews = PlayerNews::firstOrNew([
+                    $playernews = PlayerNewsRelationship::firstOrNew([
                         'player_id'=>$id,
                         'competition_news_id'=> $post->id
                     ]);
@@ -152,8 +152,8 @@ class NewsController extends Controller
 
          }
 
-        $playernews = PlayerNews::where('competition_news_id',$post->id)->delete();
-        $teamnews = TeamNews::where('competition_news_id',$post->id)->delete();
+        $playernews = PlayerNewsRelationship::where('competition_news_id',$post->id)->delete();
+        $teamnews = TeamNewsRelationship::where('competition_news_id',$post->id)->delete();
         $post->delete();
         return redirect('/news/editor')->with('message','Post Deleted');
     
@@ -200,14 +200,14 @@ class NewsController extends Controller
     //delete player related to news
     public function deletePlayer($id)
     {
-        $player = PlayerNews::where('id',$id)->delete();
+        $player = PlayerNewsRelationship::where('id',$id)->delete();
         return redirect('/news/editor');
     }
 
     //delete team related to news
     public function deleteTeam($id)
     {
-        $team = TeamNews::where('id',$id)->delete();
+        $team = TeamNewsRelationship::where('id',$id)->delete();
         return redirect('/news/editor');
     }
 

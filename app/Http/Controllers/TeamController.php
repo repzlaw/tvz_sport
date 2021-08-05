@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTeamRequest;
-use App\Models\TeamNews;
+use App\Models\TeamNewsRelationship;
 use App\Models\TeamUserEdit;
 use Illuminate\Support\Facades\Storage;
 
@@ -75,7 +75,7 @@ class TeamController extends Controller
         $id = end($explode);
         $team = Team::where('id', $id)->with('sportType')->firstOrFail();
 
-        $posts = TeamNews::where('team_id', $id)->with('news')->orderBy('created_at','desc')->get();
+        $posts = TeamNewsRelationship::where('team_id', $id)->with('news')->orderBy('created_at','desc')->get();
 
         $sport_types = SportType::all();
 

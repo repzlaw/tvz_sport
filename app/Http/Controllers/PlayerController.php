@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Team;
 use App\Models\Player;
 use App\Models\SportType;
-use App\Models\PlayerNews;
+use App\Models\PlayerNewsRelationship;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -90,7 +90,7 @@ class PlayerController extends Controller
 
         $teams = Team::all();
 
-        $posts = PlayerNews::where('player_id', $id)->with('news')->orderBy('created_at','desc')->get();
+        $posts = PlayerNewsRelationship::where('player_id', $id)->with('news')->orderBy('created_at','desc')->get();
 
 
         $player = Player::where('id', $id)->with(['sportType','Team'])->firstOrFail();

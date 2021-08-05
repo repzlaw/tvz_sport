@@ -14,7 +14,7 @@
                             <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
                                 Player Information
                             </div>
-                                @auth
+                            @auth
                                 <div class="btn-actions-pane-right float-right">
                                     @if(Auth::user()->isFollowingPlayer(Auth::user()->id, $player->id))
                                         <p><a href="#" class="btn btn-primary btn-sm" onclick="follow({{$player->id}})" id="follow">Unfollow</a></p>
