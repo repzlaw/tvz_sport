@@ -11,4 +11,12 @@ class SuspensionHistory extends Model
 
     protected $guarded = [];
 
+    /**
+     * Get the policy.
+     */
+    public function policy()
+    {
+        return $this->belongsTo(BanPolicy::class,'policy_id');
+    }
+
 }

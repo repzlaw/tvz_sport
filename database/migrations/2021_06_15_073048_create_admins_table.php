@@ -17,8 +17,6 @@ class CreateAdminsTable extends Migration
             $table->id();
             $table->string('username')->unique();
             $table->string('name');
-            // $table->string('lname');
-            $table->enum('user_type',['admin'])->default('admin');
             $table->enum('status',['active','suspended','inactive'])->default('active');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

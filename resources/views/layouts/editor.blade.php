@@ -40,7 +40,7 @@
 <div id="app">
     <nav class="navbar navbar-expand-md bg-dark navbar-dark shadow-sm">
         <!-- <div class="container"> -->
-            <a class="navbar-brand" href="{{ url('/admin/home') }}">
+            <a class="navbar-brand" href="{{ url('/editor/home') }}">
                 TVZ Sports
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -53,36 +53,17 @@
                 <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ml-auto">
                     <!-- Authentication Links -->
-                    @if(!Auth::guard('admin')->check())
+                    @if(!Auth::guard('editor')->check())
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.login') }}">{{ __('Login') }}</a>
+                            <a class="nav-link" href="{{ route('editor.login') }}">{{ __('Login') }}</a>
                         </li>
                     @else
-                        <!-- <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.sport.all') }}">{{ __('Sports') }}</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.competition.all') }}">{{ __('Competitions') }}</a>
-                        </li> -->
-
-                        <!-- <li class="nav-item">
-                            <a class="nav-link" href="/matches">{{ __('Matches') }}</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="/teams">{{ __('Teams') }}</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="/players">{{ __('Players') }}</a>
-                        </li> -->
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                {{ Auth::guard('admin')->user()->username }}
+                                {{ Auth::guard('editor')->user()->username }}
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ route('admin.logout') }}">
+                                <a class="dropdown-item" href="{{ route('editor.logout') }}">
                                     {{ __('Logout') }}
                                 </a>
                             </div>
@@ -94,64 +75,34 @@
     </nav>
     <div class="container-fluid">
   <div class="row">
-  @if(Auth::guard('admin')->check())
+  @if(Auth::guard('editor')->check())
     <nav class="col-md-2 d-none d-md-block bg-light sidebar">
       <div class="sidebar-sticky">
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link active" href="{{ url('/admin/home') }}">
+            <a class="nav-link active" href="{{ url('/editor/home') }}">
                 <i class="fa fa-home mr-2"></i>
               Dashboard <span class="sr-only">(current)</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.sport.all') }}">
-                <i class="fa fa-baseball-ball mr-2"></i>
-              Sports
+            <a class="nav-link" href="{{ route('editor.news.all') }}">
+                <i class="fa fa-newspaper mr-2"></i>
+              News
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.competition.all') }}">
-            <i class="fa fa-quidditch mr-2"></i>
-              Competitions
+            <a class="nav-link" href="{{ route('editor.team.get.all') }}">
+                <i class="fa fa-tshirt mr-2"></i>
+              Teams
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.user.all') }}">
-            <i class="fa fa-users mr-2"></i>
-              Users
+            <a class="nav-link" href="{{ route('editor.player.get.all') }}">
+                <i class="fa fa-user mr-2"></i>
+              Players
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.ban-policy.all') }}">
-            <i class="fa fa-balance-scale-left mr-2"></i>
-              Ban Policies
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.support-department.all') }}">
-            <i class="fa fa-building mr-2"></i>
-              Support Departments
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ route('admin.history.all') }}">
-            <i class="fa fa-history mr-2"></i>
-              Suspension History
-            </a>
-          </li>
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="#">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-              Reports
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-              Integrations
-            </a>
-          </li> -->
         </ul>
 
         <!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">

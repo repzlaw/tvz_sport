@@ -92,16 +92,6 @@
                             <div class="row">
                             <div class="col-sm-12 mt-3">
 
-
-                                <div class="col-md-12 mb-2">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <h6 class="ml-1 font-weight-bold">User type :</h6>
-                                        </div>
-                                        <h6 class="ml-2 text">{{$user->user_type}}</h6>
-                                    </div>
-                                </div>
-
                                 <div class="col-md-12 mb-2">
                                     <div class="input-group">
                                     <div class="input-group-prepend">
@@ -182,7 +172,7 @@
                     <input  type="email" name="email" id="email"  class="form-control" placeholder="email" value="{{ old('email') }}" required>
                 </div>
 
-                <div class="input-group mb-4" >
+                <!-- <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text">User Type</span>
                     </div>
@@ -191,7 +181,7 @@
                         <option value="user">User </option>                           
                         <option value="editor">Editor </option>                           
                     </select>
-                </div>
+                </div> -->
 
                 <div class="input-group mb-4" >
                     <div class="input-group-prepend">

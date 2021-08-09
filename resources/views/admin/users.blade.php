@@ -15,7 +15,7 @@
                         </div>
                     </div> 
                     <div class="card-body">
-                        <div class="col-12 mb-2 float-right">
+                        <div class="col-12 mb-2">
                             <form action="{{ route('admin.user.search')}}" method="get">
                                 <div class="row">
                                     <div class="col-12 col-md-4">
@@ -42,46 +42,51 @@
                                 </div>
                             </form>
                         </div>
-                        <table id="user_table" class="table table-sm table-striped table-bordered table-hover table-responsive-sm">
-                            <thead>
-                                <tr>
-                                <th width="3%">user ID</th>
-                                <th width="7%">username</th>
-                                <th width="7%">fullname</th>
-                                <th width="10%">email</th>
-                                <th width="10%">user type</th>
-                                <th width="6%">status</th>
-                                <th width="5%">action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($users as $key =>$user )
+                        @if (count($users))
+                            <table id="user_table" class="table table-sm table-striped table-bordered table-hover table-responsive-sm">
+                                <thead>
                                     <tr>
-                                        <td class="text-center">
-                                            <a href="{{route('admin.user.profile',['id'=>$user->id])}}" title="view profile">
-                                                {{$user->id}}
-                                            </a>    
-                                        </td>
-                                        <td>{{$user->username}}</td>
-                                        <td>{{$user->name}}</td>
-                                        <td>{{$user->email}}</td>
-                                        <td>{{$user->user_type}}</td>
-                                        <td>
-                                            @if ($user->status === 'active')
-                                                <div class="ml-1 badge badge-pill badge-success"> {{$user->status}}</div></td>
-                                                
-                                            @else
-                                                <div class="ml-1 badge badge-danger badge-info"> {{$user->status}}</div></td>
-                                                
-                                            @endif
-                                        <td class="text-center m-auto">
-                                            <i class='fa fa-edit text-success mr-3' style='cursor: pointer;' onclick='editUser({{$user}})'></i> 
-                                        </td>
+                                    <th width="3%">user ID</th>
+                                    <th width="7%">username</th>
+                                    <th width="7%">fullname</th>
+                                    <th width="10%">email</th>
+                                    <th width="6%">status</th>
+                                    <th width="5%">action</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($users as $key =>$user )
+                                        <tr>
+                                            <td class="text-center">
+                                                <a href="{{route('admin.user.profile',['id'=>$user->id])}}" title="view profile">
+                                                    {{$user->id}}
+                                                </a>    
+                                            </td>
+                                            <td>{{$user->username}}</td>
+                                            <td>{{$user->name}}</td>
+                                            <td>{{$user->email}}</td>
+                                            <td>
+                                                @if ($user->status === 'active')
+                                                    <div class="ml-1 badge badge-pill badge-success"> {{$user->status}}</div></td>
+                                                    
+                                                @else
+                                                    <div class="ml-1 badge badge-danger badge-info"> {{$user->status}}</div></td>
+                                                    
+                                                @endif
+                                            <td class="text-center m-auto">
+                                                <i class='fa fa-edit text-success mr-3' style='cursor: pointer;' onclick='editUser({{$user}})'></i> 
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                             {{ $users->links() }}
+                            
+                        @else
+                            <div class="alert alert-info text-center">
+                                <b>No users found</b>
+                            </div>
+                        @endif
                         
                     </div>
                 </div>
@@ -124,7 +129,7 @@
                     <input  type="email" name="email" class="form-control" placeholder="email" value="{{ old('email') }}" required>
                 </div>
 
-                <div class="input-group mb-4" >
+                <!-- <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text">User Type</span>
                     </div>
@@ -133,7 +138,7 @@
                         <option value="user">User </option>                           
                         <option value="editor">Editor </option>                           
                     </select>
-                </div>
+                </div> -->
                 <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text"> Password</span>
@@ -185,17 +190,6 @@
                         <span class="input-group-text"> Email</span>
                     </div>
                     <input  type="email" name="email" id="email"  class="form-control" placeholder="email" value="{{ old('email') }}" required>
-                </div>
-
-                <div class="input-group mb-4" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">User Type</span>
-                    </div>
-                    <select class="form-control custom-select" name="user_type" id="user_type" required>
-                        <option value="">-- select type -- </option> 
-                        <option value="user">User </option>                           
-                        <option value="editor">Editor </option>                           
-                    </select>
                 </div>
 
                 <div class="input-group mb-4" >

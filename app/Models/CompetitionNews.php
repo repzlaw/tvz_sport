@@ -16,7 +16,7 @@ class CompetitionNews extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'posted_by');
+        return $this->belongsTo(Editor::class, 'posted_by');
     }
 
     /**

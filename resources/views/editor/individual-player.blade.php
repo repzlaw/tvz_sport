@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.editor')
 
 @section('title', $player->page_title)
 @section('meta_description', $player->meta_description)
@@ -14,44 +14,23 @@
                             <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
                                 Player Information
                             </div>
-                            @auth
-                                <div class="btn-actions-pane-right float-right">
-                                    @if(Auth::user()->isFollowingPlayer(Auth::user()->id, $player->id))
-                                        <p><a href="#" class="btn btn-primary btn-sm" onclick="follow({{$player->id}})" id="follow">Unfollow</a></p>
-                                    @else
-                                        <p><a href="#" class="btn btn-primary btn-sm" onclick="follow({{$player->id}})" id="follow">Follow</a></p>
-                                    @endif
-                                </div>
+                            <div class="btn-actions-pane-right float-right">
+                                <p><a href="#" class="btn btn-warning btn-sm mr-3"  id="edit-button">Edit Player</a></p>
+                            </div>
 
-                                <div class="btn-actions-pane-right float-right">
-
-                                    <p><a href="#" class="btn btn-warning btn-sm mr-3"  id="edit-button">Edit Player</a></p>
-                                    <!-- @if(Auth::user()->user_type === 'editor') -->
-                                    <!-- @endif -->
-                                </div>
-
-                            @endauth
                         </div> 
 
                         <div class="card-body">
                             <div class="row">
-                                <!-- {{$player}} -->
                                 <div class="col-sm-3">
                                     <img
                                         src="/storage/images/player_images/{{$player->featured_image}}"
                                         alt="Avatar 5"
                                         style="height: 150px; width:150px; border: 4px solid #eee; border-radius: 15px;"
                                     />
-                                    @auth
-                                        
-                                        <div class="btn-actions-pane-right mt-3">
-
-                                            @if(Auth::user()->user_type === 'editor')
-                                                <p><a href="#" class="btn btn-info btn-sm mr-3"  id="edit-image-button">Edit Image</a></p>
-                                            @endif
-                                        </div>
-
-                                    @endauth
+                                    <div class="btn-actions-pane-right mt-3">
+                                        <p><a href="#" class="btn btn-info btn-sm mr-3"  id="edit-image-button">Edit Image</a></p>
+                                    </div>
                                 </div>
 
                                 <div class="col-sm-8">
@@ -101,9 +80,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- <div class="col-md-12 mb-2">
-                                            <div class="ml-1 badge badge-pill badge-success badge-success">{{$player->status}}</div>
-                                        </div> -->
                                     </div>
                                 </div>
                             </div>
@@ -213,7 +189,7 @@
                             <!-- {{$posts}} -->
                                 @foreach ($posts as $post)
                                     <div class="mb-3">
-                                        <a href="{{route('news.get.single',['news_slug'=>$post->news->url_slug.'-'.$post->news->id])}}"> 
+                                        <a href="{{route('editor.news.get.single',['news_slug'=>$post->news->url_slug.'-'.$post->news->id])}}"> 
                                             <h6>{{$post->news->headline}} </h6>
                                         </a>
                                     </div>
@@ -240,7 +216,7 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
-            <form action="{{ route('player.edit.image')}}" method="post" class="form-group" enctype="multipart/form-data">
+            <form action="{{ route('editor.player.edit.image')}}" method="post" class="form-group" enctype="multipart/form-data">
                     {{ csrf_field() }}
               <div class="form-group">
                 
@@ -269,9 +245,7 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
-        @auth
-                <form action="{{ route('player.user.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
-        @endauth
+            <form action="{{ route('editor.player.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
                     {{ csrf_field() }}
               <div class="form-group row">
                 
@@ -328,10 +302,6 @@
                     <input  type="text" name="country" id="country" class="form-control" placeholder="country" value="{{$player->country}}" >
                 </div>
 
-                <!-- <div class="input-group col-12 col-md-6 mb-4" >
-                    <input type="file" name="featured_image" id="featured_image" class="form-control" placeholder="Upload Player Image ..." value="{{ old('featured_image') }}" required>
-                </div> -->
-                
                 <div class="input-group col-12 col-md-6 mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text">Birth Date</span>

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.editor')
 
 @section('content')
 <div class="container">
@@ -19,7 +19,7 @@
 
                         </div> --}}
                     <br><br>
-                    <form action="{{ route('news.editor.create')}}" method="post" class="form-group" enctype="multipart/form-data">
+                    <form action="{{ route('editor.news.create')}}" method="post" class="form-group" enctype="multipart/form-data">
                         {{ csrf_field() }}
                                 <div class="input-group mb-4" style="width: 80%; margin: auto;">
                                     <div class="input-group-prepend">
@@ -95,7 +95,7 @@
                                 <!-- {{$teamnews}} -->
                                     <span class="badge badge-secondary mr-1 mb-2">
                                         {{$teamnews->team->team_name}}
-                                        <a href="{{route('news.editor.team.delete',['id'=>$teamnews->id])}}">
+                                        <a href="{{route('editor.news.team.delete',['id'=>$teamnews->id])}}">
                                             <i class="text-danger fa fa-trash fa-1x" style="cursor:pointer;"></i>
                                         </a>
                                     </span>
@@ -103,7 +103,7 @@
                                 @foreach ($post->playernews as $playernews)
                                     <span  class="badge badge-secondary mr-1 mb-2">
                                         {{$playernews->player->name}}
-                                        <a href="{{route('news.editor.player.delete',['id'=>$playernews->id])}}">
+                                        <a href="{{route('editor.news.player.delete',['id'=>$playernews->id])}}">
                                             <i class="text-danger fa fa-trash fa-1x" style="cursor:pointer;"></i>
                                         </a>
                                     </span>
@@ -111,9 +111,9 @@
                                     <br>
                                     <div class="interaction">
                                         | 
-                                        <a href="{{route('news.get.single',['news_slug'=>$post->url_slug.'-'.$post->id])}}">View </a> |
+                                        <a href="{{route('editor.news.get.single',['news_slug'=>$post->url_slug.'-'.$post->id])}}">View </a> |
                                         <a href="#" class="edit">Edit</a> |
-                                        <a href="{{route('news.editor.delete',['id'=>$post->id])}}">Delete</a>
+                                        <a href="{{route('editor.news.delete',['id'=>$post->id])}}">Delete</a>
 
                                     </div>
                                     <input type="hidden" name="page_title" id="post_page_title" value="{{$post->page_title}}">
@@ -243,7 +243,7 @@ $('.post').find('.interaction').find('.edit').on('click',function(event){
 $('#modal-save').on('click', function(){
     $.ajax({
         method: 'POST',
-        url: '{{ route('news.editor.edit')}}',
+        url: '{{ route('editor.news.edit')}}',
         data:{news_body: $('#post-body').val(), postId: postId, _token: token,
              news_title:$('#post-title').val(), sport_type:$('#sport-type').val(),
              page_title:$('#page-title').val(), meta_description:$('#meta-description').val(),
@@ -267,7 +267,7 @@ $('#modal-save').on('click', function(){
 function showResult(str) {
     $.ajax({
         method: 'POST',
-        url: '{{ route('news.editor.search.player')}}',
+        url: '{{ route('editor.news.search.player')}}',
         data:{q: str, _token: token, from:'editor'}
 
     })
@@ -344,7 +344,7 @@ function deletePlayer(params) {
 function showTeamResult(str) {
     $.ajax({
         method: 'POST',
-        url: '{{ route('news.editor.search.team')}}',
+        url: '{{ route('editor.news.search.team')}}',
         data:{q: str, _token: token, from:'editor'}
 
     })
@@ -424,7 +424,7 @@ function deleteTeam(params) {
 function showResultModal(str) {
     $.ajax({
         method: 'POST',
-        url: '{{ route('news.editor.search.player')}}',
+        url: '{{ route('editor.news.search.player')}}',
         data:{q: str, _token: token, from:'modal'}
 
     })
@@ -498,7 +498,7 @@ function removePlayerModal (index) {
 function showTeamResultModal(str) {
     $.ajax({
         method: 'POST',
-        url: '{{ route('news.editor.search.team')}}',
+        url: '{{ route('editor.news.search.team')}}',
         data:{q: str, _token: token, from:'modal'}
 
     })

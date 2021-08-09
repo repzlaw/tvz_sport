@@ -90,11 +90,13 @@ class FortifyServiceProvider extends ServiceProvider
                     ]);
                     //log information on logins table
                     $browser_info = getBrowser();
+                    $session_id = session()->getId();
                     
                     $login_log = UserLoginLog::create([
                         'user_id' => $user->id,
                         'last_login_ip' => $request->getClientIp(),
                         'browser_info' => json_encode($browser_info),
+                        'session_id' => $session_id,
                     ]);
 
                 return $user;

@@ -13,17 +13,20 @@ class LogoutController extends Controller
     public function logout(Request $request)
     {
         $id = Auth::user()->id;
-        auth()->logout();
 
         //log information on logins table
         $browser_info = getBrowser();
+        $session_id = session()->getId();
                     
         $login_log = UserLoginLog::create([
             'user_id' => $id,
             'last_login_ip' => $request->getClientIp(),
             'browser_info' => json_encode($browser_info),
             'action' => 'logout',
+            'session_id' => $session_id,
         ]);
+
+        auth()->logout();
 
         return redirect('/');
     }

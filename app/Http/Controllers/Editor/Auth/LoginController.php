@@ -1,27 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Auth;
+namespace App\Http\Controllers\Editor\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Editor;
+use App\Models\EditorLoginLog;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
-use App\Models\Admin;
-use App\Models\AdminLoginLog;
 
 class LoginController extends Controller
 {
-    /**
-     * Only guests for "admin" guard are allowed except
-     * for logout.
-     * 
-     * @return void
-     */
-    // public function __construct()
-    // {
-    //     $this->middleware('guest:admin')->except('logout');
-    // }
-
     /**
      * Show the login form.
      * 
@@ -29,15 +17,15 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('admin.login',[
-            'title' => 'Admin Login',
-            'loginRoute' => 'admin.login',
-            'forgotPasswordRoute' => 'admin.password.request'
+        return view('editor.login',[
+            'title' => 'Editor Login',
+            'loginRoute' => 'editor.login',
+            'forgotPasswordRoute' => 'editor.password.request'
         ]);
     }
 
     /**
-     * Login the admin.
+     * Login the editor.
      * 
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
@@ -47,54 +35,53 @@ class LoginController extends Controller
         $this->validator($request);
     
         //attempt login.
-        if(Auth::guard('admin')->attempt($request->only('email','password'),$request->filled('remember'))){
-            //log login logs
+        if(Auth::guard('editor')->attempt($request->only('email','password'),$request->filled('remember'))){
             //log information on logins table
-            $admin = Admin::where('email',$request->email)->first();
+            $editor = Editor::where('email',$request->email)->first();
             $browser_info = getBrowser();
             $session_id = session()->getId();
                     
-            $login_log = AdminLoginLog::create([
-                'admin_id' => $admin->id,
+            $login_log = EditorLoginLog::create([
+                'editor_id' => $editor->id,
                 'last_login_ip' => $request->getClientIp(),
                 'browser_info' => json_encode($browser_info),
                 'session_id' => $session_id,
             ]);
+
             //Authenticated
             return redirect()
-                ->intended(route('admin.home'))
-                ->with(['status'=>'You are Logged in as Admin!']);
+                ->intended(route('editor.home'))
+                ->with(['status'=>'You are Logged in as Editor!']);
         }
         //Authentication failed
         return $this->loginFailed();
     }
 
     /**
-     * Logout the admin.
+     * Logout the editor.
      * 
      * @return \Illuminate\Http\RedirectResponse
      */
     public function logout(Request $request)
     {
-        //log login logs
         //log information on logins table
-        $admin = Auth::guard('admin')->user();
+        $editor = Auth::guard('editor')->user();
         $browser_info = getBrowser();
         $session_id = session()->getId();
                 
-        $login_log = AdminLoginLog::create([
-            'admin_id' => $admin->id,
+        $login_log = EditorLoginLog::create([
+            'editor_id' => $editor->id,
             'action' => 'logout',
             'last_login_ip' => $request->getClientIp(),
             'browser_info' => json_encode($browser_info),
             'session_id' => $session_id,
         ]);
         
-      //logout the admin...
-      Auth::guard('admin')->logout();
+      //logout the editor...
+      Auth::guard('editor')->logout();
         return redirect()
-        ->route('admin.login')
-        ->with('status','Admin has been logged out!');
+        ->route('editor.login')
+        ->with('status','Editor has been logged out!');
     }
 
     /**
@@ -107,7 +94,7 @@ class LoginController extends Controller
     {
         //validation rules.
         $rules = [
-            'email'    => 'required|email|exists:admins|min:5|max:191',
+            'email'    => 'required|email|exists:editors|min:5|max:191',
             'password' => 'required|string|min:4|max:255',
         ];
 
@@ -130,5 +117,4 @@ class LoginController extends Controller
         session()->flash('message','Incorrect Password');
         return back();
     }
-    
 }

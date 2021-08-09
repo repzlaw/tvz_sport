@@ -51,7 +51,6 @@ class UserController extends Controller
             'username'=> $request->username,
             'name'=> $request->name,
             'email'=> $request->email,
-            'user_type'=> $request->user_type,
             'password'=> Hash::make($request->password),
         ]);
 
@@ -70,7 +69,6 @@ class UserController extends Controller
             'username' => 'required',
             'name' => 'required',
             'email' => 'required',
-            'user_type' => 'required',
         ]);
 
         $user = User::findOrFail($request->user_id);
@@ -79,7 +77,6 @@ class UserController extends Controller
             'username'=> $request->username,
             'name'=> $request->name,
             'email'=> $request->email,
-            'user_type'=> $request->user_type,
             'password'=> $request->password ? Hash::make($request->password) : $user->password,
         ]);
 
@@ -156,7 +153,8 @@ class UserController extends Controller
 
          $user = User::findOrFail($request->user_id);
          $admin = Admin::findOrFail(Auth::guard('admin')->user()->id);
- 
+         $policy_id = $user->policy_id;
+
          $unban = $user->update([
              'status'=> 'active',
              'policy_id'=> null,
@@ -170,6 +168,7 @@ class UserController extends Controller
              $log = SuspensionHistory::create([
                  'user_id'=>$request->user_id,
                  'action'=>'unsuspension',
+                 'policy_id'=>$policy_id,
                  'unsuspend_reason'=>$request->reason,
              ]);
             

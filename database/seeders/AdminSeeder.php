@@ -18,8 +18,7 @@ class AdminSeeder extends Seeder
             array(
                 'email' => 'work@tvzcorp.com' ,
                 'username' => 'tvzcorp',
-                'fname' => 'tvz',
-                'lname' => 'tvz',
+                'name' => 'tvz',
                 'password' => bcrypt('12345678'),
             )
         );

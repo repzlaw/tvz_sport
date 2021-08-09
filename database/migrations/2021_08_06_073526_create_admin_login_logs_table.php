@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUserLoginLogsTable extends Migration
+class CreateAdminLoginLogsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateUserLoginLogsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_login_logs', function (Blueprint $table) {
+        Schema::create('admin_login_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('admin_id')->references('id')->on('admins');
             $table->enum('action',['login','logout'])->default('login');
             $table->string('last_login_ip')->nullable();
             $table->string('session_id')->nullable();
@@ -31,6 +31,6 @@ class CreateUserLoginLogsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_login_logs');
+        Schema::dropIfExists('admin_login_logs');
     }
 }

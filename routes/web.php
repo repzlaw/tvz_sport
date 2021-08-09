@@ -19,7 +19,13 @@ use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\SupportDepartmentsController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\UserSuspensionHistoriesController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Editor\Auth\LoginController as AuthLoginController;
+use App\Http\Controllers\Editor\HomeController as EditorHomeController;
+use App\Http\Controllers\Editor\NewsController as EditorNewsController;
+use App\Http\Controllers\Editor\PlayersController;
+use App\Http\Controllers\Editor\TeamsController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 
 /*
@@ -95,39 +101,10 @@ Route::prefix('/players')->name('player.')->group(function(){
     Route::post('user/edit', [PlayerController::class,'edit'])->name('user.edit')->middleware(['auth','verified']);
 });
 
-//editors post, edit and delete news route
-Route::prefix('/news/editor')->name('news.')->group(function(){
-    //get news page
-    Route::get('/', [NewsController::class,'index'])->name('editor.all')->middleware(['auth','verified']);
-
-    //create news
-    Route::post('/create', [NewsController::class,'createNews'])->name('editor.create')->middleware(['auth','verified']);
-
-    //edit news
-    Route::post('/edit', [NewsController::class,'editNews'])->name('editor.edit')->middleware(['auth','verified']);
-
-    //delete news
-    Route::get('/delete/{id}', [NewsController::class,'deleteNews'])->name('editor.delete')->middleware(['auth','verified']);
-
-    //player search
-    Route::post('/player-search', [NewsController::class,'searchPlayer'])->name('editor.search.player');
-
-    //team search
-    Route::post('/team-search', [NewsController::class,'searchTeam'])->name('editor.search.team');
-
-    //delete player related to news
-    Route::get('/player/delete/{id}', [NewsController::class,'deletePlayer'])->name('editor.player.delete')->middleware(['auth','verified']);
-
-    //delete team related to news
-    Route::get('/team/delete/{id}', [NewsController::class,'deleteTeam'])->name('editor.team.delete')->middleware(['auth','verified']);
-
-});
-
 //individual news route
 Route::prefix('/news')->name('news.')->group(function(){
     //get news page
     Route::get('/{news_slug}', [NewsController::class,'getSingleNews'])->name('get.single');
-
 });
 
 
@@ -270,4 +247,96 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
         Route::post('/edit', [SupportDepartmentsController::class,'editSupportDepartment'])->name('edit');
         
     });
+
+    //suspension history routes
+    Route::prefix('/suspension-histories')->name('history.')->group(function(){
+        //get suspensionhistory page
+        Route::get('/', [UserSuspensionHistoriesController::class, 'index'])->name('all');
+    
+        //search suspensionhistory
+        Route::get('/search', [UserSuspensionHistoriesController::class, 'searchHistory'])->name('search');
+    });
+
+});
+
+//All the editor routes will be defined here...
+Route::prefix('/editor')->name('editor.')->namespace('Editor')->group(function(){
+    Route::namespace('Auth')->group(function(){
+        //Login Routes
+        Route::get('/login', [AuthLoginController::class,'showLoginForm'])->name('login');
+        Route::post('/login', [AuthLoginController::class,'login']);
+        Route::get('/logout',[AuthLoginController::class,'logout'])->name('logout');
+    });
+
+    //editor homepage
+    Route::get('/home', [EditorHomeController::class,'index'])->name('home');
+
+    //editors post, edit and delete news route
+    Route::prefix('/news')->name('news.')->middleware('editor')->group(function(){
+        //get news page
+        Route::get('/', [EditorNewsController::class,'index'])->name('all');
+
+        //create news
+        Route::post('/create', [EditorNewsController::class,'createNews'])->name('create');
+
+        //edit news
+        Route::post('/edit', [EditorNewsController::class,'editNews'])->name('edit');
+
+        //delete news
+        Route::get('/delete/{id}', [EditorNewsController::class,'deleteNews'])->name('delete');
+
+        //player search
+        Route::post('/player-search', [EditorNewsController::class,'searchPlayer'])->name('search.player');
+
+        //team search
+        Route::post('/team-search', [EditorNewsController::class,'searchTeam'])->name('search.team');
+
+        //delete player related to news
+        Route::get('/player/delete/{id}', [EditorNewsController::class,'deletePlayer'])->name('player.delete');
+
+        //delete team related to news
+        Route::get('/team/delete/{id}', [EditorNewsController::class,'deleteTeam'])->name('team.delete');
+
+        //individual news route
+        Route::get('/{news_slug}', [EditorNewsController::class,'getSingleNews'])->name('get.single');
+
+    });
+
+    //team routes 
+    Route::prefix('/teams')->name('team.')->middleware('editor')->group(function(){
+        //get all teams
+        Route::get('/', [TeamsController::class,'index'])->name('get.all');
+
+        //create team
+        Route::post('/create', [TeamsController::class,'create'])->name('create');
+
+        //edit team
+        Route::post('/edit', [TeamsController::class,'edit'])->name('edit');
+
+        //edit team image
+        Route::post('/edit-image', [TeamsController::class,'editImage'])->name('edit.image');
+
+        //get individual team details
+        Route::get('/{team_slug}', [TeamsController::class,'getSingle'])->name('get.single');
+    });
+
+    //players routes
+    Route::prefix('/players')->name('player.')->group(function(){
+        //get all players
+        Route::get('/', [PlayersController::class,'index'])->name('get.all');
+
+        //create player
+        Route::post('/create', [PlayersController::class,'create'])->name('create');
+
+        //edit player
+        Route::post('/edit', [PlayersController::class,'edit'])->name('edit');
+
+        //edit player image
+        Route::post('/edit-image', [PlayersController::class,'editImage'])->name('edit.image');
+
+        //get individual player details
+        Route::get('/{player_slug}', [PlayersController::class,'getSingle'])->name('get.single');
+
+    });
+
 });
