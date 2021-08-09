@@ -18,6 +18,7 @@ use App\Http\Controllers\CompetitionFollowersController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\SupportDepartmentsController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
+use App\Http\Controllers\Admin\LoginLogsController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\UserSuspensionHistoriesController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -255,6 +256,15 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     
         //search suspensionhistory
         Route::get('/search', [UserSuspensionHistoriesController::class, 'searchHistory'])->name('search');
+    });
+
+    //login logs routes
+    Route::prefix('/login-logs')->name('login-log.')->group(function(){
+        //get suspensionhistory page
+        Route::get('/admin', [LoginLogsController::class, 'adminView'])->name('admin');
+    
+        //search suspensionhistory
+        Route::get('/editor', [LoginLogsController::class, 'editorView'])->name('editor');
     });
 
 });

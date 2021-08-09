@@ -36,6 +36,7 @@
                                     <th>policy</th>
                                     <th>action</th>
                                     <th>reason</th>
+                                    <th>date & time</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -50,7 +51,6 @@
                                                 </a>    
                                             </td>
                                             <!-- <td>{{$history->user_id}}</td> -->
-                                            <!-- <td>{{$history->name}}</td> -->
                                             <td>{{$history->policy->reason}}</td>
                                             <td>
                                                 @if ($history->action === 'unsuspension')
@@ -69,6 +69,8 @@
                                                     
                                                 @endif
                                             </td>
+                                            <td>{{$history->created_at}}</td>
+
                                         </tr>
                                     @endforeach
                                 </tbody>

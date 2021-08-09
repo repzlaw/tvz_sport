@@ -28,7 +28,7 @@ class ProfileController extends Controller
 
         $logs = UserLoginLog::where('user_id',$id)->orderBy('created_at','desc')->paginate(50);
 
-        return view('admin/userLoginLogs')->with(['user'=>$user, 'logs'=>$logs]);
+        return view('admin/loginLogs/userLoginLogs')->with(['user'=>$user, 'logs'=>$logs]);
 
     }
 }

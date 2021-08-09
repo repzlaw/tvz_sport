@@ -11,4 +11,13 @@ class EditorLoginLog extends Model
 
     protected $guarded = [];
 
+
+    /**
+     * Get editor details.
+     */
+    public function editor()
+    {
+        return $this->belongsTo(Editor::class);
+    }
+
 }

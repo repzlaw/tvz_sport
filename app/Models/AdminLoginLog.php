@@ -11,4 +11,13 @@ class AdminLoginLog extends Model
 
     protected $guarded = [];
 
+
+    /**
+     * Get admin details.
+     */
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
+
 }
