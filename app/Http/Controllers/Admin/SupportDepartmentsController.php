@@ -8,6 +8,16 @@ use Illuminate\Http\Request;
 
 class SupportDepartmentsController extends Controller
 {
+    /**
+     * Only auth for "admin" guard are allowed 
+     * 
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+    
     //get SupportDeparment page
     public function index()
     {

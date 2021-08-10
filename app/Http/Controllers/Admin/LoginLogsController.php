@@ -9,6 +9,16 @@ use App\Http\Controllers\Controller;
 
 class LoginLogsController extends Controller
 {
+    /**
+     * Only auth for "admin" guard are allowed 
+     * 
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+    
     //admin login log view
     public function adminView()
     {

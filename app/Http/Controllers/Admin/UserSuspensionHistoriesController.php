@@ -8,6 +8,16 @@ use Illuminate\Http\Request;
 
 class UserSuspensionHistoriesController extends Controller
 {
+    /**
+     * Only auth for "admin" guard are allowed 
+     * 
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+    
     //user suspension history page
     public function index()
     {

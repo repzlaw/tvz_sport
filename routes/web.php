@@ -286,8 +286,14 @@ Route::prefix('/editor')->name('editor.')->namespace('Editor')->group(function()
         //get news page
         Route::get('/', [EditorNewsController::class,'index'])->name('all');
 
+        //get create news page
+        Route::get('/add-new', [EditorNewsController::class,'createNewsView'])->name('create-view');
+
         //create news
         Route::post('/create', [EditorNewsController::class,'createNews'])->name('create');
+
+        //get edit news page
+        Route::get('/edit/{news_id}', [EditorNewsController::class,'editNewsView'])->name('edit-view');
 
         //edit news
         Route::post('/edit', [EditorNewsController::class,'editNews'])->name('edit');
@@ -308,7 +314,7 @@ Route::prefix('/editor')->name('editor.')->namespace('Editor')->group(function()
         Route::get('/team/delete/{id}', [EditorNewsController::class,'deleteTeam'])->name('team.delete');
 
         //individual news route
-        Route::get('/{news_slug}', [EditorNewsController::class,'getSingleNews'])->name('get.single');
+        // Route::get('/{news_slug}', [EditorNewsController::class,'getSingleNews'])->name('get.single');
 
     });
 

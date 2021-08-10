@@ -19,6 +19,16 @@ use App\Http\Requests\StoreUserRequest;
 
 class UserController extends Controller
 {
+    /**
+     * Only auth for "admin" guard are allowed 
+     * 
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+    
     //users page
     public function index()
     {

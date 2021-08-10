@@ -10,6 +10,16 @@ use App\Http\Requests\StoreSportRequest;
 
 class SportsController extends Controller
 {
+    /**
+     * Only auth for "admin" guard are allowed 
+     * 
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+    
     //get all sports
     public function index()
     {

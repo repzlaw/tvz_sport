@@ -24,10 +24,18 @@ class NewsController extends Controller
     {
         $editor = Auth::guard('editor')->user();
 
-        $editorsNews= CompetitionNews::where('posted_by', $editor->id)->with(['playernews.player','teamnews.team'])->orderBy('updated_at','desc')->get();
+        $editorsNews= CompetitionNews::where('posted_by', $editor->id)->with(['playernews.player','teamnews.team'])
+                        ->orderBy('updated_at','desc')->paginate(30);
+        
+        return view('editor/news/post-news')->with(['posts' => $editorsNews]);
+    }
+
+    // return create news view
+    public function createNewsView()
+    {
         $sport_types = SportType::all();
         
-        return view('editor/post-news')->with(['posts' => $editorsNews, 'sports'=> $sport_types]);
+        return view('editor/news/create-news')->with(['sports'=> $sport_types]);
     }
 
     //create news function
@@ -85,6 +93,16 @@ class NewsController extends Controller
         return redirect()->back()->with(['message' => $message]);
     }
 
+    // return edit news view
+    public function editNewsView($id)
+    {
+        $news= CompetitionNews::where('id', $id)->firstOrFail();
+
+        $sport_types = SportType::all();
+
+        return view('editor/news/edit-news')->with(['sports'=> $sport_types, 'news'=>$news]);
+    }
+
     //edit news
     public function editNews(Request $request)
     {
@@ -95,6 +113,20 @@ class NewsController extends Controller
             'sport_type' => 'required',
         ]);
         // dd($request->all());
+        $teams = $request->input('teams');
+        $players = $request->input('players');
+        
+        $teamsID = [];
+        $playersID = [];
+        
+        if ($teams) {
+            $teamsID= explode(",", $teams);
+        }
+        
+        if ($players) {
+            $playersID= explode(",", $players);
+        }
+
         $post = CompetitionNews::findOrFail($request->postId);
 
         $pagetitle = $request->page_title ? $request->page_title : $request->news_title;
@@ -108,9 +140,7 @@ class NewsController extends Controller
             'meta_description'=> $metadescription,
         ]);
         if ($post) {
-            if ($request->has('teams')) {
-                $teamsID = $request->input('teams');
-
+            if ($teamsID) {
                 foreach ($teamsID as $key => $id) {
                     $teamnews = TeamNewsRelationship::firstOrNew([
                         'team_id'=>$id,
@@ -120,9 +150,7 @@ class NewsController extends Controller
                 }
             }
 
-            if ($request->has('players')) {
-                $playersID = $request->input('players');
-
+            if ($playersID) {
                 foreach ($playersID as $key => $id) {
                     $playernews = PlayerNewsRelationship::firstOrNew([
                         'player_id'=>$id,
@@ -134,7 +162,7 @@ class NewsController extends Controller
             $message = 'Post Successfully Updated!';
         }
 
-        return response()->json(['post' => $post, 'message'=>$message],200);
+        return redirect()->back()->with(['message' => $message]);
     }
 
     //delete news
@@ -153,17 +181,6 @@ class NewsController extends Controller
         $post->delete();
         return redirect()->back()->with('message','Post Deleted');
     
-    }
-
-    //get individual news page
-    public function getSingleNews($news_slug)
-    {
-        $explode = explode('-',$news_slug);
-        $id = end($explode);
-
-        $news = CompetitionNews::where(['id'=>$id])->with('user')->firstOrFail();
-
-        return view('editor/individual-news')->with(['news'=>$news]);
     }
 
     // fun to search player

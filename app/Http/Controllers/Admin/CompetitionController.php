@@ -11,6 +11,16 @@ use App\Http\Requests\StoreCompetitionRequest;
 
 class CompetitionController extends Controller
 {
+    /**
+     * Only auth for "admin" guard are allowed 
+     * 
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+    
     //get all competitions
     public function index()
     {

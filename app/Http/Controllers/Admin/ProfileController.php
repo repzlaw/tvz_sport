@@ -10,6 +10,16 @@ use App\Models\UserLoginLog;
 
 class ProfileController extends Controller
 {
+    /**
+     * Only auth for "admin" guard are allowed 
+     * 
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+    
     //get a player
     public function profile($id)
     {

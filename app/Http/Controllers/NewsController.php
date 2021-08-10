@@ -28,6 +28,10 @@ class NewsController extends Controller
 
         $news = CompetitionNews::where(['id'=>$id])->with('user')->firstOrFail();
 
+        if (Auth::guard('editor')->check()){
+            return view('editor/news/individual-news')->with(['news'=>$news]);
+        }
+
         return view('individual-news')->with(['news'=>$news]);
     }
 
