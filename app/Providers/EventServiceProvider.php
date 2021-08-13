@@ -21,9 +21,9 @@ class EventServiceProvider extends ServiceProvider
         \Illuminate\Auth\Events\Failed::class => [
             \App\Listeners\RecordFailedAdminLoginAttempt::class,
         ],
-        \Illuminate\Auth\Events\Failed::class => [
-            \App\Listeners\RecordFailedEditorLoginAttempt::class,
-        ],
+        // \Illuminate\Auth\Events\Failed::class => [
+        //     \App\Listeners\RecordFailedEditorLoginAttempt::class,
+        // ],
     ];
 
     /**

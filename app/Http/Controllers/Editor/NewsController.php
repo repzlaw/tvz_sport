@@ -25,7 +25,7 @@ class NewsController extends Controller
         $editor = Auth::guard('editor')->user();
 
         $editorsNews= CompetitionNews::where('posted_by', $editor->id)->with(['playernews.player','teamnews.team'])
-                        ->orderBy('updated_at','desc')->paginate(30);
+                        ->orderBy('created_at','desc')->paginate(30);
         
         return view('editor/news/post-news')->with(['posts' => $editorsNews]);
     }
@@ -41,6 +41,7 @@ class NewsController extends Controller
     //create news function
     public function createNews(StoreNewsRequest $request)
     {
+        // dd($request->all());
         $teams = $request->input('teams');
         $players = $request->input('players');
 
@@ -54,7 +55,6 @@ class NewsController extends Controller
         if ($players) {
             $playersID= explode(",", $players);
         }
-        // dd($playersID);
         $pagetitle = $request->page_title ? $request->page_title : $request->news_title;
         $metadescription = $request->meta_description ? $request->meta_description : $request->news_title;
 
@@ -69,6 +69,8 @@ class NewsController extends Controller
                 'page_title'=> $pagetitle,
                 'meta_description'=> $metadescription,
         ]);
+        // dd($post);
+
         if ( $post) {
             //insert record into playernews table
             if ($playersID) {
@@ -90,7 +92,7 @@ class NewsController extends Controller
             }
             $message = 'Post Successfully Created!';
         }
-        return redirect()->back()->with(['message' => $message]);
+        return redirect('/editor/news/edit/'.$post->id)->with(['message' => $message]);
     }
 
     // return edit news view

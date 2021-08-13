@@ -20,4 +20,12 @@ class EditorFailedLoginAttempt extends Model
             'browser_info' => json_encode($browser_info),
         ]);
     }
+
+     /**
+     * Get editor details.
+     */
+    public function editor()
+    {
+        return $this->belongsTo(Editor::class);
+    }
 }

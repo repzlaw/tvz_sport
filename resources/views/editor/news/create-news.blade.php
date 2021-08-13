@@ -38,7 +38,9 @@
                                     </div>
                                 <input style="width: 80%; margin: auto;" type="text" name="news_title"  class="form-control" placeholder="News Title ..." required>
                                 <br>
-                                <textarea style="width: 80%; margin: auto;" name="news_body" id="new-post"  rows="5" class="form-control" placeholder="Write News Body here ..." required></textarea>
+                                <div style="width: 80%; margin: auto;">
+                                    <textarea  name="news_body" id="new-post" rows="5" class="form-control" placeholder="Write News Body here ..." ></textarea>
+                                </div>
                                 <br>
                                 <div style="width: 80%; margin: auto;" class="col-12 col-md-12">
                                     <div class="row">
@@ -73,6 +75,13 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.2/tinymce.min.js?"></script>
+  <script>
+    tinymce.init({
+      selector: '#new-post'
+    });
+  </script>
+
 <script>
 
 //function for player live search

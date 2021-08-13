@@ -3,7 +3,7 @@
 
 <p>{{$error}}</p>
 
-@component('mail::button', ['url' => route('team.get.all')])
+@component('mail::button', ['url' => route('login')])
     Request Review
 @endcomponent
 

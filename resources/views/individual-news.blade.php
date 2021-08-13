@@ -13,14 +13,14 @@
                         <div class="card-body">
                             <!-- <div class="row first"> -->
                                 <div class="col-12 mb-4">
-                                    <h3>{{$news->headline}}</h3>
+                                    <h3 style="font-weight: bold;">{{$news->headline}}</h3>
                                     <small>by {{$news->user->username}} </small>
                                     <small class="ml-3">{{date('d/m/Y', strtotime($news->updated_at))}}</small>
                                     <small class="ml-3">{{date('H:i', strtotime($news->updated_at))}}</small>
                                 </div>
                                 <!-- matches -->
                                 <div class="row ml-3">
-                                    <p>{{$news->content}}</p>
+                                    <p>{!! html_entity_decode($news->content) !!}</p>
                                 </div>
                             <!-- </div> -->
                             

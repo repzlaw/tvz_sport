@@ -14,6 +14,8 @@
                         </div>
                     </div> 
                     <div class="card-body">
+                    <p>page {{ $logs->currentPage() }} of {{ $logs->lastPage() }} , displaying {{ count($logs) }} of {{ $logs->total() }} record(s) </p>
+
                         <table id="log_table" class="table table-sm table-striped table-bordered table-hover table-responsive-sm">
                             <thead>
                                 <tr>

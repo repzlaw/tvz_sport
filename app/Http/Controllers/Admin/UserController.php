@@ -43,22 +43,34 @@ class UserController extends Controller
     {
         $searchData = $_GET['query'];
         $searchColumn = $_GET['search_column'];
-        
-        $users =[];
+        $users= '';
 
         if (!is_null($searchData)) {
-            $users = User::where($searchColumn, 'like', "%$searchData%")->paginate(50);
+            if ($searchColumn==='id') {
+                $users = User::where('id', 'like', "%$searchData%")->paginate(50);
+            }elseif ($searchColumn==='username') {
+                $users = User::where('username', 'like', "%$searchData%")->paginate(50);
+            }elseif ($searchColumn==='email') {
+                $users = User::where('email', 'like', "%$searchData%")->paginate(50);
+            }
         }
-
-        return view('admin/users')->with(['users'=> $users]);
+        
+        if ($users) {
+            return view('admin/users')->with(['users'=> $users]);
+        }else{
+            return redirect('admin/users/')->with(['message'=>'invalid search column']);
+        }
 
     }
 
     //create users
     public function createuser(StoreUserRequest $request)
     {
+        $uuid= ((string) Str::uuid());
+
         $user = User::create([
             'username'=> $request->username,
+            'uuid'=> $uuid,
             'name'=> $request->name,
             'email'=> $request->email,
             'password'=> Hash::make($request->password),

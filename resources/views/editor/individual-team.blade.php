@@ -82,7 +82,7 @@
                             @if (count($posts)>0)
                                 @foreach ($posts as $post)
                                     <div class="mb-3">
-                                        <a href="{{route('editor.news.get.single',['news_slug'=>$post->news->url_slug.'-'.$post->news->id])}}"> 
+                                        <a href="{{route('news.get.single',['news_slug'=>$post->news->url_slug.'-'.$post->news->id])}}"> 
                                             <h6>{{$post->news->headline}} </h6>
                                         </a>
                                     </div>

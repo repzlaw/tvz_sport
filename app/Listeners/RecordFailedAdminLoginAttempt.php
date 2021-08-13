@@ -2,10 +2,14 @@
 
 namespace App\Listeners;
 
-use App\Models\AdminFailedLoginAttempt;
+use App\Mail\AdminFailedLogin;
+use App\Mail\EditorFailedLogin;
 use Illuminate\Auth\Events\Failed;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Mail;
+use App\Models\AdminFailedLoginAttempt;
+use App\Models\EditorFailedLoginAttempt;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class RecordFailedAdminLoginAttempt
 {
@@ -27,11 +31,32 @@ class RecordFailedAdminLoginAttempt
      */
     public function handle(Failed $event)
     {
-        AdminFailedLoginAttempt::record(
-            $event->user,
-            $event->credentials['email'],
-            request()->ip(),
-            getBrowser()
-        );
+        if ($event->guard ==='admin') {
+
+            Mail::to('work@tvz.com', 'TVZ')->queue(new AdminFailedLogin($event));
+
+            AdminFailedLoginAttempt::record(
+                $event->user,
+                $event->credentials['email'],
+                request()->ip(),
+                getBrowser()
+            );
+        } else if ($event->guard ==='editor') {
+
+            Mail::to('work@tvz.com', 'TVZ')->queue(new EditorFailedLogin($event));
+
+            EditorFailedLoginAttempt::record(
+                $event->user,
+                $event->credentials['email'],
+                request()->ip(),
+                getBrowser()
+            );
+        }
+        
+        // dd($event->guard);
+        // Mail::to('work@tvz.com', 'TVZ')->queue(new AdminFailedLogin($event));
+
+        
+
     }
 }

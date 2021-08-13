@@ -21,10 +21,12 @@
                             
                                 <article class="post" data-postid="{{ $post->id }}">
     
-                                    <h5>{{$post->headline}} </h5>
+                                    <h5 style="font-weight: bold;">{{$post->headline}} </h5>
                                     <span  data-competitionId="{{ $post->sport_type_id }}">
-                                    <p>{{$post->content}}</p>
-                                    <input type="hidden" name="sport_type_id" value="{{$post->sport_type_id}}">
+                                    <div>
+                                        {!! html_entity_decode($post->content) !!}
+                                    </div>
+                                    <!-- <input type="hidden" name="sport_type_id" value="{{$post->sport_type_id}}"> -->
                                     @foreach ($post->teamnews as $teamnews)
                                         <span class="badge badge-secondary mr-1 mb-2">
                                             {{$teamnews->team->team_name}}

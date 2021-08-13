@@ -8,9 +8,15 @@ use App\Http\Controllers\EventsController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Admin\EditorController;
 use App\Http\Controllers\Admin\SportsController;
+use App\Http\Controllers\Editor\TeamsController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\TeamFollowersController;
+use App\Http\Controllers\Editor\PlayersController;
 use App\Http\Controllers\Admin\BanPolicyController;
+use App\Http\Controllers\Admin\LoginLogsController;
 use App\Http\Controllers\PlayerFollowersController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\CompetitionController;
@@ -18,16 +24,12 @@ use App\Http\Controllers\CompetitionFollowersController;
 use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\SupportDepartmentsController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
-use App\Http\Controllers\Admin\LoginLogsController;
-use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\FailedLoginsController;
 use App\Http\Controllers\Admin\UserSuspensionHistoriesController;
-use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Editor\Auth\LoginController as AuthLoginController;
+use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\Editor\HomeController as EditorHomeController;
 use App\Http\Controllers\Editor\NewsController as EditorNewsController;
-use App\Http\Controllers\Editor\PlayersController;
-use App\Http\Controllers\Editor\TeamsController;
-use App\Http\Controllers\HomeController as ControllersHomeController;
+use App\Http\Controllers\Editor\Auth\LoginController as AuthLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -221,6 +223,38 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
 
     });
 
+    //Editors routes
+    Route::prefix('/editors')->name('editor.')->middleware('admin')->group(function(){
+
+        // get Editors page
+        Route::get('/', [EditorController::class, 'index'])->name('all');
+
+        // get all Editors
+        Route::get('/get', [EditorController::class, 'getEditor'])->name('get');
+
+        // search Editors
+        Route::get('/search', [EditorController::class, 'searchEditor'])->name('search');
+
+        //create Editor
+        Route::post('/create', [EditorController::class,'createEditor'])->name('create');
+
+        //edit Editor
+        Route::post('/edit', [EditorController::class,'editEditor'])->name('edit');
+
+        //ban Editor
+        Route::get('/{id}/ban', [EditorController::class,'banEditor'])->name('ban-Editor');
+
+        //unban Editor
+        Route::get('/{id}/unban', [EditorController::class,'unbanEditor'])->name('unban-Editor');
+
+        //Editor profile page
+        Route::get('/{id}', [ProfileController::class,'profile'])->name('profile');
+
+        //Editor login logs
+        Route::get('/{id}/login-logs', [ProfileController::class,'loginLogs'])->name('log');
+
+    });
+
     //banpolicys routes
     Route::prefix('/ban-policy')->name('ban-policy.')->middleware('admin')->group(function(){
 
@@ -260,11 +294,20 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
 
     //login logs routes
     Route::prefix('/login-logs')->name('login-log.')->group(function(){
-        //get suspensionhistory page
+        //get admin login logs
         Route::get('/admin', [LoginLogsController::class, 'adminView'])->name('admin');
     
-        //search suspensionhistory
+        // get editor login logs
         Route::get('/editor', [LoginLogsController::class, 'editorView'])->name('editor');
+    });
+
+    //failed login routes
+    Route::prefix('/failed-logins')->name('failed-login.')->group(function(){
+        //get suspensionhistory page
+        Route::get('/admin', [FailedLoginsController::class, 'adminView'])->name('admin');
+    
+        //search suspensionhistory
+        Route::get('/editor', [FailedLoginsController::class, 'editorView'])->name('editor');
     });
 
 });

@@ -20,4 +20,12 @@ class AdminFailedLoginAttempt extends Model
             'browser_info' => json_encode($browser_info),
         ]);
     }
+
+    /**
+     * Get admin details.
+     */
+    public function admin()
+    {
+        return $this->belongsTo(Admin::class);
+    }
 }

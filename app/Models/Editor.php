@@ -19,6 +19,9 @@ class Editor extends Authenticatable
     protected $fillable = [
         'username',
         'email',
+        'editor_role_id',
+        'uuid',
+        'name',
         'password',
     ];
 
@@ -40,4 +43,12 @@ class Editor extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the competition the news was written for.
+     */
+    public function role()
+    {
+        return $this->belongsTo(EditorRole::class, 'editor_role_id');
+    }
 }

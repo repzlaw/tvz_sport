@@ -8,15 +8,15 @@
                 <div class="card-hover-shadow-2x mb-3 mt-3 card">
                     <div class="card-header-tab card-header">
                         <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
-                            <h5>Users</h5> 
+                            <h5>editors</h5> 
                         </div>
                         <div class=" float-right">
-                            <p><a href="#" class="btn btn-primary btn-sm"  id="create-button">Create User</a></p>
+                            <p><a href="#" class="btn btn-primary btn-sm"  id="create-button">Create editor</a></p>
                         </div>
                     </div> 
                     <div class="card-body">
                         <div class="col-12 mb-2">
-                            <form action="{{ route('admin.user.search')}}" method="get">
+                            <form action="{{ route('admin.editor.search')}}" method="get">
                                 <div class="row">
                                     <div class="col-12 col-md-4">
                                         <div class="input-group mb-4" >
@@ -42,51 +42,53 @@
                                 </div>
                             </form>
                         </div>
-                        @if (count($users))
-                            <p>page {{ $users->currentPage() }} of {{ $users->lastPage() }} , displaying {{ count($users) }} of {{ $users->total() }} record(s) </p>
+                        @if (count($editors))
+                        <p>page {{ $editors->currentPage() }} of {{ $editors->lastPage() }} , displaying {{ count($editors) }} of {{ $editors->total() }} record(s) </p>
 
-                            <table id="user_table" class="table table-sm table-striped table-bordered table-hover table-responsive-sm">
+                            <table id="editor_table" class="table table-sm table-striped table-bordered table-hover table-responsive-sm">
                                 <thead>
                                     <tr>
-                                    <th width="3%">user ID</th>
+                                    <th width="3%">editor ID</th>
                                     <th width="7%">username</th>
                                     <th width="7%">fullname</th>
                                     <th width="10%">email</th>
+                                    <th width="10%">role</th>
                                     <th width="6%">status</th>
                                     <th width="5%">action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($users as $key =>$user )
+                                    @foreach ($editors as $key =>$editor)
                                         <tr>
                                             <td class="text-center">
-                                                <a href="{{route('admin.user.profile',['id'=>$user->id])}}" title="view profile">
-                                                    {{$user->id}}
-                                                </a>    
+                                                <!-- <a href="{{route('admin.editor.profile',['id'=>$editor->id])}}" title="view profile"> -->
+                                                    {{$editor->id}}
+                                                <!-- </a>     -->
                                             </td>
-                                            <td>{{$user->username}}</td>
-                                            <td>{{$user->name}}</td>
-                                            <td>{{$user->email}}</td>
+                                            <td>{{$editor->username}}</td>
+                                            <td>{{$editor->name}}</td>
+                                            <td>{{$editor->email}}</td>
+                                            <td>{{$editor->role->role}}</td>
                                             <td>
-                                                @if ($user->status === 'active')
-                                                    <div class="ml-1 badge badge-pill badge-success"> {{$user->status}}</div></td>
+                                                @if ($editor->status === 'active')
+                                                    <div class="ml-1 badge badge-pill badge-success"> {{$editor->status}}</div></td>
                                                     
                                                 @else
-                                                    <div class="ml-1 badge badge-danger badge-info"> {{$user->status}}</div></td>
+                                                    <div class="ml-1 badge badge-danger badge-info"> {{$editor->status}}</div></td>
                                                     
                                                 @endif
                                             <td class="text-center m-auto">
-                                                <i class='fa fa-edit text-success mr-3' style='cursor: pointer;' onclick='editUser({{$user}})'></i> 
+                                                <i class='fa fa-edit text-success mr-3' style='cursor: pointer;' onclick='editeditor({{$editor}})'></i> 
                                             </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
-                            {{ $users->links() }}
+                            {{ $editors->links() }}
                             
                         @else
                             <div class="alert alert-info text-center">
-                                <b>No users found</b>
+                                <b>No editors found</b>
                             </div>
                         @endif
                         
@@ -98,22 +100,22 @@
     </div>
 </div>
 
-<!-- create user modal -->
+<!-- create editor modal -->
 <div class="modal fade" tabindex="-1" role="dialog" id= "create-modal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Create User</h4>
+          <h4 class="modal-title">Create editor</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
-            <form action="{{ route('admin.user.create')}}" method="post" class="form-group" enctype="multipart/form-data">
+            <form action="{{ route('admin.editor.create')}}" method="post" class="form-group" enctype="multipart/form-data">
                     {{ csrf_field() }}
               <div class="form-group">
                 
                 <div class="input-group mb-4" >
                     <div class="input-group-prepend">
-                        <span class="input-group-text"> Username</span>
+                        <span class="input-group-text"> username</span>
                     </div>
                     <input  type="text" name="username" class="form-control" placeholder="username" value="{{ old('username') }}" required>
                 </div>
@@ -131,16 +133,16 @@
                     <input  type="email" name="email" class="form-control" placeholder="email" value="{{ old('email') }}" required>
                 </div>
 
-                <!-- <div class="input-group mb-4" >
+                <div class="input-group mb-4" >
                     <div class="input-group-prepend">
-                        <span class="input-group-text">User Type</span>
+                        <span class="input-group-text">role</span>
                     </div>
-                    <select class="form-control custom-select" name="user_type" required>
-                        <option value="">-- select type -- </option> 
-                        <option value="user">User </option>                           
-                        <option value="editor">Editor </option>                           
+                    <select class="form-control custom-select" name="editor_type" required>
+                        @foreach ($roles as $role)
+                            <option value="{{$role->id}}">{{$role->role}}</option> 
+                        @endforeach
                     </select>
-                </div> -->
+                </div>
                 <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text"> Password</span>
@@ -161,22 +163,22 @@
 </div>
   <!-- /.modal -->
 
-  <!-- edit user modal -->
+  <!-- edit editor modal -->
 <div class="modal fade" tabindex="-1" role="dialog" id= "edit-modal">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Edit User</h4>
+          <h4 class="modal-title">Edit editor</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
-            <form action="{{ route('admin.user.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
+            <form action="{{ route('admin.editor.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
                     {{ csrf_field() }}
               <div class="form-group">
                 
                 <div class="input-group mb-4" >
                     <div class="input-group-prepend">
-                        <span class="input-group-text"> Username</span>
+                        <span class="input-group-text"> username</span>
                     </div>
                     <input  type="text" name="username" id="username" class="form-control" placeholder="username" value="{{ old('username') }}" required>
                 </div>
@@ -196,12 +198,23 @@
 
                 <div class="input-group mb-4" >
                     <div class="input-group-prepend">
+                        <span class="input-group-text">role</span>
+                    </div>
+                    <select class="form-control custom-select" name="editor_type" required>
+                        @foreach ($roles as $role)
+                            <option value="{{$role->id}}">{{$role->role}}</option> 
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="input-group mb-4" >
+                    <div class="input-group-prepend">
                         <span class="input-group-text"> Password</span>
                     </div>
                     <input  type="password" name="password" id="password" class="form-control" placeholder="password" value="{{ old('password') }}" >
                 </div>
 
-                <input  type="hidden" name="user_id" id="user_id" class="form-control">
+                <input  type="hidden" name="editor_id" id="editor_id" class="form-control">
 
                 <!-- <input type="file" name="featured_image" id="featured_image" class="form-control" placeholder="Upload Team Image ..." value="{{ old('featured_image') }}" required> -->
                 <!-- <br>
@@ -251,14 +264,14 @@ $('#create-button').on('click',function(event){
     $('#create-modal').modal();
 });
 
-//modal to edit user
-function editUser(user){
-    $('#username').val(user.username);
-    $('#name').val(user.name);
-    $('#user_type').val(user.user_type);
-    $('#email').val(user.email);
-    $('#user_id').val(user.id);
-    $('#password').val(user.password);
+//modal to edit editor
+function editeditor(editor){
+    $('#username').val(editor.username);
+    $('#name').val(editor.name);
+    $('#editor_type').val(editor.editor_type);
+    $('#email').val(editor.email);
+    $('#editor_id').val(editor.id);
+    $('#password').val(editor.password);
     $('#edit-modal').modal();
 }
 

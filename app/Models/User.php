@@ -29,6 +29,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'ban_time',
         'ban_till',
         'status',
+        'uuid',
         'last_login_at',
         'last_login_ip',
     ];

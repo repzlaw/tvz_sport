@@ -123,6 +123,12 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.editor.all') }}">
+            <i class="fa fa-users mr-2"></i>
+              Editors
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.ban-policy.all') }}">
             <i class="fa fa-balance-scale-left mr-2"></i>
               Ban Policies
@@ -136,7 +142,7 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.history.all') }}">
-            <i class="fa fa-history mr-2"></i>
+            <i class="fa fa-ban mr-2"></i>
               Suspension History
             </a>
           </li>
@@ -159,6 +165,29 @@
               <li class="nav-item">
                 <a class="nav-link" href="{{ route('admin.login-log.editor') }}">
                   Editor logs
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <a class="dropdown-toggle nav-link"
+              data-toggle="dropdown"
+              href="#">
+              <i class="fa fa-user-slash mr-2"></i>
+                Failed Logins
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- links -->
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.failed-login.admin') }}">
+                  Admin Failed Logins
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.failed-login.editor') }}">
+                  Editor Failed Logins
                 </a>
               </li>
             </ul>
