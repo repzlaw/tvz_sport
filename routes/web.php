@@ -78,6 +78,9 @@ Route::prefix('/teams')->name('team.')->group(function(){
     //user editing team info
     Route::post('user/edit', [TeamController::class,'edit'])->name('user.edit')->middleware(['auth','verified']);
 
+    //get individual team news
+    Route::get('/{team_slug}/news', [TeamController::class,'getTeamNews'])->name('get-news');
+
 });
 
 //players routes
@@ -102,6 +105,10 @@ Route::prefix('/players')->name('player.')->group(function(){
 
     //user editing player info
     Route::post('user/edit', [PlayerController::class,'edit'])->name('user.edit')->middleware(['auth','verified']);
+
+    //get individual player news
+    Route::get('/{player_slug}/news', [PlayerController::class,'getPlayerNews'])->name('get-news');
+
 });
 
 //individual news route
@@ -377,6 +384,9 @@ Route::prefix('/editor')->name('editor.')->namespace('Editor')->group(function()
 
         //get individual team details
         Route::get('/{team_slug}', [TeamsController::class,'getSingle'])->name('get.single');
+
+        //get individual team news
+        Route::get('/{team_slug}/news', [TeamsController::class,'getTeamNews'])->name('get-news');
     });
 
     //players routes
@@ -395,6 +405,9 @@ Route::prefix('/editor')->name('editor.')->namespace('Editor')->group(function()
 
         //get individual player details
         Route::get('/{player_slug}', [PlayersController::class,'getSingle'])->name('get.single');
+
+        //get individual player news
+        Route::get('/{player_slug}/news', [PlayersController::class,'getPlayerNews'])->name('get-news');
 
     });
 

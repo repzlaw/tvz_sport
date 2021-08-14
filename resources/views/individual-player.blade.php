@@ -164,7 +164,7 @@
                                     <div class="input-group-prepend">
                                     <h6 class="ml-2 font-weight-bold">Followers :</h6>
                                     </div>
-                                    <h6 class="ml-2 text">{{$player->followers}}</h6>
+                                    <h6 class="ml-2 text">{{$followers}}</h6>
                                 </div>
                                 </div>
                                 <div class="col-md-12 mb-2">
@@ -203,14 +203,16 @@
                     <div class="card-hover-shadow-2x mb-3 mt-3 card">
                         <div class="card-header-tab card-header">
                             <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
-                                Team News
+                                Player News
+                            </div>
+                            <div class="btn-actions-pane-right float-right">
+                                <p><a href="{{route('player.get-news',['player_slug'=>Route::input('player_slug')])}}" class="btn btn-primary btn-sm mr-3">
+                                     All {{$player->full_name}}'s News</a></p>
                             </div>
                         </div> 
 
                         <div class="card-body">
-                            <!-- <div class="row"> -->
                             @if (count($posts)>0)
-                            <!-- {{$posts}} -->
                                 @foreach ($posts as $post)
                                     <div class="mb-3">
                                         <a href="{{route('news.get.single',['news_slug'=>$post->news->url_slug.'-'.$post->news->id])}}"> 
@@ -219,7 +221,6 @@
                                     </div>
                                 @endforeach
                             @endif
-                            <!-- </div> -->
                         </div>
                         
                     </div>

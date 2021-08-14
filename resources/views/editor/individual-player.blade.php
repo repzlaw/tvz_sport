@@ -14,10 +14,11 @@
                             <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
                                 Player Information
                             </div>
-                            <div class="btn-actions-pane-right float-right">
-                                <p><a href="#" class="btn btn-warning btn-sm mr-3"  id="edit-button">Edit Player</a></p>
-                            </div>
-
+                            @if (Auth::guard('editor')->user()->editor_role_id === 1)
+                                <div class="btn-actions-pane-right float-right">
+                                    <p><a href="#" class="btn btn-warning btn-sm mr-3"  id="edit-button">Edit Player</a></p>
+                                </div>
+                            @endif
                         </div> 
 
                         <div class="card-body">
@@ -140,7 +141,7 @@
                                     <div class="input-group-prepend">
                                     <h6 class="ml-2 font-weight-bold">Followers :</h6>
                                     </div>
-                                    <h6 class="ml-2 text">{{$player->followers}}</h6>
+                                    <h6 class="ml-2 text">{{$followers}}</h6>
                                 </div>
                                 </div>
                                 <div class="col-md-12 mb-2">
@@ -179,7 +180,11 @@
                     <div class="card-hover-shadow-2x mb-3 mt-3 card">
                         <div class="card-header-tab card-header">
                             <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
-                                Team News
+                                Player News
+                            </div>
+                            <div class="btn-actions-pane-right float-right">
+                                <p><a href="{{route('editor.player.get-news',['player_slug'=>Route::input('player_slug')])}}" class="btn btn-primary btn-sm mr-3">
+                                     All {{$player->full_name}}'s News</a></p>
                             </div>
                         </div> 
 

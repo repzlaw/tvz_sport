@@ -18,9 +18,11 @@
                                 <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
                                     <h5>Players</h5> 
                                 </div>
-                                <div class=" float-right">
-                                    <p><a href="#" class="btn btn-primary btn-sm"  id="create-button">Add Player</a></p>
-                                </div>
+                                @if (Auth::guard('editor')->user()->editor_role_id === 1)
+                                    <div class=" float-right">
+                                        <p><a href="#" class="btn btn-primary btn-sm"  id="create-button">Add Player </a></p>
+                                    </div>
+                                @endif
                             </div> 
                             <ul class="list-group list-group-flush">
                                 @foreach ($players as $player)

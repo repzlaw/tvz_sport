@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTeamRequest;
+use App\Models\TeamFollower;
 use App\Models\TeamNewsRelationship;
 use App\Models\TeamUserEdit;
 use Illuminate\Support\Facades\Storage;
@@ -75,11 +76,15 @@ class TeamController extends Controller
         $id = end($explode);
         $team = Team::where('id', $id)->with('sportType')->firstOrFail();
 
-        $posts = TeamNewsRelationship::where('team_id', $id)->with('news')->orderBy('created_at','desc')->get();
+        $posts = TeamNewsRelationship::where('team_id', $id)->with('news')->orderBy('created_at','desc')->take(10)->get();
 
         $sport_types = SportType::all();
 
-        return view('individual-team')->with(['team' => $team, 'sports'=> $sport_types, 'posts'=>$posts]);
+        $followers = TeamFollower::where('team_id', $id)->count();
+
+
+        return view('individual-team')->with(['team' => $team, 'sports'=> $sport_types,
+                                             'posts'=>$posts,'followers'=>$followers]);
 
     }
 
@@ -168,5 +173,19 @@ class TeamController extends Controller
     
             return redirect()->route('team.get.single', ['team_slug' => $team->url_slug.'-'.$team->id ])->with(['message'=>$message]);
         }
+    }
+
+    //get Team news
+    public function getTeamNews($slug)
+    {
+        $explode = explode('-',$slug);
+
+        $id = end($explode);
+
+        $posts = TeamNewsRelationship::where('team_id', $id)->with('news')->orderBy('created_at','desc')->paginate(10);
+
+        $team = Team::where('id', $id)->with(['sportType'])->firstOrFail();
+
+        return view('team-news')->with(['team' => $team, 'posts'=>$posts]);
     }
 }

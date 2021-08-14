@@ -79,22 +79,24 @@
                                         <div class="col-md-12 mb-2">
                                             <div class="input-group">
                                             <div class="input-group-prepend">
+                                                <h6 class="ml-1 font-weight-bold">Followers :</h6>
+                                            </div>
+                                            <h6 class="ml-2 text">{{$followers}}</h6>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 mb-2">
+                                            <div class="input-group">
+                                            <div class="input-group-prepend">
                                                 <h6 class="ml-1 font-weight-bold">Summary :</h6>
                                             </div>
                                             <h6 class="ml-2 text">{{$team->summary}}</h6>
                                             </div>
                                         </div>
 
-                                        <!-- <div class="col-md-12 mb-2">
-                                            <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <h6 class="ml-1 font-weight-bold">Phone Number :</h6>
-                                            </div>
-                                            <h6 class="ml-2 text">eferf</h6>
-                                            </div>
-                                        </div>
+                                        
 
-                                        <div class="col-md-12 mb-2">
+                                       <!--  <div class="col-md-12 mb-2">
                                             <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <h6 class="ml-1 font-weight-bold">Email :</h6>
@@ -166,6 +168,11 @@
                         <div class="card-header-tab card-header">
                             <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
                                 Team News
+                            </div>
+
+                            <div class="btn-actions-pane-right float-right">
+                                <p><a href="{{route('team.get-news',['team_slug'=>Route::input('team_slug')])}}" class="btn btn-primary btn-sm mr-3">
+                                     All {{$team->team_name}}'s News</a></p>
                             </div>
                         </div> 
 

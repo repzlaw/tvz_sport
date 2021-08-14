@@ -4,7 +4,9 @@
 <div class="container mt-4">
     <div class="row card">
         <div class="col-md-12 col-md-offset-1">
+            <p>page {{ $posts->currentPage() }} of {{ $posts->lastPage() }} , displaying {{ count($posts) }} of {{ $posts->total() }} record(s) </p>
             <div class="card-hover-shadow-2x mb-3 mt-3 card">
+
                 <div class="card-header-tab card-header">
                     <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
                         <h5>My News</h5> 

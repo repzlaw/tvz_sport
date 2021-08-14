@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StorePlayerRequest;
+use App\Models\PlayerFollower;
 use App\Models\PlayerUserEdit;
 
 class PlayerController extends Controller
@@ -90,11 +91,14 @@ class PlayerController extends Controller
 
         $teams = Team::all();
 
-        $posts = PlayerNewsRelationship::where('player_id', $id)->with('news')->orderBy('created_at','desc')->get();
+        $posts = PlayerNewsRelationship::where('player_id', $id)->with('news')->orderBy('created_at','desc')->take(10)->get();
+
+        $followers = PlayerFollower::where('player_id', $id)->count();
 
 
         $player = Player::where('id', $id)->with(['sportType','Team'])->firstOrFail();
-        return view('individual-player')->with(['player' => $player, 'sports'=> $sport_types, 'teams'=>$teams, 'posts'=>$posts]);
+        return view('individual-player')->with(['player' => $player, 'sports'=> $sport_types, 
+                                                'teams'=>$teams, 'posts'=>$posts,'followers'=>$followers]);
 
     }
 
@@ -203,5 +207,19 @@ class PlayerController extends Controller
             return redirect()->route('player.get.single', ['player_slug' => $player->url_slug.'-'.$player->id ])->with(['message'=>$message]);
     
         }
+    }
+
+    //get player news
+    public function getPlayerNews($slug)
+    {
+        $explode = explode('-',$slug);
+
+        $id = end($explode);
+
+        $posts = PlayerNewsRelationship::where('player_id', $id)->with('news')->orderBy('created_at','desc')->paginate(10);
+
+        $player = Player::where('id', $id)->with(['sportType','Team'])->firstOrFail();
+
+        return view('player-news')->with(['player' => $player, 'posts'=>$posts]);
     }
 }
