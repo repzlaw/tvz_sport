@@ -22,8 +22,9 @@
                             @foreach ($posts as $post)
                             
                                 <article class="post" data-postid="{{ $post->id }}">
-    
-                                    <h5 style="font-weight: bold;">{{$post->headline}} </h5>
+                                    <a href="{{route('news.get.single',['news_slug'=>$post->url_slug.'-'.$post->id])}}"> 
+                                        <h5 style="font-weight: bold;">{{$post->headline}} </h5>
+                                    </a>
                                     <span  data-competitionId="{{ $post->sport_type_id }}">
                                     <div>
                                         {!! html_entity_decode($post->content) !!}

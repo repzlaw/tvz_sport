@@ -1,3 +1,4 @@
+<div id="mydiv">
 @if (count($errors) > 0)
     @foreach ($errors->all() as $error )
     <div class="col-12 col-md-12">
@@ -53,3 +54,10 @@
         </div>
     </div>
 @endif
+</div>
+
+<script>
+setTimeout(function() {
+    $("#mydiv").fadeOut(2000); 
+}, 3000);
+</script>

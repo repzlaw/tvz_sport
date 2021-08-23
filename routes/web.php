@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\SupportDepartmentsController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\FailedLoginsController;
 use App\Http\Controllers\Admin\UserSuspensionHistoriesController;
+use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\Editor\HomeController as EditorHomeController;
 use App\Http\Controllers\Editor\NewsController as EditorNewsController;
@@ -115,8 +116,13 @@ Route::prefix('/players')->name('player.')->group(function(){
 Route::prefix('/news')->name('news.')->group(function(){
     //get news page
     Route::get('/{news_slug}', [NewsController::class,'getSingleNews'])->name('get.single');
-});
 
+    //create news comment
+    Route::post('/save-comment', [NewsController::class,'saveComment'])->name('comment.create');
+
+    //create news comment reply
+    Route::post('/save-reply', [NewsController::class,'saveReply'])->name('comment.reply.create');
+});
 
 //websites events page
 Route::get('/events', function () {
@@ -128,6 +134,8 @@ Route::get('/matches', function () {
     return view('matches');
 });
 
+//comment routes
+Route::get('/v1/comments', [CommentsController::class,'getComments'])->name('get.comments');
 
 
 //individual match page
@@ -136,7 +144,7 @@ Route::get('/poland-vs-belguim-1', function () {
 });
 
 
-Route::view('home','home')->middleware(['verified']);;
+Route::view('home','home')->middleware(['verified']);
 
 //logout route
 Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');

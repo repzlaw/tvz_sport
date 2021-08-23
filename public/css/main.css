@@ -57,7 +57,7 @@ body{
     color: #aaa;
 
 }
-hr , article {
+article {
     background-color: white;
     padding: 16px 0;
     border-bottom: 1px solid #ccc;

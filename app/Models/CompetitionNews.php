@@ -42,4 +42,12 @@ class CompetitionNews extends Model
     {
         return $this->hasMany(TeamNewsRelationship::class,'competition_news_id');
     }
+
+    /**
+     * Get comments for the news.
+     */
+    public function comments()
+    {
+        return $this->hasMany(NewsComment::class,'competition_news_id');
+    }
 }
