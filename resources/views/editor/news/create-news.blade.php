@@ -13,29 +13,39 @@
                     <div class="card-body">
                         <form action="{{ route('editor.news.create')}}" method="post" class="form-group" enctype="multipart/form-data">
                             {{ csrf_field() }}
-                                    <div class="input-group mb-4" style="width: 80%; margin: auto;">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Sport Type</span>
-                                        </div>
-                                        <select class="form-control custom-select" name="sport_type" required>
-                                            <option value="">-- All Category -- </option> 
-                                            @foreach ($sports as $sport)
-                                            <option value="{{$sport->id}}">{{$sport->sport_type}} </option>                           
-                                            @endforeach                          
-                                        </select>
+                                <div class="input-group mb-4" style="width: 80%; margin: auto;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Sport Type</span>
                                     </div>
-                                    <div class="input-group mb-4" style="width: 80%; margin: auto;">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Page Title</span>
-                                        </div>
-                                        <input style="width: 80%; margin: auto;" type="text" name="page_title" class="form-control" placeholder="Page Title ...">
+                                    <select class="form-control custom-select" name="sport_type" required>
+                                        <option value="">-- All Category -- </option> 
+                                        @foreach ($sports as $sport)
+                                        <option value="{{$sport->id}}">{{$sport->sport_type}} </option>                           
+                                        @endforeach                          
+                                    </select>
+                                </div>
+                                <div class="input-group mb-4" style="width: 80%; margin: auto;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Page Title</span>
                                     </div>
-                                    <div class="input-group mb-4" style="width: 80%; margin: auto;">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">Meta description</span>
-                                        </div>
-                                        <input style="width: 80%; margin: auto;" type="text" name="meta_description"  class="form-control" placeholder="Meta description ...">
+                                    <input style="width: 80%; margin: auto;" type="text" name="page_title" class="form-control" placeholder="Page Title ...">
+                                </div>
+                                <div class="input-group mb-4" style="width: 80%; margin: auto;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Meta description</span>
                                     </div>
+                                    <input style="width: 80%; margin: auto;" type="text" name="meta_description"  class="form-control" placeholder="Meta description ...">
+                                </div>
+                                <div class="input-group mb-4" style="width: 80%; margin: auto;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Enable comments</span>
+                                    </div>
+                                    <select class="form-control custom-select" name="enable_comment" required>
+                                        <option value="1">Yes</option>                    
+                                        <option value="0">No</option>                    
+                                    </select>
+                                </div>
+
                                 <input style="width: 80%; margin: auto;" type="text" name="news_title"  class="form-control" placeholder="News Title ..." required>
                                 <br>
                                 <div style="width: 80%; margin: auto;">

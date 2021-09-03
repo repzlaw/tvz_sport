@@ -111,6 +111,50 @@
             </div>
 
         </div>
+
+        <!-- comment section -->
+        <div class="col-10" id="footer">
+            <div class="card-hover-shadow-2x mb-3 mt-3 card" id="comment_text" style="display:none;">
+                <div class="card-header-tab card-header">
+                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
+                       Team Comments
+                    </div>
+                </div> 
+
+                <div class="card-body">
+                    <div class="row ml-3">
+                        <div class="input-group mb-4 mr-5" style="width: 250px; ">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Select language</span>
+                            </div>
+                            <select class="form-control custom-select" name="language" onchange="getLanguage(this.value)"required>
+                                <option value="en-us">English</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="es">Spanish</option>
+                                <option value="ru">Russian</option>                         
+                            </select>
+                        </div>
+                        <div class="input-group mb-4" style="width: 250px; ">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Order by</span>
+                            </div>
+                            <select class="form-control custom-select" name="orderby" onchange="getOrder(this.value)"required>
+                                <option value="newest">Newest</option>
+                                <option value="oldest">Oldest</option>
+                                <option value="upvote">Upvotes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="comments">
+                        <div id="comments_section">
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+                
+        </div>
     </div>
 </div>
 
@@ -135,7 +179,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" id = "modal-save">Save changes</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
               </div>
           </form>
         </div>
@@ -189,7 +233,7 @@
                 <!-- <input type="file" name="featured_image" id="featured_image" class="form-control" placeholder="Upload Team Image ..." value="{{$team->featured_image}}" required>
                 <br> -->
                   <textarea name="summary" id="team_summary" rows="5" class="form-control"  placeholder="Team Summary ..."  required>{{$team->summary}}</textarea>
-                  <input  type="hidden" name="team_id" id="team-id" class="form-control" value="{{$team->id}}" required>
+                  <input  type="hidden" name="team_id" class="form-control" value="{{$team->id}}" required>
 
               </div>
               <div class="modal-footer">
@@ -234,11 +278,169 @@
                     error: function (error){
                         if (error.status === 403) {
                             window.location.href = "{{url('/email/verify')}}";
-                            // console.log(error.status)
                         }
-                        // console.log(error)
                     }
                 });
         }
     </script>
+
+<script>
+    let language = 'en-us';
+    let orderby = 'asc';
+
+    function getOrder(order){
+        orderby = order
+        getComments();
+    }
+
+    function getLanguage(lang){
+        language = lang
+        getComments();
+    }
+    let status = true;
+    let page = 1;
+
+    //get comments ajax 
+    function getComments() {
+        status = false;
+        $.ajax({
+            method: 'GET',
+            url: '{{ route('comment.get')}}',
+            data:{pages:page, c: {{$team->id}}, lang: language, cat:'teams', orderby:orderby}
+
+        })
+        .done(function(msg){
+            if (msg.comments.data.length) {
+                let AuthUser = {{ auth()->check() ? 'true' : 'false' }}
+                let auth_user_id = 0; 
+
+                if (AuthUser === true) {
+                    let user_details = {!! auth()->user() !!}
+                    auth_user_id = user_details.id
+                } 
+                else{
+                    auth_user_id = 0;
+                }
+                $("#comment_text").show();
+
+                let comments = ``;
+                msg.comments.data.forEach(com => {
+                    
+                    comments += 
+                        `<div id="comment_div${com.id}">
+                            <div class="ml-2 col-12 col-md-8" 
+                                            style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
+                                            opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
+                                            border-top-left-radius: 0.25rem; flex: 1;"
+                            >
+                                <b class="mr-5">${com.user.username} </b>
+                                <br>
+                                <small class="comment_date" title="${com.created_at}">${com.created_at}</small>
+                                <div class="mt-2"
+                                    >
+                                    ${com.content}
+                                </div>
+                            </div>
+                            <div class="col-12 mt-1 ml-2">
+                                <div class="row" id="reply_row${com.id}">
+                                    <div href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${com.id}">${com.numRecommends} upvote</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="reply_section${com.id}" class="ml-5" style="display:none">
+
+                        </div>
+                        <hr>
+                        `;
+                });
+                $('#comments_section').html(comments);
+                if (msg.comments.next_page_url !== null) {
+                    $('#comments_section').append(`<div class="container m-auto" id="view_more" onclick="getComments('${msg.summary.lang_iso}')"><a href="javascript:void(0)">view more<a/></div>`);
+                }
+                msg.comments.data.forEach(com => {
+                    if (com.reply.length) {
+                        let view = `<p class="ml-4 mt-2" onclick="viewReplies(${com.id})"><a href="javascript:void(0)" id="view_reply${com.id}">view replies</a> </p>`;
+                        $("#reply_row"+com.id).append(view);
+                        let news_reply = '';   
+                        com.reply.forEach(rep => {
+                            news_reply += 
+                                `<div id="reply_div${rep.id}">
+                                    <div class="ml-2 col-12 col-md-8"
+                                                    style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
+                                                    opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
+                                                    border-top-left-radius: 0.25rem; flex: 1;"
+                                    >
+                                        <b class="mr-5">${rep.user.username} </b>
+                                        <br>
+                                        <small class="comment_date" title="${rep.created_at}">${rep.created_at}</small>
+                                        <div class="mt-2"
+                                            >
+                                            ${rep.content}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mt-1 ml-2">
+                                        <div class="row" id="rep_row${rep.id}">
+                                            <div href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${rep.id}">${rep.numRecommends} upvote</div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                `;
+                            
+                        });
+                        $("#reply_section"+com.id).html(news_reply);
+                    }
+                });
+    
+                page++;
+
+            } else {
+                let comments =
+                    `<div class="alert alert-info text-center">
+                        <b>No comments.</b>
+                    </div>
+                    `;
+                $('#comments_section').html(comments);
+            }
+            
+        })
+        .fail(function(xhr, status, error) {
+            // alert(error)
+        });
+
+    }
+
+    //toggle replies
+    function viewReplies(id){
+        $("#reply_section"+id).toggle(1000);
+        var text = $('#view_reply'+id).text();
+        $('#view_reply'+id).text(
+            text == "view replies" ? "hide replies" : "view replies");
+    }
+
+    //toggle reply form
+    function replyForm(id){
+        $("#reply_input"+id).toggle(1000);
+        var text = $('#show_reply'+id).text();
+        $('#show_reply'+id).text(
+            text == "reply" ? "X" : "reply");
+    }
+
+    //load comments only on scroll
+    $(document).scroll(function() {
+        var value = $("#footer").offset().top,
+            position = $(document).scrollTop() + $(window).height();
+        if (status && position >= value ) {
+            getComments('en-us');
+        }
+    });
+
+    // Check if body height is less than or equal to window height :)
+    $(document).ready(function() {
+        if (status && $("body").height() <= $(window).height()) {
+            getComments('en-us');
+        }
+    });
+
+</script>
 @endsection

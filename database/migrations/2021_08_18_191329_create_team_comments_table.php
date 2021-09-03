@@ -24,6 +24,8 @@ class CreateTeamCommentsTable extends Migration
             $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'));
             $table->longText('content');
             $table->enum('language',['English','Portuguese','Spanish','Russian'])->default('English');
+            $table->enum('status',['blocked','visible'])->default('visible');
+            $table->integer('numRecommends')->default(0);
             $table->timestamps();
         });
     }

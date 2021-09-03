@@ -98,15 +98,15 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                @if ( Auth::user()->user_type === 'editor' )
-                                    <a class="dropdown-item" href="/news/editor">
-                                        {{ __('Post News') }}
+                                    <a class="dropdown-item" href="/v1/comments/individual?cat=news">
+                                        <i class="fa fa-user text-primary mr-2"></i>
+                                        {{ __('Profile') }}
                                     </a>
-                                @endif
 
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
+                                        <i class="fa fa-sign-out-alt text-danger mr-2"></i>
                                         {{ __('Logout') }}
                                     </a>
 

@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Team;
 use App\Models\SportType;
+use App\Models\TeamComment;
 use Illuminate\Support\Str;
+use App\Models\TeamFollower;
+use App\Models\TeamUserEdit;
 use Illuminate\Http\Request;
+use App\Models\TeamNewsRelationship;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTeamRequest;
-use App\Models\TeamFollower;
-use App\Models\TeamNewsRelationship;
-use App\Models\TeamUserEdit;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\StoreTeamCommentRequest;
+use App\Http\Requests\StoreTeamCommentReplyRequest;
 
 class TeamController extends Controller
 {
@@ -187,5 +190,56 @@ class TeamController extends Controller
         $team = Team::where('id', $id)->with(['sportType'])->firstOrFail();
 
         return view('team-news')->with(['team' => $team, 'posts'=>$posts]);
+    }
+
+    //save users comments on news
+    public function saveComment(StoreTeamCommentRequest $request)
+    {
+        // dd($request->all());
+        
+        $user_id = Auth::id();
+        $uuid= ((string) Str::uuid());
+
+        $comment = TeamComment::create([
+            'uuid'=> $uuid,
+            'team_id'=> $request->team_id,
+            'content'=> $request->comment,
+            'language'=> $request->language,
+            'user_id'=> $user_id,
+        ]);
+        if ($comment) {
+            $message = 'Comment Saved';
+        }else{
+            $message = 'Comment failed';
+        }
+
+        return redirect()->back()->with(['message'=>$message]);
+
+    }
+
+    //save users comments replies 
+    public function saveReply(StoreTeamCommentReplyRequest $request)
+    {
+        // dd($request->all());
+        
+        $user_id = Auth::id();
+        $uuid= ((string) Str::uuid());
+
+        $comment = TeamComment::create([
+            'uuid'=> $uuid,
+            'parent_comment_id'=> $request->comment_id,
+            'team_id'=> $request->team_id,
+            'content'=> $request->comment,
+            'language'=> $request->language,
+            'user_id'=> $user_id,
+        ]);
+        if ($comment) {
+            $message = 'Reply Saved';
+        }else{
+            $message = 'Reply failed';
+        }
+
+        return redirect()->back()->with(['message'=>$message]);
+
     }
 }

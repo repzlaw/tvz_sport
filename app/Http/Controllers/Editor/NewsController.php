@@ -65,11 +65,11 @@ class NewsController extends Controller
                 'url_slug'=> $slug,
                 'headline'=> $request->news_title,
                 'content'=> $request->news_body,
+                'enable_comment'=> $request->enable_comment,
                 'posted_by'=> Auth::guard('editor')->user()->id,
                 'page_title'=> $pagetitle,
                 'meta_description'=> $metadescription,
         ]);
-        // dd($post);
 
         if ( $post) {
             //insert record into playernews table
@@ -113,6 +113,7 @@ class NewsController extends Controller
             'postId' => 'required',
             'news_title' => 'required',
             'sport_type' => 'required',
+            'enable_comment' => 'required',
         ]);
         // dd($request->all());
         $teams = $request->input('teams');
@@ -138,6 +139,7 @@ class NewsController extends Controller
             'sport_type_id'=> $request->sport_type,
             'headline'=> $request->news_title,
             'content'=> $request->news_body,
+            'enable_comment'=> $request->enable_comment,
             'page_title'=> $pagetitle,
             'meta_description'=> $metadescription,
         ]);

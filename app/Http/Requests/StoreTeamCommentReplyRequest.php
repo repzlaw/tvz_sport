@@ -2,18 +2,22 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreNewsRequest extends FormRequest
+class StoreTeamCommentReplyRequest extends FormRequest
 {
-    /**|unique:competition_news,headline
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
     public function authorize()
     {
-        return true;
+        if (Auth::check()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -24,10 +28,10 @@ class StoreNewsRequest extends FormRequest
     public function rules()
     {
         return [
-            'sport_type' => 'required',
-            'news_title' => 'required|unique:competition_news,headline|max:255',
-            'news_body' => 'required',
-            'enable_comment' => 'required',
+            'comment'=>'required',
+            'comment_id'=>'required',
+            'team_id'=>'required',
+            'language'=>'required',
         ];
     }
 }

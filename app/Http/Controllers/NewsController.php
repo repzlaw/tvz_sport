@@ -36,7 +36,6 @@ class NewsController extends Controller
         $id = end($explode);
 
         $news = CompetitionNews::where(['id'=>$id])->with(['user','playernews.player','teamnews.team'])->firstOrFail();
-
         // $comments = NewsComment::where(['competition_news_id'=>$id, 'parent_comment_id'=> null])->with(['user:id,username,created_at'])->orderBy('created_at','desc')->get();
 
         // foreach ($comments as $key => $com) {

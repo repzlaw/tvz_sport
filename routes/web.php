@@ -82,6 +82,12 @@ Route::prefix('/teams')->name('team.')->group(function(){
     //get individual team news
     Route::get('/{team_slug}/news', [TeamController::class,'getTeamNews'])->name('get-news');
 
+    //create team comment
+    Route::post('/save-comment', [TeamController::class,'saveComment'])->name('comment.create')->middleware(['auth','verified']);
+
+    //create team comment reply
+    Route::post('/save-reply', [TeamController::class,'saveReply'])->name('comment.reply.create')->middleware(['auth','verified']);
+
 });
 
 //players routes
@@ -110,6 +116,12 @@ Route::prefix('/players')->name('player.')->group(function(){
     //get individual player news
     Route::get('/{player_slug}/news', [PlayerController::class,'getPlayerNews'])->name('get-news');
 
+    //create player comment
+    Route::post('/save-comment', [PlayerController::class,'saveComment'])->name('comment.create')->middleware(['auth','verified']);
+
+    //create player comment reply
+    Route::post('/save-reply', [PlayerController::class,'saveReply'])->name('comment.reply.create')->middleware(['auth','verified']);
+
 });
 
 //individual news route
@@ -118,10 +130,10 @@ Route::prefix('/news')->name('news.')->group(function(){
     Route::get('/{news_slug}', [NewsController::class,'getSingleNews'])->name('get.single');
 
     //create news comment
-    Route::post('/save-comment', [NewsController::class,'saveComment'])->name('comment.create');
+    Route::post('/save-comment', [NewsController::class,'saveComment'])->name('comment.create')->middleware(['auth','verified']);
 
     //create news comment reply
-    Route::post('/save-reply', [NewsController::class,'saveReply'])->name('comment.reply.create');
+    Route::post('/save-reply', [NewsController::class,'saveReply'])->name('comment.reply.create')->middleware(['auth','verified']);
 });
 
 //websites events page
@@ -135,7 +147,15 @@ Route::get('/matches', function () {
 });
 
 //comment routes
-Route::get('/v1/comments', [CommentsController::class,'getComments'])->name('get.comments');
+Route::prefix('/v1/comments')->name('comment.')->group(function(){
+    Route::get('/', [CommentsController::class,'getComments'])->name('get');
+    Route::get('/delete', [CommentsController::class,'deleteComment'])->name('delete');
+    Route::get('/reply/delete', [CommentsController::class,'deleteReply'])->name('reply.delete');
+    Route::get('/check-upvote', [CommentsController::class,'checkUpvote'])->name('check.upvote');
+    Route::get('/upvote', [CommentsController::class,'upvoteComment'])->name('upvote');
+    Route::get('/individual', [CommentsController::class,'getUserComment'])->name('single.user')->middleware(['auth','verified']);
+
+});
 
 
 //individual match page

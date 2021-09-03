@@ -138,7 +138,7 @@ function searchTeam($query, $from)
         
 }
 
-//func to ge browser information
+//func to get browser information
 function getBrowser()
 {
     $u_agent = $_SERVER['HTTP_USER_AGENT'];
@@ -223,4 +223,34 @@ function getBrowser()
         'platform'  => $platform,
         'pattern'    => $pattern
     );
+}
+
+//func to check if a user has upvoted a comment
+function checkUpvoted($mod, $comment_id, $user_id){
+    if (Auth::check()) {
+        $model = '';
+        $parentModel = '';
+
+        if ($mod === 'news') {
+            $model = 'App\Models\NewsCommentUpvote';
+            $parentModel = 'App\Models\NewsComment';
+        } else if($mod === 'player') {
+            $model = 'App\Models\PlayerCommentUpvote';
+            $parentModel = 'App\Models\PlayerComment';
+        } else if($mod === 'team') {
+            $model = 'App\Models\TeamCommentUpvote';
+            $parentModel = 'App\Models\TeamComment';
+        } else if($mod === 'match') {
+            $model = 'App\Models\MatchCommentUpvote';
+            $parentModel = 'App\Models\MatchComment';
+        }
+
+        if ($model) {
+            $upvote = $model::where(['user_id'=>$user_id, 'comment_id'=>$comment_id])->first();
+            $status = $upvote ? true : false;
+
+            return response()->json(['status'=>$status, 'upvote'=>$upvote, 'model'=>$model, 'parentModel'=>$parentModel]);
+        }
+    }
+    return response()->json(['status'=>false]);
 }

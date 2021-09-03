@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+// use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class NewsComment extends Model
 {
@@ -13,6 +15,11 @@ class NewsComment extends Model
 
     protected $guarded =[];
 
+    protected $casts = [
+        'created_at' => 'datetime:d-m-Y H:i:s',
+        'updated_at' => 'datetime:d-m-Y'
+      ];
+
     /**
      * Get the user that posted the comment.
      */
@@ -21,4 +28,7 @@ class NewsComment extends Model
         return $this->setConnection('mysql')->belongsTo(User::class, 'user_id');
     }
 
+    public function getCreatedAtAttribute($value){
+       return Carbon::parse($value)->diffForHumans();
+    }
 }
