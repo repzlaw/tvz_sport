@@ -32,6 +32,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'uuid',
         'last_login_at',
         'last_login_ip',
+        'display_name',
     ];
     
 
@@ -84,6 +85,14 @@ class User extends Authenticatable implements MustVerifyEmail
             return true;
         }
         return false;
+    }
+
+    /**
+     * Get the image associated with the user.
+     */
+    public function picture()
+    {
+        return $this->hasOne(UserProfilePic::class);
     }
 
     

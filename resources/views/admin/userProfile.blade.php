@@ -151,6 +151,12 @@
             <form action="{{ route('admin.user.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
                     {{ csrf_field() }}
               <div class="form-group">
+                <div class="input-group mb-4" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"> Display name</span>
+                    </div>
+                    <input  type="text" name="display_name" id="display_name" class="form-control" placeholder="display name" value="{{ old('display_name') }}" required>
+                </div>
                 
                 <div class="input-group mb-4" >
                     <div class="input-group-prepend">
@@ -313,6 +319,7 @@ function editUser(user){
     $('#email').val(user.email);
     $('#user_id').val(user.id);
     $('#password').val(user.password);
+    $('#display_name').val(user.display_name);
     $('#edit-modal').modal();
 }
 

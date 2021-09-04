@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\SupportDepartmentsController;
 use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\FailedLoginsController;
 use App\Http\Controllers\Admin\UserSuspensionHistoriesController;
+use App\Http\Controllers\Auth\ProfileController as UserProfileController;
 use App\Http\Controllers\CommentsController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\Editor\HomeController as EditorHomeController;
@@ -157,6 +158,12 @@ Route::prefix('/v1/comments')->name('comment.')->group(function(){
 
 });
 
+//user profile routes
+Route::prefix('/user/profile')->name('profile.')->middleware(['verified'])->group(function () {
+    Route::get('/', [UserProfileController::class, 'index'])->name('index');
+    Route::post('/update-profile', [UserProfileController::class, 'updateProfile'])->name('edit');
+    Route::post('/update-image', [UserProfileController::class, 'updateImage'])->name('edit.image');
+});
 
 //individual match page
 Route::get('/poland-vs-belguim-1', function () {

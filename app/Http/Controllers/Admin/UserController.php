@@ -15,6 +15,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\EditUserRequest;
 use App\Http\Requests\StoreUserRequest;
 
 class UserController extends Controller
@@ -85,13 +86,8 @@ class UserController extends Controller
     }
 
     //edit users
-    public function edituser(Request $request)
+    public function edituser(EditUserRequest $request)
     {
-        $request->validate([
-            'username' => 'required',
-            'name' => 'required',
-            'email' => 'required',
-        ]);
 
         $user = User::findOrFail($request->user_id);
 
@@ -99,6 +95,7 @@ class UserController extends Controller
             'username'=> $request->username,
             'name'=> $request->name,
             'email'=> $request->email,
+            'display_name'=> $request->display_name,
             'password'=> $request->password ? Hash::make($request->password) : $user->password,
         ]);
 

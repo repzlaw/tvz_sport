@@ -94,11 +94,11 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->username }}
+                                    {{ Auth::user()->display_name ? Auth::user()->display_name : Auth::user()->username }}
                                 </a>
-
+                                {{-- /v1/comments/individual?cat=news --}}
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="/v1/comments/individual?cat=news">
+                                    <a class="dropdown-item" href="/user/profile">
                                         <i class="fa fa-user text-primary mr-2"></i>
                                         {{ __('Profile') }}
                                     </a>

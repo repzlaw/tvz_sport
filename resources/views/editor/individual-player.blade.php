@@ -499,7 +499,11 @@
 
                 let comments = ``;
                 msg.comments.data.forEach(com => {
-                    
+                    //get image to display
+                    let com_path = com.user.picture;
+                    let com_src = com_path ? "/storage/images/user_images/"+com.user.picture.file_path 
+                                    : "https://ui-avatars.com/api/?background=random&name="+com.user.username;
+
                     comments += 
                         `<div id="comment_div${com.id}">
                             <div class="ml-2 col-12 col-md-8" 
@@ -507,7 +511,11 @@
                                             opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
                                             border-top-left-radius: 0.25rem; flex: 1;"
                             >
-                                <b class="mr-5">${com.user.username} </b>
+                                <img
+                                    src="${com_src}"
+                                    alt="${com.user.username}"
+                                    style="height: 30px; width:30px;  border-radius: 15px;"/>
+                                <b class="ml-1 mr-5">${com.user.display_name ? com.user.display_name : com.user.username}</b>
                                 <br>
                                 <small class="comment_date" title="${com.created_at}">${com.created_at}</small>
                                 <div class="mt-2"
@@ -537,6 +545,11 @@
                         $("#reply_row"+com.id).append(view);
                         let news_reply = '';   
                         com.reply.forEach(rep => {
+                            //get image to display
+                            let rep_path = rep.user.picture;
+                            let rep_src = rep_path ? "/storage/images/user_images/"+rep.user.picture.file_path 
+                                            : "https://ui-avatars.com/api/?background=random&name="+rep.user.username;
+
                             news_reply += 
                                 `<div id="reply_div${rep.id}">
                                     <div class="ml-2 col-12 col-md-8"
@@ -544,7 +557,11 @@
                                                     opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
                                                     border-top-left-radius: 0.25rem; flex: 1;"
                                     >
-                                        <b class="mr-5">${rep.user.username} </b>
+                                        <img
+                                            src="${rep_src}"
+                                            alt="${rep.user.username}"
+                                            style="height: 30px; width:30px;  border-radius: 15px;"/>
+                                        <b class="ml-1 mr-5">${rep.user.display_name ? rep.user.display_name : rep.user.username}</b>
                                         <br>
                                         <small class="comment_date" title="${rep.created_at}">${rep.created_at}</small>
                                         <div class="mt-2"

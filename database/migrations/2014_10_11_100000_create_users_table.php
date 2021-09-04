@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
             $table->string('uuid')->unique();
             $table->string('username')->unique();
             $table->string('name')->nullable();
+            $table->string('display_name')->nullable();
             $table->enum('status',['active','banned'])->default('active');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

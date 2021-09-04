@@ -58,17 +58,18 @@ class CommentsController extends Controller
             //get comments based on category specified
             if ($category === 'news') {
                 $comments = NewsComment::where(['competition_news_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
-                                            ->with(['user:id,username'])
+                                            ->with(['user:id,username,display_name','user.picture:user_id,file_path'])
                                             ->orderBy($orderColumn,$ordertype)
                                             ->select('id','competition_news_id','parent_comment_id','user_id','content','created_at','numRecommends')
                                             ->simplePaginate($page);
-                
+
                 $total = count($comments);
                 foreach ($comments as $key => $com) {
-                    $replies = NewsComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username'])
+                    $replies = NewsComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username,display_name','user.picture:user_id,file_path'])
                                             ->get(['id','competition_news_id','parent_comment_id','user_id','content','created_at','numRecommends']);
                     $com->reply = $replies;
-                    $total = $replies? $total++ : $total;
+                    $total = $total + count($replies);
+                    // $total = $total + count($replies);
                 }
                 $summary = (object) ['lang_iso'=>$language, 'language'=>$lang, 'total'=>$total];
 
@@ -76,7 +77,7 @@ class CommentsController extends Controller
             }
             elseif ($category === 'players') {
                 $comments = PlayerComment::where(['player_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
-                                            ->with(['user:id,username'])
+                                            ->with(['user:id,username,display_name','user.picture:user_id,file_path'])
                                             ->orderBy($orderColumn,$ordertype)
                                             ->select('id','player_id','parent_comment_id','user_id','content','created_at','numRecommends')
                                             ->simplePaginate($page);
@@ -84,10 +85,10 @@ class CommentsController extends Controller
                 $total = count($comments);
                 
                 foreach ($comments as $key => $com) {
-                    $replies = PlayerComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username'])
+                    $replies = PlayerComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username,display_name','user.picture:user_id,file_path'])
                                                 ->get(['id','player_id','parent_comment_id','user_id','content','created_at','numRecommends']);
                     $com->reply = $replies;
-                    $total = $replies? $total++ : $total;
+                    $total = $total + count($replies);
 
                 }
                 $summary = (object) ['lang_iso'=>$language, 'language'=>$lang, 'total'=>$total];
@@ -97,7 +98,7 @@ class CommentsController extends Controller
             }
             elseif ($category === 'teams') {
                 $comments = TeamComment::where(['team_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
-                                            ->with(['user:id,username'])
+                                            ->with(['user:id,username,display_name','user.picture:user_id,file_path'])
                                             ->orderBy($orderColumn,$ordertype)
                                             ->select('id','team_id','parent_comment_id','user_id','content','created_at','numRecommends')
                                             ->simplePaginate($page);
@@ -105,10 +106,10 @@ class CommentsController extends Controller
                 $total = count($comments);
                 
                 foreach ($comments as $key => $com) {
-                    $replies = TeamComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username'])
+                    $replies = TeamComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username,display_name','user.picture:user_id,file_path'])
                                             ->get(['id','team_id','parent_comment_id','user_id','content','created_at','numRecommends']);
                     $com->reply = $replies;
-                    $total = $replies? $total++ : $total;
+                    $total = $total + count($replies);
 
                 }
                 $summary = (object) ['lang_iso'=>$language, 'language'=>$lang, 'total'=>$total];
@@ -118,17 +119,17 @@ class CommentsController extends Controller
             }
             elseif ($category === 'matches') {
                 $comments = MatchComment::where(['match_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
-                                            ->with(['user:id,username'])
+                                            ->with(['user:id,username,display_name','user.picture:user_id,file_path'])
                                             ->orderBy($orderColumn,$ordertype)
                                             ->select('id','match_id','parent_comment_id','user_id','content','created_at','numRecommends')
                                             ->simplePaginate($page);
                 $total = count($comments);
                 
                 foreach ($comments as $key => $com) {
-                    $replies = MatchComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username'])
+                    $replies = MatchComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username,display_name','user.picture:user_id,file_path'])
                                             ->get(['id','match_id','parent_comment_id','user_id','content','created_at','numRecommends']);
                     $com->reply = $replies;
-                    $total = $replies? $total++ : $total;
+                    $total = $total + count($replies);
 
                 }
                 $summary = (object) ['lang_iso'=>$language, 'language'=>$lang, 'total'=>$total];
