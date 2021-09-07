@@ -87,12 +87,29 @@ class User extends Authenticatable implements MustVerifyEmail
         return false;
     }
 
+    public function isFollowingUser($userId, $followed_user_id)
+    {
+        $following = Friend::where(['user_id'=>$this->id, 'followed_user_id'=>$followed_user_id])->pluck('user_id')->toArray();
+        if (in_array($userId, $following)){
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Get the image associated with the user.
      */
     public function picture()
     {
         return $this->hasOne(UserProfilePic::class);
+    }
+
+    /**
+     * Get the people following user.
+     */
+    public function friends()
+    {
+        return $this->hasMany(Friend::class,'followed_user_id');
     }
 
     

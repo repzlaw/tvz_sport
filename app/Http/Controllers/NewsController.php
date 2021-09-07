@@ -3,19 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Team;
+use App\Models\User;
 use App\Models\Player;
 use App\Models\SportType;
 use App\Models\NewsComment;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\CompetitionNews;
+use App\Models\NewsCommentReply;
 use App\Models\TeamNewsRelationship;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PlayerNewsRelationship;
 use App\Http\Requests\StoreNewsRequest;
 use App\Http\Requests\StoreNewsCommentRequest;
 use App\Http\Requests\StoreNewsCommentReplyRequest;
-use App\Models\NewsCommentReply;
 
 class NewsController extends Controller
 {
@@ -55,8 +56,10 @@ class NewsController extends Controller
     public function saveComment(StoreNewsCommentRequest $request)
     {
         // dd($request->all());
+        $news = CompetitionNews::findOrFail($request->news_id);
+        $comment_count = $news->comment_count + 1;
         
-        $user_id = Auth::id();
+        $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
         $uuid= ((string) Str::uuid());
 
         $comment = NewsComment::create([
@@ -64,9 +67,14 @@ class NewsController extends Controller
             'competition_news_id'=> $request->news_id,
             'content'=> $request->comment,
             'language'=> $request->language,
-            'user_id'=> $user_id,
+            'user_id'=> $user->id,
+            'username'=> $user->username,
+            'display_name'=> $user->display_name,
+            'profile_pic'=> $user->picture? $user->picture->file_path : null,
         ]);
         if ($comment) {
+            //update comment count
+            $news->update(['comment_count'=>$comment_count]);
             $message = 'Comment Saved';
         }else{
             $message = 'Comment failed';
@@ -80,8 +88,11 @@ class NewsController extends Controller
     public function saveReply(StoreNewsCommentReplyRequest $request)
     {
         // dd($request->all());
+        $news = CompetitionNews::findOrFail($request->competition_news_id);
+        $comment_count = $news->comment_count + 1;
         
-        $user_id = Auth::id();
+        $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
+
         $uuid= ((string) Str::uuid());
 
         $comment = NewsComment::create([
@@ -90,9 +101,14 @@ class NewsController extends Controller
             'competition_news_id'=> $request->competition_news_id,
             'content'=> $request->comment,
             'language'=> $request->language,
-            'user_id'=> $user_id,
+            'user_id'=> $user->id,
+            'username'=> $user->username,
+            'display_name'=> $user->display_name,
+            'profile_pic'=> $user->picture? $user->picture->file_path : null,
         ]);
         if ($comment) {
+            //update comment count
+            $news->update(['comment_count'=>$comment_count]);
             $message = 'Reply Saved';
         }else{
             $message = 'Reply failed';

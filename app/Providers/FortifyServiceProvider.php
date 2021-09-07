@@ -82,8 +82,10 @@ class FortifyServiceProvider extends ServiceProvider
         //authentication
         Fortify::authenticateUsing(function (Request $request) {
             $user = User::where('username', $request->username)->first();
-            if ($user &&
-                Hash::check($request->password, $user->password)) {
+            $usermail = User::where('email', $request->username)->first();
+            $user = $user ? $user : $usermail;
+            
+            if ($user && Hash::check($request->password, $user->password)) {
                     $user->update([
                         'last_login_at' => Carbon::now()->toDateTimeString(),
                         'last_login_ip' => $request->getClientIp()

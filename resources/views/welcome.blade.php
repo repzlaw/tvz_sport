@@ -17,8 +17,10 @@
                                     @foreach ($latestnews as $news )
                                     <p> 
                                     <a href="{{route('news.get.single',['news_slug'=>$news->url_slug.'-'.$news->id])}}"> 
-                                        <h6>{{$news->headline}} 
-                                        <small> - by {{$news->user->username}} </small>
+                                        <h6>{{$news->headline}} <br>
+                                            <small>  posted by {{$news->user->username}} </small>
+                                            <small>  - {{$news->created_at}} </small>
+                                            <small> -  {{$news->comment_count}} comment(s) </small>
                                         </h6>
                                     </a>
                                     </p>
@@ -38,9 +40,11 @@
                                 <!-- {{$previousnews}} -->
                                     @foreach ($previousnews as $news )
                                         <p> 
-                                        <a href="{{route('news.get.single',['news_slug'=>$news->url_slug.'-'.$news->id])}}"> 
-                                            <h6>{{$news->headline}} 
-                                            <small> - by {{$news->user->username}} </small>
+                                        <a style="text-decoration: none" href="{{route('news.get.single',['news_slug'=>$news->url_slug.'-'.$news->id])}}"> 
+                                            <h6>{{$news->headline}} <br>
+                                            <small>  posted by {{$news->user->username}} </small>
+                                            <small>  - {{$news->created_at}} </small>
+                                            <small> -  {{$news->comment_count}} comment(s) </small>
                                             </h6>
                                         </a>
                                         </p>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Team;
+use App\Models\Friend;
 use App\Models\Player;
 use App\Models\TeamFollower;
 use App\Models\PlayerFollower;
@@ -62,6 +63,25 @@ function teamFollowSystem($team_id)
         $follow->follow_date = $date;
         $follow->save();
         return true;
+}
+
+//follow or unfollow user
+function userFollowSystem($followed_user_id)
+{
+    $user=Auth::user();
+    if ($user->isFollowingUser($user->id, $followed_user_id)){
+        Friend::where(['followed_user_id'=>$followed_user_id, 'user_id'=>$user->id])->delete();
+        return false;
+    }
+
+    $date = date("Y/m/d");
+    $follow = Friend::firstOrNew([
+        'followed_user_id' => $followed_user_id,
+        'user_id' => $user->id,
+    ]);
+    $follow->follow_date = $date;
+    $follow->save();
+    return true;
 }
 
 //process image function

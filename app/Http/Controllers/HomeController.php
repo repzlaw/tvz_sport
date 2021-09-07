@@ -34,10 +34,10 @@ class HomeController extends Controller
         $previousevents = MatchEvent::whereDate('match_date','!=', Carbon::today())->orderBy('match_time', 'asc')->with('user','homeTeam','awayTeam')->get();
 
         //get latest news
-        $latestnews = CompetitionNews::whereDate('created_at', Carbon::today())->orderBy('updated_at', 'desc')->with('user','competition')->get();
+        $latestnews = CompetitionNews::whereDate('created_at', Carbon::today())->orderBy('created_at', 'desc')->with('user','competition')->get();
 
         //get past news
-        $previousnews = CompetitionNews::whereDate('created_at','!=', Carbon::today())->orderBy('updated_at', 'desc')->with('user','competition')->get();
+        $previousnews = CompetitionNews::whereDate('created_at','!=', Carbon::today())->orderBy('created_at', 'desc')->with('user','competition')->get();
         
         return view('welcome')->with(['upcomingevents'=> $upcomingevents, 'previousevents'=>$previousevents, 'latestnews'=> $latestnews, 'previousnews'=>$previousnews]);
 

@@ -26,6 +26,9 @@ class CreateMatchCommentsTable extends Migration
             $table->enum('language',['English','Portuguese','Spanish','Russian'])->default('English');
             $table->enum('status',['blocked','visible'])->default('visible');
             $table->integer('numRecommends')->default(0);
+            $table->string('username');
+            $table->string('display_name')->nullable();
+            $table->string('profile_pic')->nullable();
             $table->timestamps();
         });
     }

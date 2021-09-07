@@ -14,12 +14,10 @@ class ProfileController extends Controller
     public function index()
     {
         if (Auth::check()) {
-            $user = User::where('id', Auth::user()->id)->with(['picture'])->first();
-            // return $user;
+            $user = User::where('id', Auth::user()->id)->with(['picture'])->withCount('friends')->firstOrFail();
     
             return view('userProfile.user-profile')->with(['user'=>$user]);
         }
-        return abort(404,"Page not found");
     }
 
     //edit users
@@ -47,24 +45,23 @@ class ProfileController extends Controller
     {
         // dd($request->all()); 
         $request->validate([
-            'featured_image' => 'required|image|mimes:jpeg,jpg,gif,svg|max:2048',
+            'featured_image' => 'required|image|mimes:jpeg,jpg,gif,png,svg|max:2048',
         ]);
         if ($request->hasFile('featured_image')) {
             //process image
             $fileNameToStore = process_image($request->file('featured_image'));
 
             //store image
-            $path = $request->file('featured_image')->storeAs('public/images/user_images', $fileNameToStore);
+            $path = $request->file('featured_image')->storeAs('public/images/profile', $fileNameToStore);
 
             //get old user image if exist
             $user = UserProfilePic::where('user_id',$request->user_id)->first();
             if ($user) {
                 $user_image = $user->file_path;
                 if ($user_image) {
-                    unlink(storage_path("app/public/images/user_images/".$user_image));
+                    unlink(storage_path("app/public/images/profile/".$user_image));
                 }
             }
-
 
             $update = UserProfilePic::firstOrNew([
                 'user_id'=>$request->user_id,
@@ -81,4 +78,22 @@ class ProfileController extends Controller
         }
     }
 
+    //fun to get other users profile
+    public function userProfile($slug)
+    {
+        $explode = explode('-',$slug);
+        $id = end($explode);
+        $user = User::where('id', $id)->with(['picture'])->withCount('friends')->firstOrFail();
+        // return $user;
+
+        return view('userProfile.user-profile')->with(['user'=>$user]);
+    }
+
+    //follow or unfollow user
+    public function followUser($id)
+    {
+        $follow = userFollowSystem($id);
+
+        return $follow;
+    }
 }

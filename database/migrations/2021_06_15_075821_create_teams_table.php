@@ -22,6 +22,7 @@ class CreateTeamsTable extends Migration
             $table->string('featured_image')->nullable();
             $table->string('page_title')->nullable();
             $table->string('meta_description')->nullable();
+            $table->integer('comment_count')->default(0);
             $table->timestamps();
         });
     }

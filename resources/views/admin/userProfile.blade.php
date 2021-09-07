@@ -35,7 +35,7 @@
                             <div class="row">
                                 <!-- <div class="col-sm-3">
                                     <img
-                                        src="/storage/images/user_images/{{$user->featured_image}}"
+                                        src="/storage/images/profile/{{$user->featured_image}}"
                                         alt="Avatar 5"
                                         style="height: 150px; width:150px; border: 4px solid #eee; border-radius: 15px;"
                                     />

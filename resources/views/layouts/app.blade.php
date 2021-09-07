@@ -94,7 +94,19 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->display_name ? Auth::user()->display_name : Auth::user()->username }}
+                                    {{-- {{ Auth::user()->display_name ? Auth::user()->display_name : Auth::user()->username }} --}}
+                                    
+                                    @if (Auth::user()->picture)
+                                        <img
+                                        src="/storage/images/profile/{{Auth::user()->picture->file_path}}"
+                                        alt="{{ Auth::user()->username}}"
+                                        style="height: 30px; width:30px;  border-radius: 15px;"/>
+                                    @else
+                                        <img
+                                        src="/storage/images/profile/no_image.png"
+                                        alt="{{ Auth::user()->username}}"
+                                        style="height: 30px; width:30px;  border-radius: 15px;"/>
+                                    @endif
                                 </a>
                                 {{-- /v1/comments/individual?cat=news --}}
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">

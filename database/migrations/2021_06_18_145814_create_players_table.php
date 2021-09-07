@@ -32,6 +32,7 @@ class CreatePlayersTable extends Migration
             $table->date('active_since');
             $table->string('page_title')->nullable();
             $table->string('meta_description')->nullable();
+            $table->integer('comment_count')->default(0);
             $table->timestamps();
         });
     }

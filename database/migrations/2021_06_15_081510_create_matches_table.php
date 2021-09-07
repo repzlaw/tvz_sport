@@ -23,6 +23,7 @@ class CreateMatchesTable extends Migration
             $table->date('match_date');
             $table->time('match_time');
             $table->foreignId('posted_by')->references('id')->on('users');
+            $table->integer('comment_count')->default(0);
             $table->timestamps();
         });
     }

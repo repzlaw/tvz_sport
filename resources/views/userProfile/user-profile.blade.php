@@ -12,35 +12,49 @@
                     <div class="card-hover-shadow-2x mb-3 mt-3 card">
                         <div class="card-header-tab card-header">
                             <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
-                                My Profile
+                                @if ($user->id === Auth::id())
+                                    My Profile 
+                                @else
+                                    {{$user->display_name? $user->display_name : $user->username}}'s profile
+                                @endif
+                                
                             </div>
                             <div class="btn-actions-pane-right float-right">
-                                <a href="#" class="btn btn-outline-warning btn-sm mr-3" id="edit-button" onclick='editUser({{$user}})'> Edit Profile</a>
-                            </div>
+                                    @if ($user->id === Auth::id())
+                                        <a href="#" class="btn btn-outline-warning btn-sm mr-3" id="edit-button" onclick='editUser({{$user}})'> Edit Profile</a>
+                                        <a href="/v1/comments/individual?cat=news" class="btn btn-outline-success btn-sm mr-3"> Activity</a>
+                                    @else
+                                        @if(Auth::user()->isFollowingUser(Auth::user()->id, $user->id))
+                                            <p><a href="#" class="btn btn-outline-primary btn-sm" onclick="follow({{$user->id}})" id="follow">Unfriend ☹️</a></p>
+                                        @else
+                                            <p><a href="#" class="btn btn-outline-primary btn-sm" onclick="follow({{$user->id}})" id="follow">Make friend 😊</a></p>
+                                        @endif
+                                    @endif
+                                </div>
                         </div> 
 
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-sm-3">
-                                    {{-- src="/storage/images/user_images/{{$user->featured_image}}" --}}
+                                    {{-- src="/storage/images/profile/{{$user->featured_image}}" --}}
                                     @if ($user->picture)
                                         <img
-                                            src="/storage/images/user_images/{{$user->picture->file_path}}"
+                                            src="/storage/images/profile/{{$user->picture->file_path}}"
                                             alt="{{$user->username}}"
                                             style="height: 150px; width:150px; border: 4px solid #eee; border-radius: 15px;"/>
                                         
                                     @else
                                         <img
-                                            src="https://ui-avatars.com/api/?background=random&name={{$user->username}}"
+                                            src="/storage/images/profile/no_image.png"
                                             alt="{{$user->username}}"
                                             style="height: 150px; width:150px; border: 4px solid #eee; border-radius: 15px;"/>
                                     @endif
                                     @auth
-                                        
-                                        <div class="btn-actions-pane-right mt-3">
-                                            <p><a href="#" class="btn btn-outline-info btn-sm mr-3"  id="edit-image-button">Edit Image</a></p>
-                                        </div>
-
+                                        @if ($user->id === Auth::id())
+                                            <div class="btn-actions-pane-right mt-3">
+                                                <p><a href="#" class="btn btn-outline-info btn-sm mr-3"  id="edit-image-button">Edit Image</a></p>
+                                            </div>
+                                        @endif
                                     @endauth
                                 </div>
 
@@ -54,24 +68,25 @@
                                                 <h6 class="ml-2 text">{{$user->display_name}}</h6>
                                             </div>
                                         </div>
+                                        @if ($user->id === Auth::id())
+                                            <div class="col-md-12 mb-2">
+                                                <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <h6 class="ml-1 font-weight-bold">Username :</h6>
+                                                </div>
+                                                    <h6 class="ml-2 text">{{$user->username}}</h6>
+                                                </div>
+                                            </div>
 
-                                        <div class="col-md-12 mb-2">
-                                            <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <h6 class="ml-1 font-weight-bold">Username :</h6>
+                                            <div class="col-md-12 mb-2">
+                                                <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <h6 class="ml-1 font-weight-bold">Email :</h6>
+                                                </div>
+                                                <h6 class="ml-2 text">{{$user->email}}</h6>
+                                                </div>
                                             </div>
-                                                <h6 class="ml-2 text">{{$user->username}}</h6>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-12 mb-2">
-                                            <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <h6 class="ml-1 font-weight-bold">Email :</h6>
-                                            </div>
-                                            <h6 class="ml-2 text">{{$user->email}}</h6>
-                                            </div>
-                                        </div>
+                                        @endif
 
                                         <div class="col-md-12 mb-2">
                                             <div class="input-group">
@@ -79,6 +94,15 @@
                                                 <h6 class="ml-1 font-weight-bold">Fullname :</h6>
                                             </div>
                                             <h6 class="ml-2 text">{{$user->name}}</h6>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 mb-2">
+                                            <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <h6 class="ml-1 font-weight-bold">Friends :</h6>
+                                            </div>
+                                            <h6 class="ml-2 text">{{$user->friends_count}}</h6>
                                             </div>
                                         </div>
 
@@ -210,6 +234,28 @@ $('#edit-image-button').on('click',function(event){
     event.preventDefault();
     $('#edit-image').modal();
 });
+
+function follow(userId){
+    var token = $("meta[name='csrf-token']").attr("content");
+        $.ajax({
+            url: '{{ url('/user/profile/follow')}}'+'/'+userId,
+            type: 'GET',
+            success: function (response)
+            {
+                if(response==true){
+                    $("#follow").text("Unfriend ☹️");
+                }
+                if(response==false){
+                    $("#follow").text("Make Friend 😊");
+                }
+            },
+            error: function (error){
+                if (error.status === 403) {
+                    window.location.href = "{{url('/email/verify')}}";
+                }
+            }
+        });
+}
 
 </script>
 @endsection

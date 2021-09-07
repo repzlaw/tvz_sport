@@ -27,7 +27,7 @@ use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\FailedLoginsController;
 use App\Http\Controllers\Admin\UserSuspensionHistoriesController;
 use App\Http\Controllers\Auth\ProfileController as UserProfileController;
-use App\Http\Controllers\CommentsController;
+use App\Http\Controllers\Comment\CommentsController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\Editor\HomeController as EditorHomeController;
 use App\Http\Controllers\Editor\NewsController as EditorNewsController;
@@ -163,6 +163,11 @@ Route::prefix('/user/profile')->name('profile.')->middleware(['verified'])->grou
     Route::get('/', [UserProfileController::class, 'index'])->name('index');
     Route::post('/update-profile', [UserProfileController::class, 'updateProfile'])->name('edit');
     Route::post('/update-image', [UserProfileController::class, 'updateImage'])->name('edit.image');
+    Route::get('/{user_slug}', [UserProfileController::class, 'userProfile'])->name('user-profile');
+    //follow or unfollow user
+    Route::get('/follow/{id}', [UserProfileController::class,'followUser'])->name('follow');
+
+
 });
 
 //individual match page

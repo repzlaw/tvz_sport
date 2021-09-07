@@ -124,9 +124,9 @@ function getComments() {
             let comments = ``;
             msg.comments.data.forEach(com => {
                 //get image to display
-                let com_path = com.user.picture;
-                    let com_src = com_path ? "/storage/images/user_images/"+com.user.picture.file_path 
-                                    : "https://ui-avatars.com/api/?background=random&name="+com.user.username;
+                let com_path = com.profile_pic;
+                    let com_src = com_path ? "/storage/images/profile/"+com.profile_pic 
+                                    : "/storage/images/profile/no_image.png";
 
                 comments += `<div id="comment_div${com.id}">
                                 <div class="ml-2 col-12 col-md-8" 
@@ -136,9 +136,9 @@ function getComments() {
                                 >
                                     <img
                                         src="${com_src}"
-                                        alt="${com.user.username}"
+                                        alt="${com.username}"
                                         style="height: 30px; width:30px;  border-radius: 15px;"/>
-                                    <b class="ml-1 mr-5">${com.user.display_name ? com.user.display_name : com.user.username}</b>
+                                    <b class="ml-1 mr-5">${com.display_name ? com.display_name : com.username}</b>
                                     <br>
                                     <small class="comment_date" title="${com.created_at}">${com.created_at}</small>
                                     <div class="mt-2"
@@ -172,21 +172,20 @@ function getComments() {
                     let news_reply = '';   
                     com.reply.forEach(rep => {
                         //get image to display
-                        let rep_path = rep.user.picture;
-                            let rep_src = rep_path ? "/storage/images/user_images/"+rep.user.picture.file_path 
-                                            : "https://ui-avatars.com/api/?background=random&name="+rep.user.username;
+                        let rep_path = rep.profile_pic;
+                            let rep_src = rep_path ? "/storage/images/profile/"+rep.profile_pic 
+                                            : "/storage/images/profile/no_image.png";
 
                         news_reply += `<div id="reply_div${rep.id}">
                                             <div class="ml-2 col-12 col-md-8"
                                                             style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                                             opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
-                                                            border-top-left-radius: 0.25rem; flex: 1;"
-                                            >
+                                                            border-top-left-radius: 0.25rem; flex: 1;">
                                                 <img
                                                     src="${rep_src}"
-                                                    alt="${rep.user.username}"
+                                                    alt="${rep.username}"
                                                     style="height: 30px; width:30px;  border-radius: 15px;"/>
-                                                <b class="ml-1 mr-5">${rep.user.display_name ? rep.user.display_name : rep.user.username}</b>
+                                                <b class="ml-1 mr-5">${rep.display_name ? rep.display_name : rep.username}</b>
                                                 <br>
                                                 <small class="comment_date" title="${rep.created_at}">${rep.created_at}</small>
                                                 <div class="mt-2"
