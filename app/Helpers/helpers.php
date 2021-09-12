@@ -274,3 +274,15 @@ function checkUpvoted($mod, $comment_id, $user_id){
     }
     return response()->json(['status'=>false]);
 }
+
+//get friends count
+function friendCount($id)
+{
+    $follow = Friend::where(['followed_user_id'=>$id, 'status'=>'active'])
+                                    ->count();
+
+    $following = Friend::where(['user_id'=>$id, 'status'=>'active'])
+                                    ->count();
+
+    return $follow + $following;
+}

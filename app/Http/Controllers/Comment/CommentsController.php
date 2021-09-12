@@ -18,9 +18,22 @@ use App\Http\Requests\GetCommentRequest;
 use App\Http\Requests\StoreUpvoteRequest;
 use App\Http\Requests\DeleteCommentRequest;
 use App\Http\Requests\GetIndividualCommentRequest;
+use App\Services\Users\Comments\CommentService;
 
 class CommentsController extends Controller
 {
+    protected $CommentService;
+    /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(CommentService $CommentService)
+    {
+        $this->CommentService = $CommentService;
+    }
+
+
     //get comments based on specified parameters
     public function getComments(GetCommentRequest $request)
     {
@@ -56,92 +69,17 @@ class CommentsController extends Controller
         if ($lang) {
             //get comments based on category specified
             if ($category === 'news') {
-                $comments = NewsComment::where(['competition_news_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
-                                            ->orderBy($orderColumn,$ordertype)
-                                            ->select('id','competition_news_id','username','profile_pic','display_name',
-                                                    'parent_comment_id','user_id','content','created_at',
-                                                    'numRecommends')
-                                            ->simplePaginate($page);
-
-                // $total = count($comments);
-                foreach ($comments as $key => $com) {
-                    $replies = NewsComment::where(['parent_comment_id'=> $com->id])
-                                            ->get(['id','competition_news_id','username','profile_pic','display_name',
-                                                'parent_comment_id','user_id','content','created_at','numRecommends',
-                                                ]);
-                    $com->reply = $replies;
-                    // $total = $total + count($replies);
-                }
-                $summary = (object) ['lang_iso'=>$language, 'language'=>$lang];
-                // , 'total'=>$total];
-
-                return response()->json(['summary'=>$summary,'comments'=> $comments]);
-            }
-            elseif ($category === 'players') {
-                $comments = PlayerComment::where(['player_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
-                                            ->with(['user:id,username,display_name','user.picture:user_id,file_path'])
-                                            ->orderBy($orderColumn,$ordertype)
-                                            ->select('id','competition_news_id','username','profile_pic','display_name',
-                                                    'parent_comment_id','user_id','content','created_at',
-                                                    'numRecommends')
-                                            ->simplePaginate($page);
-
-                foreach ($comments as $key => $com) {
-                    $replies = PlayerComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username,display_name','user.picture:user_id,file_path'])
-                                                ->get(['id','competition_news_id','username','profile_pic','display_name',
-                                                        'parent_comment_id','user_id','content','created_at','numRecommends',
-                                                        ]);
-                    $com->reply = $replies;
-
-                }
-                $summary = (object) ['lang_iso'=>$language, 'language'=>$lang];
-
-                return response()->json(['summary'=>$summary,'comments'=> $comments]);
-    
-            }
-            elseif ($category === 'teams') {
-                $comments = TeamComment::where(['team_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
-                                            ->with(['user:id,username,display_name','user.picture:user_id,file_path'])
-                                            ->orderBy($orderColumn,$ordertype)
-                                            ->select('id','competition_news_id','username','profile_pic','display_name',
-                                                    'parent_comment_id','user_id','content','created_at',
-                                                    'numRecommends')
-                                            ->simplePaginate($page);
-
-                foreach ($comments as $key => $com) {
-                    $replies = TeamComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username,display_name','user.picture:user_id,file_path'])
-                                            ->get(['id','competition_news_id','username','profile_pic','display_name',
-                                                        'parent_comment_id','user_id','content','created_at','numRecommends',
-                                                        ]);
-                    $com->reply = $replies;
-
-                }
-                $summary = (object) ['lang_iso'=>$language, 'language'=>$lang];
-
-                return response()->json(['summary'=>$summary,'comments'=> $comments]);
-    
-            }
-            elseif ($category === 'matches') {
-                $comments = MatchComment::where(['match_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
-                                            ->with(['user:id,username,display_name','user.picture:user_id,file_path'])
-                                            ->orderBy($orderColumn,$ordertype)
-                                            ->select('id','competition_news_id','username','profile_pic','display_name',
-                                                    'parent_comment_id','user_id','content','created_at',
-                                                    'numRecommends')
-                                            ->simplePaginate($page);
-                
-                foreach ($comments as $key => $com) {
-                    $replies = MatchComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username,display_name','user.picture:user_id,file_path'])
-                                            ->get(['id','competition_news_id','username','profile_pic','display_name',
-                                                        'parent_comment_id','user_id','content','created_at','numRecommends',
-                                                        ]);
-                    $com->reply = $replies;
-
-                }
-                $summary = (object) ['lang_iso'=>$language, 'language'=>$lang];
-
-                return response()->json(['summary'=>$summary,'comments'=> $comments]);
-    
+                $comments = $this->CommentService->newsComments($id, $lang, $orderColumn, $ordertype, $language, $page);
+                return $comments;
+            } elseif ($category === 'players') {
+                $comments = $this->CommentService->playerComments($id, $lang, $orderColumn, $ordertype, $language, $page);
+                return $comments;
+            } elseif ($category === 'teams') {
+                $comments = $this->CommentService->teamComments($id, $lang, $orderColumn, $ordertype, $language, $page);
+                return $comments;
+            } elseif ($category === 'matches') {
+                $comments = $this->CommentService->matchComments($id, $lang, $orderColumn, $ordertype, $language, $page);
+                return $comments;
             }
         }
 
@@ -258,7 +196,6 @@ class CommentsController extends Controller
         $model ='';
         $mod = $request->get('cat');
         $id = Auth::id();
-        // $id = $request->get('user');
 
         if ($mod === 'news') {
             $model = 'App\Models\NewsComment';

@@ -19,6 +19,7 @@ class CreateFriendsTable extends Migration
             $table->foreignId('followed_user_id')->references('id')->on('users');
             $table->date('follow_date');
             $table->string('updates_enabled')->nullable();
+            $table->enum('status',['active','pending','declined'])->default('pending');
             $table->timestamps();
         });
     }

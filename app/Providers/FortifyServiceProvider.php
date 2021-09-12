@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Rules\Recaptcha;
+use App\Models\UserLoginLog;
 use Illuminate\Http\Request;
 use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +17,6 @@ use App\Actions\Fortify\UpdateUserPassword;
 use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Fortify\Contracts\LogoutResponse;
 use App\Actions\Fortify\UpdateUserProfileInformation;
-use App\Models\UserLoginLog;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -81,6 +82,12 @@ class FortifyServiceProvider extends ServiceProvider
 
         //authentication
         Fortify::authenticateUsing(function (Request $request) {
+            $request->validate([
+                'g-recaptcha-response' => [
+                    'required',
+                     new Recaptcha()
+                ],
+            ]);
             $user = User::where('username', $request->username)->first();
             $usermail = User::where('email', $request->username)->first();
             $user = $user ? $user : $usermail;

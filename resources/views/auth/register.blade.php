@@ -61,6 +61,13 @@
                             </div>
                         </div>
 
+                        <div class="form-group row d-flex justify-content-center mt-3 mb-3">
+                            <div class="col-md-6">
+                                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                                <div class="g-recaptcha" id="feedback-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY')  }}"></div>
+                            </div>
+                        </div>
+
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">

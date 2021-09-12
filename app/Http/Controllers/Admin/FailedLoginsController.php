@@ -23,7 +23,6 @@ class FailedLoginsController extends Controller
     public function adminView()
     {
         $logs = AdminFailedLoginAttempt::orderBy('created_at','desc')->with('admin')->paginate(50);
-// return($logs);
         return view('admin/failedLogins/adminFailedLogins')->with(['logs'=>$logs]);
     }
 

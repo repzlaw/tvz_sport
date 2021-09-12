@@ -32,6 +32,7 @@ use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\Editor\HomeController as EditorHomeController;
 use App\Http\Controllers\Editor\NewsController as EditorNewsController;
 use App\Http\Controllers\Editor\Auth\LoginController as AuthLoginController;
+use App\Http\Controllers\User\FriendsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -164,9 +165,17 @@ Route::prefix('/user/profile')->name('profile.')->middleware(['verified'])->grou
     Route::post('/update-profile', [UserProfileController::class, 'updateProfile'])->name('edit');
     Route::post('/update-image', [UserProfileController::class, 'updateImage'])->name('edit.image');
     Route::get('/{user_slug}', [UserProfileController::class, 'userProfile'])->name('user-profile');
-    //follow or unfollow user
     Route::get('/follow/{id}', [UserProfileController::class,'followUser'])->name('follow');
 
+});
+
+//user profile routes
+Route::prefix('/friends')->name('friend.')->middleware(['verified'])->group(function () {
+    Route::get('/pending-requests', [FriendsController::class,'pendingRequest'])->name('pending-requests');
+    Route::get('/friends-list', [FriendsController::class,'friendList'])->name('friends-list');
+    Route::get('/accept-request/{friend_slug}', [FriendsController::class,'acceptRequest'])->name('accept.request');
+    Route::get('/decline-request/{friend_slug}', [FriendsController::class,'declineRequest'])->name('decline-request');
+    Route::post('/invite-friend', [FriendsController::class,'inviteFriend'])->name('invite');
 
 });
 

@@ -8,7 +8,7 @@
     <div class="row justify-content-center">
         <div class="col-12">
             {{-- <div class="row"> --}}
-                <div class="col-12 col-md-8">
+                <div class="col-12 col-md-8 m-auto">
                     <div class="card-hover-shadow-2x mb-3 mt-3 card">
                         <div class="card-header-tab card-header">
                             <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
@@ -20,23 +20,29 @@
                                 
                             </div>
                             <div class="btn-actions-pane-right float-right">
-                                    @if ($user->id === Auth::id())
-                                        <a href="#" class="btn btn-outline-warning btn-sm mr-3" id="edit-button" onclick='editUser({{$user}})'> Edit Profile</a>
-                                        <a href="/v1/comments/individual?cat=news" class="btn btn-outline-success btn-sm mr-3"> Activity</a>
-                                    @else
-                                        @if(Auth::user()->isFollowingUser(Auth::user()->id, $user->id))
-                                            <p><a href="#" class="btn btn-outline-primary btn-sm" onclick="follow({{$user->id}})" id="follow">Unfriend ☹️</a></p>
+                                @if ($user->id === Auth::id())
+                                    <a href="#" class="btn btn-outline-warning btn-sm mr-3" id="edit-button" onclick='editUser({{$user}})'> Edit Profile</a>
+                                    <a href="/v1/comments/individual?cat=news" class="btn btn-outline-success btn-sm mr-3"> Activity</a>
+                                    <a href="#" class="btn btn-outline-dark btn-sm mr-3" id="invite-button" onclick='inviteFriend({{$user}})'> Invite friend</a>
+                                @else
+                                    @if(Auth::user()->isFollowingUser(Auth::user()->id, $user->id))
+                                        @if (Auth::user()->userRequestPending(Auth::user()->id, $user->id))
+                                            <p><button href="#" class="btn btn-outline-primary btn-sm" disabled>Request Pending</button></p>
+                                        
                                         @else
-                                            <p><a href="#" class="btn btn-outline-primary btn-sm" onclick="follow({{$user->id}})" id="follow">Make friend 😊</a></p>
+                                            <p><a href="#" class="btn btn-outline-primary btn-sm" onclick="follow({{$user->id}})" id="follow">Unfriend ☹️</a></p>
+                                        
                                         @endif
+                                    @else
+                                        <p><a href="#" class="btn btn-outline-primary btn-sm" onclick="follow({{$user->id}})" id="follow">Make friend 😊</a></p>
                                     @endif
-                                </div>
+                                @endif
+                            </div>
                         </div> 
 
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-sm-3">
-                                    {{-- src="/storage/images/profile/{{$user->featured_image}}" --}}
                                     @if ($user->picture)
                                         <img
                                             src="/storage/images/profile/{{$user->picture->file_path}}"
@@ -65,7 +71,7 @@
                                             <div class="input-group-prepend">
                                                 <h6 class="ml-1 font-weight-bold">Display name :</h6>
                                             </div>
-                                                <h6 class="ml-2 text">{{$user->display_name}}</h6>
+                                                <h6 class="ml-2 text">{{$user->display_name? $user->display_name : $user->username}}</h6>
                                             </div>
                                         </div>
                                         @if ($user->id === Auth::id())
@@ -116,6 +122,14 @@
                                         
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row container d-flex justify-content-center mt-3">
+                                @if ($user->id === Auth::id())
+                                    <a href="{{route('friend.pending-requests')}}" class="btn btn-primary btn-sm mr-5 mt-2"> Pending Requests</a>
+                                    <a href="{{route('friend.friends-list')}}" class="btn btn-success btn-sm mr-5 mt-2" id="edit-button">See Friends List</a>
+                                @else
+
+                                @endif
                             </div>
                         </div>
                         
@@ -212,7 +226,41 @@
       <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
+    </div>
   </div>
+  <!-- invite friend modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id= "invite-friend-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Invite Friend</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+            <form action="{{ route('friend.invite')}}" method="post" class="form-group" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+              <div class="form-group">
+                <div class="input-group mb-4" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"> Email</span>
+                    </div>
+                    <input  type="email" name="email" class="form-control" placeholder="enter email" value="{{ old('email') }}" required>
+                </div>
+                <br>
+                  <input  type="hidden" name="user_id" class="form-control" value="{{$user->id}}" required>
+                  <input  type="hidden" name="username" class="form-control" value="{{$user->username}}" required>
+                  <input  type="hidden" name="display_name" class="form-control" value="{{$user->display_name}}" required>
+                  <input  type="hidden" name="user_email" class="form-control" value="{{$user->email}}" required>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" id = "invite-modal-save">Save changes</button>
+              </div>
+          </form>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </div>
 
 @endsection
@@ -229,6 +277,11 @@ function editUser(user){
     $('#edit-modal').modal();
 }
 
+//modal to invite friend
+function inviteFriend(user){
+    $('#invite-friend-modal').modal();
+}
+
 //edit image
 $('#edit-image-button').on('click',function(event){
     event.preventDefault();
@@ -243,7 +296,7 @@ function follow(userId){
             success: function (response)
             {
                 if(response==true){
-                    $("#follow").text("Unfriend ☹️");
+                    $("#follow").text("Request sent");
                 }
                 if(response==false){
                     $("#follow").text("Make Friend 😊");

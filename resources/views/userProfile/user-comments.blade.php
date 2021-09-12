@@ -63,7 +63,7 @@
                                                 <div class="col-12 mt-1">
                                                     <div class="row">
                                                         <p class="ml-4 mt-2"><a href="javascript:void(0)" style="text-decoration: none;" id="view_upvotes{{$com->id}}">{{$com->numRecommends}} @choice('upvote|upvotes', $com->numRecommends) </a> </p>
-                                                        <!-- <p class="ml-4 mt-2" onclick="deleteComment({{$com->id}},{{$com->user_id}})"><a href="javascript:void(0)" id="delete_comment{{$com->id}}">delete</a> </p> -->
+                                                        {{-- <p class="ml-4 mt-2" onclick="deleteComment({{$com->id}},{{$com->user_id}})"><a href="javascript:void(0)" id="delete_comment{{$com->id}}">delete</a> </p>  --}}
                                                     </div>
                                                 </div>
                                                 @endauth

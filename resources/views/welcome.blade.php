@@ -1,5 +1,9 @@
 @extends('layouts.app')
-
+@section('style')
+    a:visited {
+        color: #1a0dab;
+    }
+@endsection
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -18,9 +22,9 @@
                                     <p> 
                                     <a href="{{route('news.get.single',['news_slug'=>$news->url_slug.'-'.$news->id])}}"> 
                                         <h6>{{$news->headline}} <br>
-                                            <small>  posted by {{$news->user->username}} </small>
+                                            <small>  ~ {{$news->user->username}} </small>
                                             <small>  - {{$news->created_at}} </small>
-                                            <small> -  {{$news->comment_count}} comment(s) </small>
+                                            <small> -  {{$news->comment_count}} <i class="fas fa-comment-alt"></i>  </small>
                                         </h6>
                                     </a>
                                     </p>
@@ -42,9 +46,9 @@
                                         <p> 
                                         <a style="text-decoration: none" href="{{route('news.get.single',['news_slug'=>$news->url_slug.'-'.$news->id])}}"> 
                                             <h6>{{$news->headline}} <br>
-                                            <small>  posted by {{$news->user->username}} </small>
+                                            <small>  ~ {{$news->user->username}} </small>
                                             <small>  - {{$news->created_at}} </small>
-                                            <small> -  {{$news->comment_count}} comment(s) </small>
+                                            <small> -  {{$news->comment_count}} <i class="fas fa-comment-alt"></i>  </small>
                                             </h6>
                                         </a>
                                         </p>

@@ -34,11 +34,12 @@
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
 
     <style>
-            body {
-                font-family: 'Nunito', sans-serif;
-                background-color: #212529;
-            }
-        </style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #212529;
+        }
+        @yield('style')
+    </style>
 </head>
 <body>
     <div id="app">

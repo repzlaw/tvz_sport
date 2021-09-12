@@ -3,18 +3,26 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\Friend;
 use Illuminate\Http\Request;
+use App\Models\UserProfilePic;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\EditUserRequest;
-use App\Models\UserProfilePic;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProfileController extends Controller
 {
     public function index()
     {
         if (Auth::check()) {
-            $user = User::where('id', Auth::user()->id)->with(['picture'])->withCount('friends')->firstOrFail();
+            $user = User::where('id', Auth::user()->id)
+                        ->with(['picture'])
+                        ->firstOrFail();
+
+            $friend_count = friendCount($user->id);
+            $user->friends_count = $friend_count;
     
             return view('userProfile.user-profile')->with(['user'=>$user]);
         }
@@ -83,8 +91,12 @@ class ProfileController extends Controller
     {
         $explode = explode('-',$slug);
         $id = end($explode);
-        $user = User::where('id', $id)->with(['picture'])->withCount('friends')->firstOrFail();
-        // return $user;
+        $user = User::where('id', $id)
+                    ->with(['picture'])
+                    ->firstOrFail();
+
+        $friend_count = friendCount($user->id);
+        $user->friends_count = $friend_count;
 
         return view('userProfile.user-profile')->with(['user'=>$user]);
     }

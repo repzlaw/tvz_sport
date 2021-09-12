@@ -89,8 +89,27 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isFollowingUser($userId, $followed_user_id)
     {
-        $following = Friend::where(['user_id'=>$this->id, 'followed_user_id'=>$followed_user_id])->pluck('user_id')->toArray();
-        if (in_array($userId, $following)){
+        $following = Friend::where(['user_id'=>$this->id, 'followed_user_id'=>$followed_user_id])
+                            ->pluck('user_id')->toArray();
+
+        $followed = Friend::where(['followed_user_id'=>$this->id, 'user_id'=>$followed_user_id])
+                            ->pluck('followed_user_id')->toArray();
+
+        if (in_array($userId, $following) || in_array($userId, $followed)){
+            return true;
+        }
+        return false;
+    }
+
+    public function userRequestPending($userId, $followed_user_id)
+    {
+        $following = Friend::where(['user_id'=>$this->id, 'followed_user_id'=>$followed_user_id, 'status'=>'pending'])
+                            ->pluck('user_id')->toArray();
+
+        $followed = Friend::where(['followed_user_id'=>$this->id, 'user_id'=>$followed_user_id, 'status'=>'pending'])
+                            ->pluck('followed_user_id')->toArray();
+                            
+        if (in_array($userId, $following) || in_array($userId, $followed)){
             return true;
         }
         return false;
