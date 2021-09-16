@@ -17,10 +17,33 @@
                                 @else
                                     {{$user->display_name? $user->display_name : $user->username}}'s profile
                                 @endif
-                                
                             </div>
                             <div class="btn-actions-pane-right float-right">
                                 @if ($user->id === Auth::id())
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-th"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                                <a href="#" class="dropdown-item btn btn-outline-warning btn-sm mr-3" id="edit-button" onclick='editUser({{$user}})'> Edit Profile</a>
+                                                <a href="/v1/comments/individual?cat=news" class="dropdown-item btn btn-outline-success btn-sm mr-3"> Activity</a>
+                                                <a href="#" class="dropdown-item btn btn-outline-dark btn-sm mr-3" id="invite-button" onclick='inviteFriend({{$user}})'> Invite friend</a>
+                                                <a href="#" class="dropdown-item btn btn-outline-dark btn-sm mr-3" id="change-password-button" onclick='changePassword({{$user}})'> Change Password</a>
+                                            </div>
+                                        </div>
+                                @else
+                                    @if(Auth::user()->isFollowingUser(Auth::user()->id, $user->id))
+                                        @if (Auth::user()->userRequestPending(Auth::user()->id, $user->id))
+                                            <p><button href="#" class="btn btn-outline-primary btn-sm" disabled>Request Pending</button></p>
+                                        @else
+                                            <p><a href="#" class="btn btn-outline-primary btn-sm" onclick="follow({{$user->id}})" id="follow">Unfriend ☹️</a></p>
+                                        
+                                        @endif
+                                    @else
+                                        <p><a href="#" class="btn btn-outline-primary btn-sm" onclick="follow({{$user->id}})" id="follow">Make friend 😊</a></p>
+                                    @endif
+                                @endif
+                                {{-- @if ($user->id === Auth::id())
                                     <a href="#" class="btn btn-outline-warning btn-sm mr-3" id="edit-button" onclick='editUser({{$user}})'> Edit Profile</a>
                                     <a href="/v1/comments/individual?cat=news" class="btn btn-outline-success btn-sm mr-3"> Activity</a>
                                     <a href="#" class="btn btn-outline-dark btn-sm mr-3" id="invite-button" onclick='inviteFriend({{$user}})'> Invite friend</a>
@@ -36,7 +59,7 @@
                                     @else
                                         <p><a href="#" class="btn btn-outline-primary btn-sm" onclick="follow({{$user->id}})" id="follow">Make friend 😊</a></p>
                                     @endif
-                                @endif
+                                @endif --}}
                             </div>
                         </div> 
 
@@ -261,6 +284,50 @@
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<!-- changePassword modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id= "change-password-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Change Password</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+            <form action="{{ route('profile.change-password')}}" method="post" class="form-group" enctype="multipart/form-data">
+                    {{ csrf_field() }}
+              <div class="form-group">
+                <div class="input-group mb-3" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"> Old Password</span>
+                    </div>
+                    <input  type="text" name="old_password" class="form-control" placeholder="enter old password" value="{{ old('old_password') }}" required>
+                </div>
+                <div class="input-group mb-3" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"> New Password</span>
+                    </div>
+                    <input  type="text" name="new_password" class="form-control" placeholder="enter new password" value="{{ old('new_password') }}" required>
+                </div>
+                <div class="input-group mb-2" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"> Confirm Password</span>
+                    </div>
+                    <input  type="text" name="confirm_password" class="form-control" placeholder="confirm new password" value="{{ old('confirm_password') }}" required>
+                </div>
+                  <input  type="hidden" name="user_id" class="form-control" value="{{$user->id}}" required>
+                  <input  type="hidden" name="user_name" class="form-control" value="{{$user->username}}" required>
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" id = "invite-modal-save">Save changes</button>
+              </div>
+          </form>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 </div>
 
 @endsection
@@ -280,6 +347,11 @@ function editUser(user){
 //modal to invite friend
 function inviteFriend(user){
     $('#invite-friend-modal').modal();
+}
+
+//modal to invite friend
+function changePassword(user){
+    $('#change-password-modal').modal();
 }
 
 //edit image

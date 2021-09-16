@@ -4,15 +4,15 @@ namespace App\Models;
 
 use App\Models\TeamFollower;
 use App\Models\PlayerFollower;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -129,6 +129,22 @@ class User extends Authenticatable implements MustVerifyEmail
     public function friends()
     {
         return $this->hasMany(Friend::class,'followed_user_id');
+    }
+
+    //generate token
+    public function generateEmailToken(){
+        $this->timestamps = false;
+        $this->two_factor_secret =  mt_rand(100000,999999);
+        $this->two_factor_expiry = now()->addMinutes(10);
+        $this->save();
+    }
+    
+    //reset email token
+    public function resetPasswordToken(){
+        $this->timestamps = false;
+        $this->two_factor_secret = null;
+        $this->two_factor_expiry = null;
+        $this->save();
     }
 
     

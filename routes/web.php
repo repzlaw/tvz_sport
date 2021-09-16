@@ -33,6 +33,7 @@ use App\Http\Controllers\Editor\HomeController as EditorHomeController;
 use App\Http\Controllers\Editor\NewsController as EditorNewsController;
 use App\Http\Controllers\Editor\Auth\LoginController as AuthLoginController;
 use App\Http\Controllers\User\FriendsController;
+use App\Http\Controllers\User\UserTwoFactorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -166,10 +167,15 @@ Route::prefix('/user/profile')->name('profile.')->middleware(['verified'])->grou
     Route::post('/update-image', [UserProfileController::class, 'updateImage'])->name('edit.image');
     Route::get('/{user_slug}', [UserProfileController::class, 'userProfile'])->name('user-profile');
     Route::get('/follow/{id}', [UserProfileController::class,'followUser'])->name('follow');
+    //change password
+    Route::post('/change-password', [UserProfileController::class, 'changePassword'])->name('change-password');
+    Route::get('/change-password/verify', [UserTwoFactorController::class, 'passwordTwoFaIndex'])->name('verify.change-password');
+    Route::post('/password-token-verify', [UserTwoFactorController::class, 'verifyPassword'])->name('password-token.confirm');
+    Route::get('/password-resend-token', [UserTwoFactorController::class, 'resendPasswordToken'])->name('token.resend');
 
 });
 
-//user profile routes
+//user friends routes
 Route::prefix('/friends')->name('friend.')->middleware(['verified'])->group(function () {
     Route::get('/pending-requests', [FriendsController::class,'pendingRequest'])->name('pending-requests');
     Route::get('/friends-list', [FriendsController::class,'friendList'])->name('friends-list');
@@ -178,6 +184,7 @@ Route::prefix('/friends')->name('friend.')->middleware(['verified'])->group(func
     Route::post('/invite-friend', [FriendsController::class,'inviteFriend'])->name('invite');
 
 });
+
 
 //individual match page
 Route::get('/poland-vs-belguim-1', function () {

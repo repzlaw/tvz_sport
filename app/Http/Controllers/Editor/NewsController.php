@@ -72,6 +72,7 @@ class NewsController extends Controller
         ]);
 
         if ( $post) {
+            cache()->forget('homepage-latest-news');
             //insert record into playernews table
             if ($playersID) {
                 foreach ($playersID as $key => $id) {

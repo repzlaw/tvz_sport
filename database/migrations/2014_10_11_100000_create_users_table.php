@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->text('two_factor_secret')->nullable();
             $table->text('two_factor_recovery_codes')->nullable();
+            $table->dateTime('two_factor_expiry')->nullable();
             $table->date('ban_date')->nullable();
             $table->time('ban_time')->nullable();
             $table->date('ban_till')->nullable();

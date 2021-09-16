@@ -11,7 +11,7 @@ class inviteFriend extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $subject = "TVZ_SPORT Invite";
+    public $subject = "TVZ SPORT Invite";
     public $display_name;
     public $user_email;
     /**

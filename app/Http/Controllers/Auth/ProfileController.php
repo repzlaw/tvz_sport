@@ -9,8 +9,13 @@ use App\Models\UserProfilePic;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\EditUserRequest;
+use App\Mail\PasswordUpdateVerification;
 use Illuminate\Database\Eloquent\Builder;
+use App\Http\Requests\ChangePasswordRequest;
 
 class ProfileController extends Controller
 {
@@ -107,5 +112,25 @@ class ProfileController extends Controller
         $follow = userFollowSystem($id);
 
         return $follow;
+    }
+
+    //changePassword
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $user = Auth::user();
+        $key = 'password-'.$user->username;
+        if(Hash::check($request->old_password, $user->password) && $request->confirm_password === $request->new_password)
+        {
+            $hashedPassword = Hash::make($request->new_password);
+            
+            $cached_password = Cache::put($key, $hashedPassword, $seconds = 15*60);
+            
+            $user->generateEmailToken();
+            Mail::to($user->email)->send(new PasswordUpdateVerification($user));
+            return redirect()->route('profile.verify.change-password');
+        }
+        session()->flash('error','Passwords do not match');
+        return back();
+        // dd($hashedPassword);
     }
 }
