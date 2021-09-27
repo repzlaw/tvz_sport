@@ -7,6 +7,7 @@ use App\Models\TeamFollower;
 use App\Models\PlayerFollower;
 use App\Models\CompetitionFollower;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 //follow or unfollow competition
 function competitionFollowSystem($event_id)
@@ -90,7 +91,7 @@ function process_image($image)
     // Get filename with the extension
     $filenameWithExt = $image->getClientOriginalName();
     //get file name with the extension
-    $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+    $filename = Hash::make(pathinfo($filenameWithExt, PATHINFO_FILENAME));
     //get just extension
     $extension = $image->getClientOriginalExtension();
     
@@ -108,7 +109,7 @@ function searchPlayer($query, $from)
         if ($q != null) {
             $player = Player::where('full_name', 'like', "%$q%")->limit(5)->get();
             if (count($player)) {
-                if ($from === 'editor') {
+                if ($from === 'user') {
                     foreach ($player as $key => $p) {
                         $output .= "
                         <li class='list-group-item' onclick='selectPlayer($p)'>".$p->full_name."</li>
@@ -137,7 +138,7 @@ function searchTeam($query, $from)
     if ($q != null) {
         $team = Team::where('team_name', 'like', "%$q%")->limit(5)->get();
         if (count($team)) {
-            if ($from === 'editor') {
+            if ($from === 'user') {
                 foreach ($team as $key => $p) {
                     $output .= "
                     <li class='list-group-item' onclick='selectteam($p)'>".$p->team_name."</li>
@@ -285,4 +286,12 @@ function friendCount($id)
                                     ->count();
 
     return $follow + $following;
+}
+
+//get active guard
+function activeGuard(){
+    foreach(array_keys(config('auth.guards')) as $guard){
+        if(auth()->guard($guard)->check()) return $guard;
+    }
+    return null;
 }

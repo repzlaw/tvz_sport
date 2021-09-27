@@ -22,9 +22,7 @@ class NewsController extends Controller
     //return post news page
     public function index()
     {
-        $editor = Auth::guard('editor')->user();
-
-        $editorsNews= CompetitionNews::where('posted_by', $editor->id)->with(['playernews.player','teamnews.team'])
+        $editorsNews= CompetitionNews::with(['playernews.player','teamnews.team'])
                         ->orderBy('created_at','desc')->paginate(30);
         
         return view('editor/news/post-news')->with(['posts' => $editorsNews]);
@@ -99,7 +97,8 @@ class NewsController extends Controller
     // return edit news view
     public function editNewsView($id)
     {
-        $news= CompetitionNews::where('id', $id)->firstOrFail();
+        $news= CompetitionNews::where('id', $id)->with(['playernews.player','teamnews.team'])->firstOrFail();
+        // return $news;
 
         $sport_types = SportType::all();
 
@@ -229,6 +228,41 @@ class NewsController extends Controller
         $team = TeamNewsRelationship::where('id',$id)->delete();
 
         return redirect()->back()->with(['message' => 'team deleted from news']);
+    }
+
+    //sort news by status
+    public function newsSearch()
+    {
+        $searchData = $_GET['query'];
+        if ($searchData) {
+            $editorsNews= CompetitionNews::where('status', $searchData)->with(['playernews.player','teamnews.team'])
+                        ->orderBy('created_at','desc')->paginate(30);
+        
+            return view('editor/news/post-news')->with(['posts' => $editorsNews]);
+            
+        }
+            return redirect('editor/news');
+
+    }
+
+    //change news status
+    public function changeStatus(Request $request)
+    {
+        $request->validate(['status'=>'required|string'
+                            // 'news_id'=>'required'
+                            ]);
+
+        $post = CompetitionNews::findOrFail($request->news_id);
+        $post->update([
+                'status'=>$request->status
+        ]);
+        if ($post) {
+            cache()->forget('homepage-latest-news');
+            cache()->forget('homepage-previous-news');
+
+        }
+
+        return back()->with('message', 'updated successfully');
     }
 
 }

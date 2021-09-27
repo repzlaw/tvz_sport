@@ -109,11 +109,22 @@
                                         style="height: 30px; width:30px;  border-radius: 15px;"/>
                                     @endif
                                 </a>
-                                {{-- /v1/comments/individual?cat=news --}}
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="/user/profile">
                                         <i class="fa fa-user text-primary mr-2"></i>
                                         {{ __('Profile') }}
+                                    </a>
+
+                                    @if (Auth::user()->role_id === 2 || Auth::user()->role_id === 3)
+                                    <a class="dropdown-item" href="/user/news">
+                                        <i class="fa fa-newspaper text-primary mr-2"></i>
+                                        {{ __('Post news') }}
+                                    </a>
+                                    @endif
+
+                                    <a class="dropdown-item" href="/user/settings">
+                                        <i class="fa fa-cog text-primary mr-2"></i>
+                                        {{ __('Settings') }}
                                     </a>
 
                                     <a class="dropdown-item" href="{{ route('logout') }}"

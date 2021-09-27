@@ -16,9 +16,11 @@ class EditorRoleSeeder extends Seeder
     {
         $editor = array(
             array(
+                'id' => 1,
                 'role' => 'editor',
             ),
             array(
+                'id' => 2,
                 'role' => 'author',
             )
         );

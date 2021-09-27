@@ -17,7 +17,6 @@
                     <section class="row posts"  >
                         @if (count($posts)>0)
                             @foreach ($posts as $post)
-                            
                                 <article class="post" data-postid="{{ $post->id }}">
                                     <a href="{{route('news.get.single',['news_slug'=>$post->news->url_slug.'-'.$post->news->id])}}"> 
                                         <h5 style="font-weight: bold;">{{$post->news->headline}} </h5>
@@ -27,8 +26,7 @@
                                         {!! html_entity_decode($post->news->content) !!}
                                     </div>
                                         <input type="hidden" name="page_title" id="post_page_title" value="{{$post->page_title}}">
-                                        <input type="hidden" name="meta_description" id="post_meta_description" value="{{$post->meta_description}}">
-                                        
+                                        <input type="hidden" name="meta_description" id="post_meta_description" value="{{$post->meta_description}}">    
                                 </article>
                             @endforeach
                             {{ $posts->links() }}

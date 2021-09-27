@@ -12,7 +12,7 @@
                         @csrf
 
                         <div class="form-group row">
-                            <label for="username" class="col-md-4 col-form-label text-md-right">{{ __('Username') }}</label>
+                            <label for="username" class="col-md-4 col-form-label text-md-right">{{ __('Display Name') }}</label>
 
                             <div class="col-md-6">
                                 <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
@@ -39,6 +39,7 @@
                             </div>
                         </div>
 
+                        <small class="mb-2">The password must be at least 8 characters and contain at least one uppercase character, one number, and one special character.</small>
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
@@ -60,14 +61,19 @@
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                             </div>
                         </div>
-
-                        <div class="form-group row d-flex justify-content-center mt-3 mb-3">
-                            <div class="col-md-6">
-                                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-                                <div class="g-recaptcha" id="feedback-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY')  }}"></div>
-                            </div>
-                        </div>
-
+                        
+                        @if ($captcha_enable)
+                            @if ($captcha_register)
+                                @if ($captcha_site_key)
+                                    <div class="form-group row d-flex justify-content-center mt-3 mb-3">
+                                        <div class="col-md-6">
+                                            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                                            <div class="g-recaptcha" id="feedback-recaptcha" data-sitekey="{{ $captcha_site_key->value }}"></div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
+                        @endif
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">

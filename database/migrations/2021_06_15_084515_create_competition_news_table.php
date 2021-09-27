@@ -22,9 +22,10 @@ class CreateCompetitionNewsTable extends Migration
             $table->string('page_title')->nullable();
             $table->string('meta_description')->nullable();
             $table->string('meta_keywords')->nullable();
-            $table->foreignId('posted_by')->references('id')->on('editors');
+            $table->foreignId('posted_by')->references('id')->on('users');
             $table->enum('enable_comment',['1','0'])->default('1');
             $table->integer('comment_count')->default(0);
+            $table->enum('status',['published','draft','underreview','trash'])->default('published');
             $table->timestamps();
         });
     }

@@ -7,6 +7,7 @@ use App\Models\Competitions;
 use Illuminate\Http\Request;
 use App\Models\CompetitionNews;
 use App\Models\MatchEvent;
+use Illuminate\Support\Facades\Redis;
 
 class HomeController extends Controller
 {
@@ -27,6 +28,10 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // $redi = app()->make('redis');
+        // $s = $redi->set('keys','ywao');
+        // dd($redi);
+        // dd($s->get('keys'));
         $expiresAt = Carbon::now()->endOfDay()->addSecond();
         //get upcoming events
         $upcomingevents= cache()->remember('homepage-latest-event', $expiresAt, function(){
@@ -38,11 +43,13 @@ class HomeController extends Controller
         }); 
         //get latest news
         $latestnews= cache()->remember('homepage-latest-news', $expiresAt, function(){
-            return CompetitionNews::whereDate('created_at', Carbon::today())->orderBy('created_at', 'desc')->with('user','competition')->get();
+            return CompetitionNews::where('status','published')
+                                    ->whereDate('created_at', Carbon::today())->orderBy('created_at', 'desc')->with('user','competition')->get();
         });
         //get past news
         $previousnews= cache()->remember('homepage-previous-news', $expiresAt, function(){
-            return CompetitionNews::whereDate('created_at','!=', Carbon::today())->orderBy('created_at', 'desc')->with('user','competition')->get();
+            return CompetitionNews::where('status','published')
+                                    ->whereDate('created_at','!=', Carbon::today())->orderBy('created_at', 'desc')->with('user','competition')->get();
         });
 
         return view('welcome')->with(['upcomingevents'=> $upcomingevents, 'previousevents'=>$previousevents, 'latestnews'=> $latestnews, 'previousnews'=>$previousnews]);

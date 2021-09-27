@@ -20,6 +20,8 @@ class Admin extends Authenticatable
         'username',
         'email',
         'password',
+        'security_answer',
+        'security_question_id'
     ];
 
      /**
@@ -40,4 +42,9 @@ class Admin extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function passwordSecurity()
+    {
+        return $this->hasOne(AdminPasswordSecurity::class, 'admin_id');
+    }
 }

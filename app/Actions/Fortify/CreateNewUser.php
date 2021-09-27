@@ -7,6 +7,7 @@ use App\Rules\Recaptcha;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
@@ -37,7 +38,6 @@ class CreateNewUser implements CreatesNewUsers
                 'required',
                  new Recaptcha()
             ],
-
             'password' => $this->passwordRules(),
         ])->validate();
         
@@ -48,6 +48,8 @@ class CreateNewUser implements CreatesNewUsers
             'uuid'=> $uuid,
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
+            // 'security_question_id' => $input['security_question_id'] ?? NULL,
+            // 'security_answer' => $input['security_answer'] ? Crypt::encryptString($input['security_answer']): NULL,
         ]);
     }
 }

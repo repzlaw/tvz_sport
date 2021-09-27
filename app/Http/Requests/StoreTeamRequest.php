@@ -27,7 +27,7 @@ class StoreTeamRequest extends FormRequest
             'sport_type_id' => 'required',
             'team_name' => 'required|unique:teams,team_name|max:255',
             'summary' => 'required',
-            'featured_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'featured_image' => 'file|image|mimes:jpeg,png,jpg,svg|max:2048',
         ];
     }
 }

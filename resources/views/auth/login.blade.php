@@ -23,10 +23,10 @@
                         @endif
 
                         <div class="form-group row">
-                            <label for="username" class="col-md-4 col-form-label text-md-right">{{ __('Username / Email') }}</label>
+                            <label for="username" class="col-md-4 col-form-label text-md-right">{{ __('Email') }}</label>
 
                             <div class="col-md-6">
-                                <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
+                                <input id="username" type="email" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
 
                                 @error('username')
                                     <span class="invalid-feedback" role="alert">
@@ -49,17 +49,18 @@
                                 @enderror
                             </div>
                         </div>
-
-                        <div class="form-group row d-flex justify-content-center mt-3 mb-3">
-                            <div class="col-md-6">
-                                <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-                                <div class="g-recaptcha" id="feedback-recaptcha" data-sitekey="{{ env('GOOGLE_RECAPTCHA_KEY')  }}"></div>
-                            </div>
-                        </div>
-
-                        
-
-
+                        @if ($captcha_enable)
+                            @if ($captcha_login)
+                                @if ($captcha_site_key)
+                                    <div class="form-group row d-flex justify-content-center mt-3 mb-3">
+                                        <div class="col-md-6">
+                                            <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                                            <div class="g-recaptcha" id="feedback-recaptcha" data-sitekey="{{ $captcha_site_key->value }}"></div>
+                                        </div>
+                                    </div>
+                                @endif
+                            @endif
+                        @endif
                         <div class="form-group row">
                             <div class="col-md-6 offset-md-4">
                                 <div class="form-check">

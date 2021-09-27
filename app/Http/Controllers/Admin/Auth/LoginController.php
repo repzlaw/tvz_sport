@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use App\Models\Admin;
 use Illuminate\Http\Request;
+use App\Models\AdminLoginLog;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
-use App\Models\Admin;
-use App\Models\AdminLoginLog;
 
 class LoginController extends Controller
 {
@@ -29,6 +30,9 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
+//         $google2fa = app('pragmarx.google2fa');
+
+// return $google2fa->generateSecretKey();
         return view('admin.login',[
             'title' => 'Admin Login',
             'loginRoute' => 'admin.login',
@@ -92,6 +96,7 @@ class LoginController extends Controller
         
       //logout the admin...
       Auth::guard('admin')->logout();
+      Session::flush();
         return redirect()
         ->route('admin.login')
         ->with('status','Admin has been logged out!');

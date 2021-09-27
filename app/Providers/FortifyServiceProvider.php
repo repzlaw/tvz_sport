@@ -8,6 +8,8 @@ use App\Rules\Recaptcha;
 use App\Models\UserLoginLog;
 use Illuminate\Http\Request;
 use Laravel\Fortify\Fortify;
+use App\Models\Configuration;
+use App\Models\SecurityQuestion;
 use Illuminate\Support\Facades\Hash;
 use App\Actions\Fortify\CreateNewUser;
 use Illuminate\Support\ServiceProvider;
@@ -57,11 +59,34 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         Fortify::loginView(function () {
-            return view('auth.login');
+            $captcha_enable= Configuration::where('key','captcha_enable')->first();
+            $captcha_login= Configuration::where('key','captcha_login')->first();
+
+            if ($captcha_enable) {
+                $captcha_enable = $captcha_enable->value;
+                if ($captcha_login) {
+                    $captcha_login = $captcha_login->value;
+                }
+            }
+            $captcha_site_key= Configuration::where('key','captcha_site_key')->first();
+            return view('auth.login')->with(['captcha_site_key'=>$captcha_site_key,'captcha_enable'=>$captcha_enable,
+                                                'captcha_login'=>$captcha_login]);
         });
 
         Fortify::registerView(function () {
-            return view('auth.register');
+            $securityQuestions = SecurityQuestion::all();
+            $captcha_enable= Configuration::where('key','captcha_enable')->first();
+            $captcha_register= Configuration::where('key','captcha_register')->first();
+
+            if ($captcha_enable) {
+                $captcha_enable = $captcha_enable->value;
+                if ($captcha_register) {
+                    $captcha_register = $captcha_register->value;
+                }
+            }
+            $captcha_site_key= Configuration::where('key','captcha_site_key')->first();
+            return view('auth.register')->with(['captcha_site_key'=>$captcha_site_key,'captcha_enable'=>$captcha_enable,
+                                                'captcha_register'=>$captcha_register,'securityQuestions'=>$securityQuestions]);
         });
 
         Fortify::RequestPasswordResetLinkView(function () {
@@ -82,12 +107,22 @@ class FortifyServiceProvider extends ServiceProvider
 
         //authentication
         Fortify::authenticateUsing(function (Request $request) {
-            $request->validate([
-                'g-recaptcha-response' => [
-                    'required',
-                     new Recaptcha()
-                ],
-            ]);
+            $captcha_enable= Configuration::where('key','captcha_enable')->first();
+            $captcha_login= Configuration::where('key','captcha_login')->first();
+            if ($captcha_enable) {
+                $captcha_enable = $captcha_enable->value;
+                if ($captcha_login) {
+                    $captcha_login = $captcha_login->value;
+                    if ($captcha_login) {
+                        $request->validate([
+                            'g-recaptcha-response' => [
+                                'required',
+                                new Recaptcha()
+                            ],
+                        ]);
+                    }
+                }
+            }
             $user = User::where('username', $request->username)->first();
             $usermail = User::where('email', $request->username)->first();
             $user = $user ? $user : $usermail;

@@ -503,19 +503,21 @@
                     let com_path = com.profile_pic;
                     let com_src = com_path ? "/storage/images/profile/"+com.profile_pic
                                     : "/storage/images/profile/no_image.png";
-
+                    let slug = com.username;
+                    
                     comments += 
                         `<div id="comment_div${com.id}">
                             <div class="ml-2 col-12 col-md-8" 
                                             style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                             opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
-                                            border-top-left-radius: 0.25rem; flex: 1;"
-                            >
-                                <img
-                                    src="${com_src}"
-                                    alt="${com.username}"
-                                    style="height: 30px; width:30px;  border-radius: 15px;"/>
-                                <b class="ml-1 mr-5">${com.display_name ? com.display_name : com.username}</b>
+                                            border-top-left-radius: 0.25rem; flex: 1;">
+                                <a href="/user/profile/${slug}" style="text-decoration:none;">
+                                    <img
+                                        src="${com_src}"
+                                        alt="${com.username}"
+                                        style="height: 30px; width:30px;  border-radius: 15px;"/>
+                                    <b class="ml-1 mr-5" style="color:black">${com.display_name ? com.display_name : com.username}</b>
+                                </a>
                                 <br>
                                 <small class="comment_date" title="${com.created_at}">${com.created_at}</small>
                                 <div class="mt-2"
@@ -549,19 +551,21 @@
                             let rep_path = rep.profile_pic;
                             let rep_src = rep_path ? "/storage/images/profile/"+rep.profile_pic 
                                             : "/storage/images/profile/no_image.png";
+                            let repslug = rep.username;
 
                             news_reply += 
                                 `<div id="reply_div${rep.id}">
                                     <div class="ml-2 col-12 col-md-8"
                                                     style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                                     opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
-                                                    border-top-left-radius: 0.25rem; flex: 1;"
-                                    >
-                                        <img
+                                                    border-top-left-radius: 0.25rem; flex: 1;">
+                                        <a href="/user/profile/${repslug}" style="text-decoration:none;">
+                                            <img
                                             src="${rep_src}"
                                             alt="${rep.username}"
                                             style="height: 30px; width:30px;  border-radius: 15px;"/>
-                                        <b class="ml-1 mr-5">${rep.display_name ? rep.display_name : rep.username}</b>
+                                            <b class="ml-1 mr-5" style="color:black">${rep.display_name ? rep.display_name : rep.username}</b>
+                                        </a>
                                         <br>
                                         <small class="comment_date" title="${rep.created_at}">${rep.created_at}</small>
                                         <div class="mt-2"

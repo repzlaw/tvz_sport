@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use datatables;
+use HTMLPurifier;
 use App\Models\User;
 use App\Mail\BanUser;
 use App\Models\Admin;
@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\EditUserRequest;
 use App\Http\Requests\StoreUserRequest;
+use HTMLPurifier_Config;
 
 class UserController extends Controller
 {
@@ -40,11 +41,18 @@ class UserController extends Controller
     }
 
     //search users
-    public function searchUser()
+    public function searchUser(Request $request)
     {
-        $searchData = $_GET['query'];
-        $searchColumn = $_GET['search_column'];
+        $searchData = $request->input('query');
+        // $_GET['query'];
+        $searchColumn = $request->input('search_column');
+        // $_GET['search_column'];
         $users= '';
+        
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
+        $searchData = $purifier->purify($searchData);
+        $searchColumn = $purifier->purify($searchColumn);
 
         if (!is_null($searchData)) {
             if ($searchColumn==='id') {
@@ -74,6 +82,7 @@ class UserController extends Controller
             'uuid'=> $uuid,
             'name'=> $request->name,
             'email'=> $request->email,
+            'role_id'=> $request->user_type,
             'password'=> Hash::make($request->password),
         ]);
 
@@ -88,14 +97,14 @@ class UserController extends Controller
     //edit users
     public function edituser(EditUserRequest $request)
     {
-
         $user = User::findOrFail($request->user_id);
 
         $update = $user->update([
             'username'=> $request->username,
             'name'=> $request->name,
             'email'=> $request->email,
-            'display_name'=> $request->display_name,
+            // 'display_name'=> $request->display_name,
+            'role_id'=> $request->user_type,
             'password'=> $request->password ? Hash::make($request->password) : $user->password,
         ]);
 

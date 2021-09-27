@@ -17,7 +17,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Sport Type</span>
                                     </div>
-                                    <select class="form-control custom-select" name="sport_type" required>
+                                    <select class="form-control custom-select" name="sport_type" id="sport_type" required>
                                         <option value="">-- All Category -- </option> 
                                         @foreach ($sports as $sport)
                                         <option value="{{$sport->id}}" {{ $sport->id == $news->sport_type_id ? 'selected' : ''}}
@@ -41,7 +41,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">Enable comments</span>
                                     </div>
-                                    <select class="form-control custom-select" name="enable_comment" required>
+                                    <select class="form-control custom-select" name="enable_comment" id="enable_comment" required>
                                         <option value="1">Yes</option>                    
                                         <option value="0">No</option>                    
                                     </select>
@@ -53,19 +53,34 @@
                                 </div>
                                 <br>
                                 <div style="width: 80%; margin: auto;" class="col-12 col-md-12">
+                                    
                                     <div class="row">
                                         <div  class="col-6 col-md-6">
+                                            @foreach ($news->playernews as $playernews)
+                                                <span  class="badge badge-secondary mr-1 mb-2">
+                                                    {{$playernews->player->name}}
+                                                    <a href="{{route('editor.news.player.delete',['id'=>$playernews->id])}}">
+                                                        <i class="text-danger fa fa-trash fa-1x" style="cursor:pointer;"></i>
+                                                    </a>
+                                                </span>
+                                            @endforeach
                                             <div id="player-bagde" class="mb-2"></div>
                                             <input placeholder="search Players" type="text" size="30" class="form-control" id="search-input" onkeyup="showResult(this.value)">
                                             <ul id="livesearch" class="list-group"></ul>
-
                                         </div>
 
                                         <div  class="col-6 col-md-6">
+                                            @foreach ($news->teamnews as $teamnews)
+                                                <span class="badge badge-secondary mr-1 mb-2">
+                                                    {{$teamnews->team->team_name}}
+                                                    <a href="{{route('editor.news.team.delete',['id'=>$teamnews->id])}}">
+                                                        <i class="text-danger fa fa-trash fa-1x" style="cursor:pointer;"></i>
+                                                    </a>
+                                                </span>
+                                            @endforeach
                                             <div id="team-bagde" class="mb-2"></div>
                                             <input placeholder="search Teams" type="text" size="30" class="form-control" id="search-team" onkeyup="showTeamResult(this.value)">
                                             <ul id="liveteamsearch" class="list-group"></ul>
-
                                         </div>
                                     </div>
 
@@ -89,10 +104,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.2/tinymce.min.js?"></script>
   <script>
     tinymce.init({
-      selector: '#new-post'
+      selector: '#new-post',
+      plugins: 'link',
+      default_link_target: '_blank',
+      invalid_elements : "script",
     });
 </script>
 <script>
+$(document).ready(function() {
+    $('#enable_comment').val({{$news->enable_comment}});
+    $('#sport_type').val({{$news->sport_type}});
+});
 
 //function for player live search
 function showResult(str) {

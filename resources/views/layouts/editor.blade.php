@@ -103,6 +103,12 @@
               Players
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('editor.setting.all') }}">
+                <i class="fa fa-cog mr-2"></i>
+              Settings
+            </a>
+          </li>
         </ul>
 
         <!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">

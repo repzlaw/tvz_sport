@@ -37,14 +37,11 @@ class NewsController extends Controller
         $id = end($explode);
 
         $news = CompetitionNews::where(['id'=>$id])->with(['user','playernews.player','teamnews.team'])->firstOrFail();
-        // $comments = NewsComment::where(['competition_news_id'=>$id, 'parent_comment_id'=> null])->with(['user:id,username,created_at'])->orderBy('created_at','desc')->get();
 
-        // foreach ($comments as $key => $com) {
-        //    $replies = NewsComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username,created_at'])->get();
-        //    $com->reply = $replies;
-        // }
-        
-// return $comments;
+        if ($news->status != 'published') {
+            return abort(404,"Page not found"); 
+        }
+
         if (Auth::guard('editor')->check()){
             return view('editor/news/individual-news')->with(['news'=>$news]);
         }

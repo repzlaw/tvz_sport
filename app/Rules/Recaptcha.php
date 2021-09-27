@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Models\Configuration;
 use Illuminate\Contracts\Validation\Rule;
 
 class Recaptcha implements Rule
@@ -15,8 +16,13 @@ class Recaptcha implements Rule
 
     public function passes($attribute, $value)
     {
+        $RECAPTCHA_SECRET= Configuration::where('key','captcha_secret_key')->first();
+        $GOOGLE_RECAPTCHA_SECRET='';
+        if ($RECAPTCHA_SECRET) {
+            $GOOGLE_RECAPTCHA_SECRET = $RECAPTCHA_SECRET->value;
+        }
         $data = array(
-            'secret'   => env('GOOGLE_RECAPTCHA_SECRET'),
+            'secret'   => $GOOGLE_RECAPTCHA_SECRET,
             'response' => $value
         );
 

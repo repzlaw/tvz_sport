@@ -70,6 +70,17 @@ return [
             'database'  => env('DB_DATABASE_SECOND'),
             'username'  => env('DB_USERNAME_SECOND'),
             'password'  => env('DB_PASSWORD_SECOND'),
+            'collation' => 'utf8mb4_unicode_ci',
+        ],
+
+        'mysql3' => [
+            'driver'    => env('DB_CONNECTION_THIRD'),
+            'host'      => env('DB_HOST_THIRD'),
+            'port'      => env('DB_PORT_THIRD'),
+            'database'  => env('DB_DATABASE_THIRD'),
+            'username'  => env('DB_USERNAME_THIRD'),
+            'password'  => env('DB_PASSWORD_THIRD'),
+            'collation' => 'utf8mb4_unicode_ci',
         ],
 
         'pgsql' => [

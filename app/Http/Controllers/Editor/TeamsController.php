@@ -133,7 +133,7 @@ class TeamsController extends Controller
         if (Auth::guard('editor')->user()->editor_role_id === 1){
 
             $request->validate([
-                'featured_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'featured_image' => 'file|required|image|mimes:jpeg,png,jpg,svg|max:2048',
             ]);
             if ($request->hasFile('featured_image')) {
                 //process image

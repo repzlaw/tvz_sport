@@ -23,6 +23,8 @@ class Editor extends Authenticatable
         'uuid',
         'name',
         'password',
+        'security_answer',
+        'security_question_id'
     ];
 
     /**
@@ -43,6 +45,11 @@ class Editor extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function passwordSecurity()
+    {
+        return $this->hasOne(EditorPasswordSecurity::class, 'editor_id');
+    }
 
     /**
      * Get the competition the news was written for.

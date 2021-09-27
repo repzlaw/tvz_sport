@@ -192,6 +192,12 @@
               </li>
             </ul>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.setting.all') }}">
+            <i class="fa fa-cog mr-2"></i>
+              Settings
+            </a>
+          </li>
 
           <!-- <li class="nav-item">
             <a class="nav-link" href="#">

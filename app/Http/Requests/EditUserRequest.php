@@ -27,8 +27,9 @@ class EditUserRequest extends FormRequest
             'user_id' => 'required',
             'username' => 'required',
             'name' => 'required',
+            'user_type'=> 'required',
             'email' => 'required',
-            'display_name' => 'required',
+            // 'display_name' => 'required',
         ];
     }
 }

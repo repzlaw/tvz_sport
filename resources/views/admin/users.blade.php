@@ -16,7 +16,8 @@
                     </div> 
                     <div class="card-body">
                         <div class="col-12 mb-2">
-                            <form action="{{ route('admin.user.search')}}" method="get">
+                            <form action="{{ route('admin.user.search')}}" method="POST">
+                                {{ csrf_field() }}
                                 <div class="row">
                                     <div class="col-12 col-md-4">
                                         <div class="input-group mb-4" >
@@ -131,16 +132,15 @@
                     <input  type="email" name="email" class="form-control" placeholder="email" value="{{ old('email') }}" required>
                 </div>
 
-                <!-- <div class="input-group mb-4" >
+                <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text">User Type</span>
                     </div>
                     <select class="form-control custom-select" name="user_type" required>
-                        <option value="">-- select type -- </option> 
-                        <option value="user">User </option>                           
-                        <option value="editor">Editor </option>                           
+                        <option value="1">User </option>                           
+                        <option value="2">Author </option>                           
                     </select>
-                </div> -->
+                </div>
                 <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text"> Password</span>
@@ -192,6 +192,16 @@
                         <span class="input-group-text"> Email</span>
                     </div>
                     <input  type="email" name="email" id="email"  class="form-control" placeholder="email" value="{{ old('email') }}" required>
+                </div>
+
+                <div class="input-group mb-4" >
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">User Type</span>
+                    </div>
+                    <select class="form-control custom-select" id="user_type" name="user_type" required>
+                        <option value="1">User </option>                           
+                        <option value="2">Author </option>                           
+                    </select>
                 </div>
 
                 <div class="input-group mb-4" >
@@ -255,7 +265,7 @@ $('#create-button').on('click',function(event){
 function editUser(user){
     $('#username').val(user.username);
     $('#name').val(user.name);
-    $('#user_type').val(user.user_type);
+    $('#user_type').val(user.role_id);
     $('#email').val(user.email);
     $('#user_id').val(user.id);
     $('#password').val(user.password);

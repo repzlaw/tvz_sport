@@ -25,12 +25,12 @@
                                             <i class="fas fa-th"></i>
                                         </button>
                                         <div class="dropdown-menu">
-                                                <a href="#" class="dropdown-item btn btn-outline-warning btn-sm mr-3" id="edit-button" onclick='editUser({{$user}})'> Edit Profile</a>
-                                                <a href="/v1/comments/individual?cat=news" class="dropdown-item btn btn-outline-success btn-sm mr-3"> Activity</a>
-                                                <a href="#" class="dropdown-item btn btn-outline-dark btn-sm mr-3" id="invite-button" onclick='inviteFriend({{$user}})'> Invite friend</a>
-                                                <a href="#" class="dropdown-item btn btn-outline-dark btn-sm mr-3" id="change-password-button" onclick='changePassword({{$user}})'> Change Password</a>
-                                            </div>
+                                            <a href="#" class="dropdown-item btn btn-outline-warning btn-sm mr-3" id="edit-button" onclick='editUser({{$user}})'> Edit Profile</a>
+                                            <a href="/v1/comments/individual?cat=news" class="dropdown-item btn btn-outline-success btn-sm mr-3"> Activity</a>
+                                            <a href="#" class="dropdown-item btn btn-outline-dark btn-sm mr-3" id="invite-button" onclick='inviteFriend({{$user}})'> Invite friend</a>
+                                            <a href="#" class="dropdown-item btn btn-outline-dark btn-sm mr-3" id="change-password-button" onclick='changePassword({{$user}})'> Change Password</a>
                                         </div>
+                                    </div>
                                 @else
                                     @if(Auth::user()->isFollowingUser(Auth::user()->id, $user->id))
                                         @if (Auth::user()->userRequestPending(Auth::user()->id, $user->id))
@@ -137,8 +137,7 @@
 
                                         <div class="col-md-12 mb-2">
                                             <div class="input-group">
-                                            
-                                            <h6 class="ml-2 text badge badge-pill badge-success badge-success">{{$user->status}}</h6>
+                                                <h6 class="ml-2 text badge badge-pill badge-success badge-success">{{$user->status}}</h6>
                                             </div>
                                         </div>
 
@@ -303,6 +302,8 @@
                     </div>
                     <input  type="text" name="old_password" class="form-control" placeholder="enter old password" value="{{ old('old_password') }}" required>
                 </div>
+                <small class="mb-2">The password must be at least 8 characters and contain at least one uppercase character, one number, and one special character.</small>
+
                 <div class="input-group mb-3" >
                     <div class="input-group-prepend">
                         <span class="input-group-text"> New Password</span>

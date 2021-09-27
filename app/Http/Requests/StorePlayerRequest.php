@@ -30,7 +30,7 @@ class StorePlayerRequest extends FormRequest
             'name' => 'required',
             'status' => 'required',
             'active_since' => 'required',
-            'featured_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'featured_image' => 'file|image|mimes:jpeg,png,jpg,svg|max:2048',
         ];
     }
 }

@@ -148,7 +148,7 @@ class TeamController extends Controller
     public function editImage(Request $request)
     {
         $request->validate([
-            'featured_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'featured_image' => 'required|image|mimes:jpeg,png,jpg,svg|max:2048',
         ]);
         if ($request->hasFile('featured_image')) {
             //process image

@@ -30,6 +30,7 @@ class CreateUsersTable extends Migration
             $table->time('ban_time')->nullable();
             $table->date('ban_till')->nullable();
             $table->foreignId('policy_id')->nullable()->references('id')->on('ban_policies');
+            $table->foreignId('role_id')->nullable()->references('id')->on('user_roles');
             $table->datetime('last_login_at')->nullable();
             $table->string('last_login_ip')->nullable();
             $table->rememberToken();

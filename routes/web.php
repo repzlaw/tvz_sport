@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\TeamController;
@@ -21,18 +20,23 @@ use App\Http\Controllers\PlayerFollowersController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\CompetitionController;
 use App\Http\Controllers\CompetitionFollowersController;
-use App\Http\Controllers\Admin\Auth\ResetPasswordController;
 use App\Http\Controllers\Admin\SupportDepartmentsController;
-use App\Http\Controllers\Admin\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\FailedLoginsController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserSuspensionHistoriesController;
+use App\Http\Controllers\Admin\AdminPasswordSecurityController;
 use App\Http\Controllers\Auth\ProfileController as UserProfileController;
 use App\Http\Controllers\Comment\CommentsController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\Editor\HomeController as EditorHomeController;
 use App\Http\Controllers\Editor\NewsController as EditorNewsController;
 use App\Http\Controllers\Editor\Auth\LoginController as AuthLoginController;
+use App\Http\Controllers\Editor\EditorPasswordSecurityController;
+use App\Http\Controllers\Editor\SettingsController as EditorSettingsController;
+use App\Http\Controllers\Google2faController;
 use App\Http\Controllers\User\FriendsController;
+use App\Http\Controllers\User\NewsController as UserNewsController;
+use App\Http\Controllers\User\SettingsController as UserSettingsController;
 use App\Http\Controllers\User\UserTwoFactorController;
 
 /*
@@ -48,6 +52,10 @@ use App\Http\Controllers\User\UserTwoFactorController;
 
 //websites homepage
 Route::get('/', [ControllersHomeController::class,'index'])->name('home');
+Route::post('/2faVerify',[Google2faController::class,'g2faVerify'])->name('2faVerify');
+Route::post('/2fa-logout',[Google2faController::class,'logout'])->name('2fa.logout');
+
+
 
 //event routes
 Route::prefix('/event')->name('event.')->group(function(){
@@ -161,17 +169,62 @@ Route::prefix('/v1/comments')->name('comment.')->group(function(){
 });
 
 //user profile routes
-Route::prefix('/user/profile')->name('profile.')->middleware(['verified'])->group(function () {
-    Route::get('/', [UserProfileController::class, 'index'])->name('index');
-    Route::post('/update-profile', [UserProfileController::class, 'updateProfile'])->name('edit');
-    Route::post('/update-image', [UserProfileController::class, 'updateImage'])->name('edit.image');
-    Route::get('/{user_slug}', [UserProfileController::class, 'userProfile'])->name('user-profile');
-    Route::get('/follow/{id}', [UserProfileController::class,'followUser'])->name('follow');
-    //change password
-    Route::post('/change-password', [UserProfileController::class, 'changePassword'])->name('change-password');
-    Route::get('/change-password/verify', [UserTwoFactorController::class, 'passwordTwoFaIndex'])->name('verify.change-password');
-    Route::post('/password-token-verify', [UserTwoFactorController::class, 'verifyPassword'])->name('password-token.confirm');
-    Route::get('/password-resend-token', [UserTwoFactorController::class, 'resendPasswordToken'])->name('token.resend');
+Route::prefix('/user')->middleware(['verified'])->group(function () {
+    Route::prefix('/profile')->name('profile.')->group(function () {
+        Route::get('/', [UserProfileController::class, 'index'])->name('index');
+        Route::post('/update-profile', [UserProfileController::class, 'updateProfile'])->name('edit');
+        Route::post('/update-image', [UserProfileController::class, 'updateImage'])->name('edit.image');
+        Route::get('/{user_slug}', [UserProfileController::class, 'userProfile'])->name('user-profile');
+        Route::get('/follow/{id}', [UserProfileController::class,'followUser'])->name('follow');
+        //change password
+        Route::post('/change-password', [UserProfileController::class, 'changePassword'])->name('change-password');
+        Route::get('/change-password/verify', [UserTwoFactorController::class, 'passwordTwoFaIndex'])->name('verify.change-password');
+        Route::post('/password-token-verify', [UserTwoFactorController::class, 'verifyPassword'])->name('password-token.confirm');
+        Route::get('/password-resend-token', [UserTwoFactorController::class, 'resendPasswordToken'])->name('token.resend');
+    });
+
+
+    //user post, edit and delete news route
+    Route::prefix('/news')->middleware(['author'])->name('user.news.')->group(function(){
+        //get news page
+        Route::get('/', [UserNewsController::class,'index'])->name('all');
+
+        //get create news page
+        Route::get('/add-new', [UserNewsController::class,'createNewsView'])->name('create-view');
+
+        //create news
+        Route::post('/create', [UserNewsController::class,'createNews'])->name('create');
+
+        //get edit news page
+        Route::get('/edit/{news_id}', [UserNewsController::class,'editNewsView'])->name('edit-view');
+
+        //edit news
+        Route::post('/edit', [UserNewsController::class,'editNews'])->name('edit');
+
+        //delete news
+        Route::get('/delete/{id}', [UserNewsController::class,'deleteNews'])->name('delete');
+
+        //player search
+        Route::post('/player-search', [UserNewsController::class,'searchPlayer'])->name('search.player');
+
+        //team search
+        Route::post('/team-search', [UserNewsController::class,'searchTeam'])->name('search.team');
+
+        //delete player related to news
+        Route::get('/player/delete/{id}', [UserNewsController::class,'deletePlayer'])->name('player.delete');
+
+        //delete team related to news
+        Route::get('/team/delete/{id}', [UserNewsController::class,'deleteTeam'])->name('team.delete');
+
+    });
+
+    //settings route
+    Route::prefix('/settings')->name('setting.')->middleware(['auth'])->group(function(){
+        Route::get('/', [UserSettingsController::class, 'index'])->name('all');
+        Route::post('/save', [UserSettingsController::class, 'save'])->name('save');
+        Route::post('/security', [UserSettingsController::class, 'security'])->name('security');
+
+    });
 
 });
 
@@ -206,18 +259,21 @@ Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
 
     Route::namespace('Auth')->group(function(){
-        
         //Login Routes
         Route::get('/login', [LoginController::class,'showLoginForm'])->name('login');
         Route::post('/login', [LoginController::class,'login']);
         Route::get('/logout',[LoginController::class,'logout'])->name('logout');
+        Route::get('/2fa',[AdminPasswordSecurityController::class,'show2faForm'])->name('2fa');
+        Route::post('/generate-2fa-secret',[AdminPasswordSecurityController::class,'generate2faSecret'])->middleware(['admin','2fa'])->name('generate2faSecret');
+        Route::post('/enale2fa',[AdminPasswordSecurityController::class,'enable2fa'])->middleware(['admin','2fa'])->name('enable2fa');
+        Route::post('/disable2fa',[AdminPasswordSecurityController::class,'disable2fa'])->middleware(['admin','2fa'])->name('disable2fa');
     });
     
     // admin home
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->middleware(['admin','2fa'])->name('home');
 
     //sports routes
-    Route::prefix('/sports')->name('sport.')->middleware('admin')->group(function(){
+    Route::prefix('/sports')->name('sport.')->middleware(['admin','2fa'])->group(function(){
 
         // get all sports
         Route::get('/', [SportsController::class, 'index'])->name('all');
@@ -235,7 +291,7 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     });
 
     //competitions routes
-    Route::prefix('/competitions')->name('competition.')->middleware('admin')->group(function(){
+    Route::prefix('/competitions')->name('competition.')->middleware(['admin','2fa'])->group(function(){
 
         // get all competitions
         Route::get('/', [CompetitionController::class, 'index'])->name('all');
@@ -255,7 +311,7 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     });
 
     //users routes
-    Route::prefix('/users')->name('user.')->middleware('admin')->group(function(){
+    Route::prefix('/users')->name('user.')->middleware(['admin','2fa'])->group(function(){
 
         // get users page
         Route::get('/', [UserController::class, 'index'])->name('all');
@@ -264,7 +320,7 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
         Route::get('/get', [UserController::class, 'getUser'])->name('get');
 
         // search users
-        Route::get('/search', [UserController::class, 'searchUser'])->name('search');
+        Route::post('/search', [UserController::class, 'searchUser'])->name('search');
 
         //create user
         Route::post('/create', [UserController::class,'createuser'])->name('create');
@@ -287,7 +343,7 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     });
 
     //Editors routes
-    Route::prefix('/editors')->name('editor.')->middleware('admin')->group(function(){
+    Route::prefix('/editors')->name('editor.')->middleware(['admin','2fa'])->group(function(){
 
         // get Editors page
         Route::get('/', [EditorController::class, 'index'])->name('all');
@@ -296,7 +352,7 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
         Route::get('/get', [EditorController::class, 'getEditor'])->name('get');
 
         // search Editors
-        Route::get('/search', [EditorController::class, 'searchEditor'])->name('search');
+        Route::post('/search', [EditorController::class, 'searchEditor'])->name('search');
 
         //create Editor
         Route::post('/create', [EditorController::class,'createEditor'])->name('create');
@@ -319,7 +375,7 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     });
 
     //banpolicys routes
-    Route::prefix('/ban-policy')->name('ban-policy.')->middleware('admin')->group(function(){
+    Route::prefix('/ban-policy')->name('ban-policy.')->middleware(['admin','2fa'])->group(function(){
 
         // get banpolicys page
         Route::get('/', [BanPolicyController::class, 'index'])->name('all');
@@ -333,7 +389,7 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     });
 
     //support department routes
-    Route::prefix('/support-departments')->name('support-department.')->middleware('admin')->group(function(){
+    Route::prefix('/support-departments')->name('support-department.')->middleware(['admin','2fa'])->group(function(){
 
         // get support department page
         Route::get('/', [SupportDepartmentsController::class, 'index'])->name('all');
@@ -373,6 +429,14 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
         Route::get('/editor', [FailedLoginsController::class, 'editorView'])->name('editor');
     });
 
+    //settings route
+    Route::prefix('/settings')->name('setting.')->middleware(['admin','2fa'])->group(function(){
+        Route::get('/', [SettingsController::class, 'index'])->name('all');
+        Route::post('/save', [SettingsController::class, 'save'])->name('save');
+        Route::post('/security', [SettingsController::class, 'security'])->name('security');
+
+    });
+
 });
 
 //All the editor routes will be defined here...
@@ -382,13 +446,17 @@ Route::prefix('/editor')->name('editor.')->namespace('Editor')->group(function()
         Route::get('/login', [AuthLoginController::class,'showLoginForm'])->name('login');
         Route::post('/login', [AuthLoginController::class,'login']);
         Route::get('/logout',[AuthLoginController::class,'logout'])->name('logout');
+        Route::get('/2fa',[EditorPasswordSecurityController::class,'show2faForm']);
+        Route::post('/generate-2fa-secret',[EditorPasswordSecurityController::class,'generate2faSecret'])->name('generate2faSecret');
+        Route::post('/enale2fa',[EditorPasswordSecurityController::class,'enable2fa'])->name('enable2fa');
+        Route::post('/disable2fa',[EditorPasswordSecurityController::class,'disable2fa'])->name('disable2fa');
     });
 
     //editor homepage
-    Route::get('/home', [EditorHomeController::class,'index'])->name('home');
+    Route::get('/home', [EditorHomeController::class,'index'])->name('home')->middleware(['2fa']);
 
     //editors post, edit and delete news route
-    Route::prefix('/news')->name('news.')->middleware('editor')->group(function(){
+    Route::prefix('/news')->name('news.')->middleware(['editor','2fa'])->group(function(){
         //get news page
         Route::get('/', [EditorNewsController::class,'index'])->name('all');
 
@@ -419,13 +487,16 @@ Route::prefix('/editor')->name('editor.')->namespace('Editor')->group(function()
         //delete team related to news
         Route::get('/team/delete/{id}', [EditorNewsController::class,'deleteTeam'])->name('team.delete');
 
-        //individual news route
-        // Route::get('/{news_slug}', [EditorNewsController::class,'getSingleNews'])->name('get.single');
+        // sort news by status
+        Route::get('/search', [EditorNewsController::class,'newsSearch'])->name('search');
+
+        // change news status
+        Route::post('/change-status', [EditorNewsController::class,'changeStatus'])->name('status');
 
     });
 
     //team routes 
-    Route::prefix('/teams')->name('team.')->middleware('editor')->group(function(){
+    Route::prefix('/teams')->name('team.')->middleware(['editor','2fa'])->group(function(){
         //get all teams
         Route::get('/', [TeamsController::class,'index'])->name('get.all');
 
@@ -446,7 +517,7 @@ Route::prefix('/editor')->name('editor.')->namespace('Editor')->group(function()
     });
 
     //players routes
-    Route::prefix('/players')->name('player.')->group(function(){
+    Route::prefix('/players')->name('player.')->middleware(['editor','2fa'])->group(function(){
         //get all players
         Route::get('/', [PlayersController::class,'index'])->name('get.all');
 
@@ -467,4 +538,10 @@ Route::prefix('/editor')->name('editor.')->namespace('Editor')->group(function()
 
     });
 
+    //settings route
+    Route::prefix('/settings')->name('setting.')->middleware(['editor','2fa'])->group(function(){
+        Route::get('/', [EditorSettingsController::class, 'index'])->name('all');
+        Route::post('/save', [EditorSettingsController::class, 'save'])->name('save');
+
+    });
 });

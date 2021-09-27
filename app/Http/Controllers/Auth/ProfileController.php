@@ -58,7 +58,7 @@ class ProfileController extends Controller
     {
         // dd($request->all()); 
         $request->validate([
-            'featured_image' => 'required|image|mimes:jpeg,jpg,gif,png,svg|max:2048',
+            'featured_image' => 'file|required|image|mimes:jpeg,jpg,png,svg|max:2048',
         ]);
         if ($request->hasFile('featured_image')) {
             //process image
@@ -94,9 +94,9 @@ class ProfileController extends Controller
     //fun to get other users profile
     public function userProfile($slug)
     {
-        $explode = explode('-',$slug);
-        $id = end($explode);
-        $user = User::where('id', $id)
+        // $explode = explode('-',$slug);
+        // $id = end($explode);
+        $user = User::where('username', $slug)
                     ->with(['picture'])
                     ->firstOrFail();
 
@@ -131,6 +131,5 @@ class ProfileController extends Controller
         }
         session()->flash('error','Passwords do not match');
         return back();
-        // dd($hashedPassword);
     }
 }

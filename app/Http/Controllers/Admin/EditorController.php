@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use HTMLPurifier;
 use App\Models\Editor;
 use App\Models\EditorRole;
 use Illuminate\Support\Str;
@@ -9,7 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\StoreEditorRequest;
-
+use HTMLPurifier_Config;
 class EditorController extends Controller
 {
     /**
@@ -82,10 +83,15 @@ class EditorController extends Controller
     }
 
     //search editors
-    public function searchEditor()
+    public function searchEditor(Request $request)
     {
-        $searchData = $_GET['query'];
-        $searchColumn = $_GET['search_column'];
+        $searchData = $request->input('query');
+        $searchColumn = $request->input('search_column');
+        
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
+        $searchData = $purifier->purify($searchData);
+        $searchColumn = $purifier->purify($searchColumn);
         $editors= '';
 
         if (!is_null($searchData)) {

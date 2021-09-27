@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Editor\Auth;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\Editor;
+use Illuminate\Http\Request;
 use App\Models\EditorLoginLog;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -79,6 +80,7 @@ class LoginController extends Controller
         
       //logout the editor...
       Auth::guard('editor')->logout();
+      Session::flush();
         return redirect()
         ->route('editor.login')
         ->with('status','Editor has been logged out!');

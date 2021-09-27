@@ -88,7 +88,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.2/tinymce.min.js?"></script>
   <script>
     tinymce.init({
-      selector: '#new-post'
+      selector: '#new-post',
+      plugins: 'link',
+      default_link_target: '_blank',
+      invalid_elements : "script",
     });
   </script>
 

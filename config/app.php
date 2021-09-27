@@ -178,7 +178,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
-        Yajra\DataTables\DataTablesServiceProvider::class,
+        // Yajra\DataTables\DataTablesServiceProvider::class,
+        PragmaRX\Google2FALaravel\ServiceProvider::class,
 
     ],
 
@@ -232,7 +233,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+        // 'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+        'Google2FA' => PragmaRX\Google2FALaravel\Facade::class,
 
 
     ],
