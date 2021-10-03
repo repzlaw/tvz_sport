@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminForumController;
+use App\Http\Controllers\Admin\AdminForumPostController;
+use App\Http\Controllers\Admin\AdminForumThreadController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\TeamController;
@@ -476,21 +479,21 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
 
     //forum routes
     Route::prefix('/forums')->name('forum.')->group(function () {
-        Route::get('/', [ForumController::class,'index'])->name('all');
-        Route::get('/{forum_slug}', [ForumController::class,'getSingleCategory'])->name('get.single');
+        Route::get('/', [AdminForumController::class,'index'])->name('all');
+        Route::get('/{forum_slug}', [AdminForumController::class,'getSingleCategory'])->name('get.single');
 
         Route::prefix('/threads')->name('thread.')->group(function () {
-            Route::get('/{thread_slug}', [ForumThreadController::class,'getSingleThread'])->name('get.single');
-            Route::post('/create', [ForumThreadController::class,'create'])->name('create')->middleware(['verified','spam']);
-            Route::post('/edit', [ForumThreadController::class,'edit'])->name('edit')->middleware(['verified','spam']);
-            Route::post('/upvote', [ForumThreadController::class,'upvoteThread'])->name('upvote')->middleware(['verified']);
-            Route::post('/downvote', [ForumThreadController::class,'downvoteThread'])->name('downvote')->middleware(['verified']);
+            Route::get('/{thread_slug}', [AdminForumThreadController::class,'getSingleThread'])->name('get.single');
+            Route::post('/create', [AdminForumThreadController::class,'create'])->name('create')->middleware(['verified','spam']);
+            Route::post('/edit', [AdminForumThreadController::class,'edit'])->name('edit')->middleware(['verified','spam']);
+            Route::post('/upvote', [AdminForumThreadController::class,'upvoteThread'])->name('upvote')->middleware(['verified']);
+            Route::post('/downvote', [AdminForumThreadController::class,'downvoteThread'])->name('downvote')->middleware(['verified']);
         });
 
         Route::prefix('/posts')->name('post.')->group(function () {
-            Route::post('/create', [ForumPostController::class,'create'])->name('create')->middleware(['verified','spam']);
-            Route::post('/edit', [ForumPostController::class,'edit'])->name('edit')->middleware(['verified','spam']);
-            Route::post('/upvote', [ForumPostController::class,'upvotePost'])->name('upvote')->middleware(['verified']);
+            Route::post('/create', [AdminForumPostController::class,'create'])->name('create')->middleware(['verified','spam']);
+            Route::post('/edit', [AdminForumPostController::class,'edit'])->name('edit')->middleware(['verified','spam']);
+            Route::post('/upvote', [AdminForumPostController::class,'upvotePost'])->name('upvote')->middleware(['verified']);
         
         });
     });
