@@ -31,7 +31,7 @@
                                 @foreach ($logs as $key =>$log)
                                     <tr>
                                         <td>{{$key+1}}</td>
-                                        <td>{{$log->admin->username}}</td>
+                                        <td>{{$log->admin ? $log->admin->username : '-'}}</td>
                                         <td>{{$log->last_login_ip}}</td>
                                         <td>
                                             @if ($log->action === 'login')

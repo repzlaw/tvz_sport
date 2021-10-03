@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Team;
+use App\Models\User;
 use App\Models\SportType;
 use App\Models\TeamComment;
 use Illuminate\Support\Str;
 use App\Models\TeamFollower;
 use App\Models\TeamUserEdit;
 use Illuminate\Http\Request;
+use Mews\Purifier\Facades\Purifier;
 use App\Models\TeamNewsRelationship;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTeamRequest;
@@ -196,18 +198,30 @@ class TeamController extends Controller
     public function saveComment(StoreTeamCommentRequest $request)
     {
         // dd($request->all());
-        
-        $user_id = Auth::id();
+        $comment = Purifier::clean($request->comment);
+
+        if (!$comment) {
+            session()->flash('error','Invalid comment');
+            return back();
+        }
+        $news = Team::findOrFail($request->team_id);
+        $comment_count = $news->comment_count + 1;
+        $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
         $uuid= ((string) Str::uuid());
 
         $comment = TeamComment::create([
             'uuid'=> $uuid,
             'team_id'=> $request->team_id,
-            'content'=> $request->comment,
+            'content'=> $comment,
             'language'=> $request->language,
-            'user_id'=> $user_id,
+            'user_id'=> $user->id,
+            'username'=> $user->username,
+            'display_name'=> $user->display_name,
+            'profile_pic'=> $user->picture? $user->picture->file_path : null,
         ]);
         if ($comment) {
+            //update comment count
+            $news->update(['comment_count'=>$comment_count]);
             $message = 'Comment Saved';
         }else{
             $message = 'Comment failed';
@@ -220,26 +234,35 @@ class TeamController extends Controller
     //save users comments replies 
     public function saveReply(StoreTeamCommentReplyRequest $request)
     {
-        // dd($request->all());
-        
-        $user_id = Auth::id();
+        $comment = Purifier::clean($request->comment);
+
+        if (!$comment) {
+            session()->flash('error','Invalid comment');
+            return back();
+        }
+        $news = Team::findOrFail($request->team_id);
+        $comment_count = $news->comment_count + 1;
+        $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
         $uuid= ((string) Str::uuid());
 
         $comment = TeamComment::create([
             'uuid'=> $uuid,
             'parent_comment_id'=> $request->comment_id,
             'team_id'=> $request->team_id,
-            'content'=> $request->comment,
+            'content'=> $comment,
             'language'=> $request->language,
-            'user_id'=> $user_id,
+            'user_id'=> $user->id,
+            'username'=> $user->username,
+            'display_name'=> $user->display_name,
+            'profile_pic'=> $user->picture? $user->picture->file_path : null,
         ]);
         if ($comment) {
+            //update comment count
+            $news->update(['comment_count'=>$comment_count]);
             $message = 'Reply Saved';
         }else{
             $message = 'Reply failed';
         }
-
         return redirect()->back()->with(['message'=>$message]);
-
     }
 }

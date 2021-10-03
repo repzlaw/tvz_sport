@@ -70,6 +70,7 @@ class Kernel extends HttpKernel
         'author' => \App\Http\Middleware\UserAuthorRole::class,
         // '2fa' => \PragmaRX\Google2FALaravel\Middleware::class,
         '2fa' => \App\Http\Middleware\Google2FAMiddleware::class,
+        'spam' => \Spatie\Honeypot\ProtectAgainstSpam::class,
         
 
     ];

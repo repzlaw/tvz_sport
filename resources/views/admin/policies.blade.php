@@ -16,12 +16,16 @@
                         </div>
                     </div> 
                     <ul class="list-group list-group-flush">
-                        @foreach ($policies as $policy)
+                        @forelse ($policies as $policy)
                         <li class="list-group-item">
                                 {{$policy->reason}}
                                 <i class="fa fa-edit text-info fa-lg float-right" id="edit-button" onclick="edit({{$policy}})"></i>
                         </li>
-                        @endforeach 
+                        @empty
+                          <div class="alert alert-info text-center">
+                            <b>No policies found</b>
+                          </div>
+                        @endforelse
                     </ul>
                     
                 </div>

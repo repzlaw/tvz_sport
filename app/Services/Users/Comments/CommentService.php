@@ -12,14 +12,14 @@ class CommentService
     public function newsComments($id, $lang, $orderColumn, $ordertype, $language, $page){
         $comments = NewsComment::where(['competition_news_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
                                             ->orderBy($orderColumn,$ordertype)
-                                            ->select('id','competition_news_id','username','profile_pic','display_name',
+                                            ->select('id','uuid','competition_news_id','username','profile_pic','display_name',
                                                     'parent_comment_id','user_id','content','created_at',
                                                     'numRecommends')
                                             ->simplePaginate($page);
 
         foreach ($comments as $key => $com) {
             $replies = NewsComment::where(['parent_comment_id'=> $com->id])
-                                    ->get(['id','competition_news_id','username','profile_pic','display_name',
+                                    ->get(['id','uuid','competition_news_id','username','profile_pic','display_name',
                                         'parent_comment_id','user_id','content','created_at','numRecommends',
                                         ]);
             $com->reply = $replies;
@@ -33,16 +33,15 @@ class CommentService
     public function playerComments($id, $lang, $orderColumn, $ordertype, $language, $page)
     {
         $comments = PlayerComment::where(['player_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
-                                            ->with(['user:id,username,display_name','user.picture:user_id,file_path'])
                                             ->orderBy($orderColumn,$ordertype)
-                                            ->select('id','competition_news_id','username','profile_pic','display_name',
+                                            ->select('id','uuid','player_id','username','profile_pic','display_name',
                                                     'parent_comment_id','user_id','content','created_at',
                                                     'numRecommends')
                                             ->simplePaginate($page);
 
         foreach ($comments as $key => $com) {
-            $replies = PlayerComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username,display_name','user.picture:user_id,file_path'])
-                                        ->get(['id','competition_news_id','username','profile_pic','display_name',
+            $replies = PlayerComment::where(['parent_comment_id'=> $com->id])
+                                        ->get(['id','uuid','player_id','username','profile_pic','display_name',
                                                 'parent_comment_id','user_id','content','created_at','numRecommends',
                                                 ]);
             $com->reply = $replies;
@@ -57,16 +56,15 @@ class CommentService
     public function teamComments($id, $lang, $orderColumn, $ordertype, $language, $page)
     {
         $comments = TeamComment::where(['team_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
-                                            ->with(['user:id,username,display_name','user.picture:user_id,file_path'])
                                             ->orderBy($orderColumn,$ordertype)
-                                            ->select('id','competition_news_id','username','profile_pic','display_name',
+                                            ->select('id','uuid','team_id','username','profile_pic','display_name',
                                                     'parent_comment_id','user_id','content','created_at',
                                                     'numRecommends')
                                             ->simplePaginate($page);
 
         foreach ($comments as $key => $com) {
-            $replies = TeamComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username,display_name','user.picture:user_id,file_path'])
-                                    ->get(['id','competition_news_id','username','profile_pic','display_name',
+            $replies = TeamComment::where(['parent_comment_id'=> $com->id])
+                                    ->get(['id','uuid','team_id','username','profile_pic','display_name',
                                                 'parent_comment_id','user_id','content','created_at','numRecommends',
                                                 ]);
             $com->reply = $replies;
@@ -81,18 +79,17 @@ class CommentService
     public function matchComments($id, $lang, $orderColumn, $ordertype, $language, $page)
     {
         $comments = MatchComment::where(['match_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
-                                            ->with(['user:id,username,display_name','user.picture:user_id,file_path'])
                                             ->orderBy($orderColumn,$ordertype)
-                                            ->select('id','competition_news_id','username','profile_pic','display_name',
+                                            ->select('id','uuid','match_id','username','profile_pic','display_name',
                                                     'parent_comment_id','user_id','content','created_at',
                                                     'numRecommends')
                                             ->simplePaginate($page);
                 
         foreach ($comments as $key => $com) {
-            $replies = MatchComment::where(['parent_comment_id'=> $com->id])->with(['user:id,username,display_name','user.picture:user_id,file_path'])
-                                    ->get(['id','competition_news_id','username','profile_pic','display_name',
+            $replies = MatchComment::where(['parent_comment_id'=> $com->id])
+                                    ->get(['id','uuid','match_id','username','profile_pic','display_name',
                                                 'parent_comment_id','user_id','content','created_at','numRecommends',
-                                                ]);
+                                            ]);
             $com->reply = $replies;
 
         }

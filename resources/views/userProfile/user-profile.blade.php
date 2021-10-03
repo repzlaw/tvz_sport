@@ -19,6 +19,7 @@
                                 @endif
                             </div>
                             <div class="btn-actions-pane-right float-right">
+                            @auth
                                 @if ($user->id === Auth::id())
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-outline-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -43,6 +44,8 @@
                                         <p><a href="#" class="btn btn-outline-primary btn-sm" onclick="follow({{$user->id}})" id="follow">Make friend 😊</a></p>
                                     @endif
                                 @endif
+                            @endauth
+                            
                                 {{-- @if ($user->id === Auth::id())
                                     <a href="#" class="btn btn-outline-warning btn-sm mr-3" id="edit-button" onclick='editUser({{$user}})'> Edit Profile</a>
                                     <a href="/v1/comments/individual?cat=news" class="btn btn-outline-success btn-sm mr-3"> Activity</a>
@@ -364,7 +367,7 @@ $('#edit-image-button').on('click',function(event){
 function follow(userId){
     var token = $("meta[name='csrf-token']").attr("content");
         $.ajax({
-            url: '{{ url('/user/profile/follow')}}'+'/'+userId,
+            url: '{{ url('/profile/follow')}}'+'/'+userId,
             type: 'GET',
             success: function (response)
             {

@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PlayerFollower;
 use App\Models\PlayerUserEdit;
+use Mews\Purifier\Facades\Purifier;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PlayerNewsRelationship;
@@ -42,11 +43,19 @@ class PlayersController extends Controller
     public function create(StorePlayerRequest $request)
     {
         if (Auth::guard('editor')->user()->editor_role_id === 1){
+            $full_name = Purifier::clean($request->full_name);
+            $page_title = Purifier::clean($request->page_title);
+            $name = Purifier::clean($request->name);
+            $meta_description = Purifier::clean($request->meta_description);
 
-            $pagetitle = $request->page_title ? $request->page_title : $request->full_name;
-            $metadescription = $request->meta_description ? $request->meta_description : $request->full_name;
+            if (!$full_name || !$name) {
+                session()->flash('error','Invalid player details');
+                return back();
+            }
 
-            $slug = Str::slug($request->full_name, "-");
+            $pagetitle = $page_title ? $page_title : $full_name;
+            $metadescription = $meta_description ? $meta_description : $full_name;
+            $slug = Str::slug($full_name, "-");
 
             if ($request->hasFile('featured_image')) {
                 //process image
@@ -64,8 +73,8 @@ class PlayersController extends Controller
                 'sport_type_id'=> $request->sport_type_id,
                 'team_id'=> $request->team_id,
                 'url_slug'=> $slug,
-                'name'=> $request->name,
-                'full_name'=> $request->full_name,
+                'name'=> $name,
+                'full_name'=> $full_name,
                 'country'=> $request->country,
                 'birth_date'=> $request->birth_date,
                 'active_since'=> $request->active_since,
@@ -126,15 +135,26 @@ class PlayersController extends Controller
             ]);
             $player = Player::findOrFail($request->player_id);
 
-            $pagetitle = $request->page_title ? $request->page_title : $request->full_name;
-            $metadescription = $request->meta_description ? $request->meta_description : $request->full_name;
-            $slug = Str::slug($request->full_name, "-");
+            $full_name = Purifier::clean($request->full_name);
+            $page_title = Purifier::clean($request->page_title);
+            $name = Purifier::clean($request->name);
+            $meta_description = Purifier::clean($request->meta_description);
+
+            if (!$full_name || !$name) {
+                session()->flash('error','Invalid player details');
+                return back();
+            }
+
+            $pagetitle = $page_title ? $page_title : $full_name;
+            $metadescription = $meta_description ? $meta_description : $full_name;
+
+            $slug = Str::slug($full_name, "-");
 
                 $update = $player->update([
                     'sport_type_id'=> $request->sport_type_id,
                     'team_id'=> $request->team_id,
-                    'name'=> $request->name,
-                    'full_name'=> $request->full_name,
+                    'name'=> $name,
+                    'full_name'=> $full_name,
                     'country'=> $request->country,
                     'birth_date'=> $request->birth_date,
                     'active_since'=> $request->active_since,

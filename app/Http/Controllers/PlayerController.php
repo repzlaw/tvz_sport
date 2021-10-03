@@ -3,18 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Team;
+use App\Models\User;
 use App\Models\Player;
 use App\Models\SportType;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\PlayerComment;
 use App\Models\PlayerFollower;
 use App\Models\PlayerUserEdit;
+use Mews\Purifier\Facades\Purifier;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PlayerNewsRelationship;
 use App\Http\Requests\StorePlayerRequest;
 use App\Http\Requests\StorePlayerCommentRequest;
 use App\Http\Requests\StorePlayerCommentReplyRequest;
-use App\Models\PlayerComment;
 
 class PlayerController extends Controller
 {
@@ -230,18 +232,31 @@ class PlayerController extends Controller
     public function saveComment(StorePlayerCommentRequest $request)
     {
         // dd($request->all());
+        $comment = Purifier::clean($request->comment);
+
+        if (!$comment) {
+            session()->flash('error','Invalid comment');
+            return back();
+        }
+        $news = Player::findOrFail($request->player_id);
+        $comment_count = $news->comment_count + 1;
+        $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
         
-        $user_id = Auth::id();
         $uuid= ((string) Str::uuid());
 
         $comment = PlayerComment::create([
             'uuid'=> $uuid,
             'player_id'=> $request->player_id,
-            'content'=> $request->comment,
+            'content'=> $comment,
             'language'=> $request->language,
-            'user_id'=> $user_id,
+            'user_id'=> $user->id,
+            'username'=> $user->username,
+            'display_name'=> $user->display_name,
+            'profile_pic'=> $user->picture? $user->picture->file_path : null,
         ]);
         if ($comment) {
+            //update comment count
+            $news->update(['comment_count'=>$comment_count]);
             $message = 'Comment Saved';
         }else{
             $message = 'Comment failed';
@@ -254,19 +269,31 @@ class PlayerController extends Controller
     //save users comments replies 
     public function saveReply(StorePlayerCommentReplyRequest $request)
     {
-        
-        $user_id = Auth::id();
+        $comment = Purifier::clean($request->comment);
+
+        if (!$comment) {
+            session()->flash('error','Invalid comment');
+            return back();
+        }
+        $news = Player::findOrFail($request->player_id);
+        $comment_count = $news->comment_count + 1;
+        $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
         $uuid= ((string) Str::uuid());
 
         $comment = PlayerComment::create([
             'uuid'=> $uuid,
             'parent_comment_id'=> $request->comment_id,
             'player_id'=> $request->player_id,
-            'content'=> $request->comment,
+            'content'=> $comment,
             'language'=> $request->language,
-            'user_id'=> $user_id,
+            'user_id'=> $user->id,
+            'username'=> $user->username,
+            'display_name'=> $user->display_name,
+            'profile_pic'=> $user->picture? $user->picture->file_path : null,
         ]);
         if ($comment) {
+            //update comment count
+            $news->update(['comment_count'=>$comment_count]);
             $message = 'Reply Saved';
         }else{
             $message = 'Reply failed';

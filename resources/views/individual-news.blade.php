@@ -18,7 +18,7 @@
                                     <small class="ml-3">{{date('H:i', strtotime($news->updated_at))}}</small>
                                 </div>
                                 <div class="row ml-3">
-                                    <p>{!! html_entity_decode($news->content) !!}</p>
+                                    <p>{!! $news->content !!}</p>
                                 </div> 
 
                                 <div class="row ml-3">
@@ -126,19 +126,21 @@
 <script>
     let language = 'en-us';
     let orderby = 'asc';
+    let status = true;
+    let page = 1;
 
     function getOrder(order){
+        page = 1;
         orderby = order
         getComments();
     }
 
     function getLanguage(lang){
-        language = lang
+        page = 1;
+        language = lang;
         getComments();
     }
 
-    let status = true;
-    let page = 1;
 
     //get comments ajax 
     function getComments() {
@@ -150,6 +152,8 @@
             data:{pages:page, c: {{$news->id}}, lang: language, cat:'news', orderby:orderby}
         })
         .done(function(msg){
+            $("#comment_text").show();
+
             if (msg.comments.data.length) {
                 let AuthUser = {{ auth()->check() ? 'true' : 'false' }}
                 let auth_user_id = 0; 
@@ -161,7 +165,6 @@
                 else{
                     auth_user_id = 0;
                 }
-                $("#comment_text").show();
                 let comments = ``;
                 msg.comments.data.forEach(com => {
                     //get image to display
@@ -175,7 +178,7 @@
                                                     style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                                     opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
                                                     border-top-left-radius: 0.25rem; flex: 1;">
-                                        <a href="/user/profile/${slug}" style="text-decoration:none;">
+                                        <a href="/profile/${slug}" style="text-decoration:none;">
                                             <img
                                                 src="${com_src}"
                                                 alt="${com.username}"
@@ -191,7 +194,7 @@
                                     <div class="col-12 mt-1">
                                         <div class="row" id="reply_row${com.id}">
                                             @auth()
-                                                <p class="ml-4 mt-2" onclick="upvoteComment(${com.id})"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${com.id}"></i></a></p>
+                                                <p class="ml-4 mt-2" onclick="upvoteComment(${com.id},'${com.uuid}')"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${com.id}"></i></a></p>
                                                 <a href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${com.id}">${com.numRecommends}</a>
                                                 <p class="ml-4 mt-2" onclick="replyForm(${com.id})"><a href="javascript:void(0)" id="show_reply${com.id}">reply</a> </p>
                                             @else
@@ -275,7 +278,7 @@
                                                                 style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                                                 opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
                                                                 border-top-left-radius: 0.25rem; flex: 1;">
-                                                    <a href="/user/profile/${repslug}" style="text-decoration:none;">
+                                                    <a href="/profile/${repslug}" style="text-decoration:none;">
                                                         <img
                                                         src="${rep_src}"
                                                         alt="${rep.username}"
@@ -292,7 +295,7 @@
                                                 <div class="col-12 mt-1">
                                                     <div class="row" id="rep_row${rep.id}">
                                                         @auth()
-                                                            <p class="ml-4 mt-2" onclick="upvoteComment(${rep.id})"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${rep.id}"></i></a></p>
+                                                            <p class="ml-4 mt-2" onclick="upvoteComment(${rep.uuid},'${com.uuid}')"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${rep.id}"></i></a></p>
                                                             <a href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${rep.id}">${rep.numRecommends}</a>
                                                             ${auth_user_id === rep.user_id ? 
                                                                 `<span/>`
@@ -412,7 +415,7 @@
         $.ajax({
             method:'GET',
             url: '{{ route('comment.check.upvote')}}',
-            data:{comment_id:com_id, model:'news'}
+            data:{comment_id:com_id, cat:'news'}
         })
         .done(function(res){
             if (res) {
@@ -423,11 +426,11 @@
     }
 
     //upvote or remove vote
-    function upvoteComment(com_id){
+    function upvoteComment(com_id, uuid){
         $.ajax({
             method:'GET',
             url: '{{ route('comment.upvote')}}',
-            data:{comment_id:com_id, model:'news'}
+            data:{comment_id:uuid, cat:'news'}
         })
         .done(function(res){
             $("#num_recommend"+com_id).text(res.numRecommends);

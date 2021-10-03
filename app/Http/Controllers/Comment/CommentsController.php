@@ -55,7 +55,6 @@ class CommentsController extends Controller
         
         //get language specified
         $lang= '';
-        
         if ($language == 'en-US' || $language == 'en-us') {
             $lang = 'English';
         }elseif ($language === 'pt') {
@@ -66,8 +65,8 @@ class CommentsController extends Controller
             $lang = 'Russian';
         }
 
+        //get comments based on category specified
         if ($lang) {
-            //get comments based on category specified
             if ($category === 'news') {
                 $comments = $this->CommentService->newsComments($id, $lang, $orderColumn, $ordertype, $language, $page);
                 return $comments;
@@ -82,7 +81,6 @@ class CommentsController extends Controller
                 return $comments;
             }
         }
-
     }
     
     //delete comment
@@ -144,7 +142,7 @@ class CommentsController extends Controller
     //check if user upvoted a comment
     public function checkUpvote(StoreUpvoteRequest $request)
     {
-        $mod = $request->get('model');
+        $mod = $request->get('cat');
         $comment_id = $request->get('comment_id');
         $user_id = Auth::id();
         
@@ -156,8 +154,12 @@ class CommentsController extends Controller
     //upvote or remove upvote
     public function upvoteComment(StoreUpvoteRequest $request)
     {
-        $mod = $request->get('model');
-        $comment_id = $request->get('comment_id');
+        $mod = $request->get('cat');
+        $comment_uuid = $request->get('comment_id');
+        $model =  getCommentModel($mod);
+        $model = $model->getData();
+        $comment = $model->parentModel::where('uuid',$comment_uuid)->firstOrFail();
+        $comment_id = $comment->id;
         $user_id = Auth::id();
 
         $check = checkUpvoted($mod, $comment_id, $user_id);

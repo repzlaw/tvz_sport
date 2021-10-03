@@ -15,7 +15,7 @@ class CreateEditorLoginLogsTable extends Migration
     {
         Schema::create('editor_login_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('editor_id')->references('id')->on('editors');
+            $table->foreignId('editor_id')->nullable()->references('id')->on('editors');
             $table->enum('action',['login','logout'])->default('login');
             $table->string('last_login_ip')->nullable();
             $table->string('session_id')->nullable();

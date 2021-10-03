@@ -25,7 +25,7 @@ class CreateCompetitionNewsTable extends Migration
             $table->foreignId('posted_by')->references('id')->on('users');
             $table->enum('enable_comment',['1','0'])->default('1');
             $table->integer('comment_count')->default(0);
-            $table->enum('status',['published','draft','underreview','trash'])->default('published');
+            $table->enum('status',['published','draft','underreview','trash'])->default('underreview');
             $table->timestamps();
         });
     }

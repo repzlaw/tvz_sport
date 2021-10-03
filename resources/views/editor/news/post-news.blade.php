@@ -55,7 +55,7 @@
                                     </a>
                                     <span  data-competitionId="{{ $post->sport_type_id }}">
                                     <div>
-                                        {!! html_entity_decode($post->content) !!}
+                                        {!! $post->content !!}
                                     </div>
                                     <!-- <input type="hidden" name="sport_type_id" value="{{$post->sport_type_id}}"> -->
                                     @foreach ($post->teamnews as $teamnews)

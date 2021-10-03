@@ -28,6 +28,14 @@ class ConfigurationSeeder extends Seeder
                 'value' => null
             ),
             array(
+                'key' => 'captcha_site_key_v3',
+                'value' => null
+            ),
+            array(
+                '_v3' => 'captcha_secret_key_v3',
+                'value' => null
+            ),
+            array(
                 'key' => 'captcha_login',
                 'value' => 0
             ),

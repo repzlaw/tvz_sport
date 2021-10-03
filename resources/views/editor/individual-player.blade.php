@@ -460,19 +460,20 @@
 <script>
     let language = 'en-us';
     let orderby = 'asc';
+    let status = true;
+    let page = 1;
 
     function getOrder(order){
+        page = 1;
         orderby = order
         getComments();
     }
 
     function getLanguage(lang){
+        page = 1;
         language = lang
         getComments();
     }
-
-    let status = true;
-    let page = 1;
 
     //get comments ajax 
     function getComments() {
@@ -484,6 +485,8 @@
 
         })
         .done(function(msg){
+            $("#comment_text").show();
+
             if (msg.comments.data.length) {
                 let AuthUser = {{ auth()->check() ? 'true' : 'false' }}
                 let auth_user_id = 0; 
@@ -495,7 +498,6 @@
                 else{
                     auth_user_id = 0;
                 }
-                $("#comment_text").show();
 
                 let comments = ``;
                 msg.comments.data.forEach(com => {
@@ -511,7 +513,7 @@
                                             style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                             opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
                                             border-top-left-radius: 0.25rem; flex: 1;">
-                                <a href="/user/profile/${slug}" style="text-decoration:none;">
+                                <a href="/profile/${slug}" style="text-decoration:none;">
                                     <img
                                         src="${com_src}"
                                         alt="${com.username}"
@@ -559,7 +561,7 @@
                                                     style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                                     opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
                                                     border-top-left-radius: 0.25rem; flex: 1;">
-                                        <a href="/user/profile/${repslug}" style="text-decoration:none;">
+                                        <a href="/profile/${repslug}" style="text-decoration:none;">
                                             <img
                                             src="${rep_src}"
                                             alt="${rep.username}"

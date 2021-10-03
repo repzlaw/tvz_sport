@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ConfigurationSeeder::class,
             SecurityQuestionsSeeder::class,
             UserRoleSeeder::class,
+            UserMemberTypeSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
     }

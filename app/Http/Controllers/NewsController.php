@@ -11,10 +11,12 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\CompetitionNews;
 use App\Models\NewsCommentReply;
+use Mews\Purifier\Facades\Purifier;
 use App\Models\TeamNewsRelationship;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PlayerNewsRelationship;
 use App\Http\Requests\StoreNewsRequest;
+use Symfony\Component\Console\Input\Input;
 use App\Http\Requests\StoreNewsCommentRequest;
 use App\Http\Requests\StoreNewsCommentReplyRequest;
 
@@ -53,6 +55,12 @@ class NewsController extends Controller
     public function saveComment(StoreNewsCommentRequest $request)
     {
         // dd($request->all());
+        $comment = Purifier::clean($request->comment);
+
+        if (!$comment) {
+            session()->flash('error','Invalid comment');
+            return back();
+        }
         $news = CompetitionNews::findOrFail($request->news_id);
         $comment_count = $news->comment_count + 1;
         
@@ -62,7 +70,7 @@ class NewsController extends Controller
         $comment = NewsComment::create([
             'uuid'=> $uuid,
             'competition_news_id'=> $request->news_id,
-            'content'=> $request->comment,
+            'content'=> $comment,
             'language'=> $request->language,
             'user_id'=> $user->id,
             'username'=> $user->username,
@@ -85,6 +93,12 @@ class NewsController extends Controller
     public function saveReply(StoreNewsCommentReplyRequest $request)
     {
         // dd($request->all());
+        $comment = Purifier::clean($request->comment);
+
+        if (!$comment) {
+            session()->flash('error','Invalid comment');
+            return back();
+        }
         $news = CompetitionNews::findOrFail($request->competition_news_id);
         $comment_count = $news->comment_count + 1;
         
@@ -96,7 +110,7 @@ class NewsController extends Controller
             'uuid'=> $uuid,
             'parent_comment_id'=> $request->comment_id,
             'competition_news_id'=> $request->competition_news_id,
-            'content'=> $request->comment,
+            'content'=> $comment,
             'language'=> $request->language,
             'user_id'=> $user->id,
             'username'=> $user->username,

@@ -28,10 +28,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // $redi = app()->make('redis');
-        // $s = $redi->set('keys','ywao');
-        // dd($redi);
-        // dd($s->get('keys'));
+        
         $expiresAt = Carbon::now()->endOfDay()->addSecond();
         //get upcoming events
         $upcomingevents= cache()->remember('homepage-latest-event', $expiresAt, function(){

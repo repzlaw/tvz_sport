@@ -29,7 +29,7 @@ class StoreUpvoteRequest extends FormRequest
     {
         return [
             'comment_id'=> 'required',
-            'model'=> 'required'
+            'cat'=> 'required'
         ];
     }
 }

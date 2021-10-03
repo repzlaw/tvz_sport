@@ -15,7 +15,7 @@ class CreateAdminLoginLogsTable extends Migration
     {
         Schema::create('admin_login_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admin_id')->references('id')->on('admins');
+            $table->foreignId('admin_id')->nullable()->references('id')->on('admins');
             $table->enum('action',['login','logout'])->default('login');
             $table->string('last_login_ip')->nullable();
             $table->string('session_id')->nullable();

@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Models\TeamFollower;
 use App\Models\TeamUserEdit;
 use Illuminate\Http\Request;
+use Mews\Purifier\Facades\Purifier;
 use App\Http\Controllers\Controller;
 use App\Models\TeamNewsRelationship;
 use Illuminate\Support\Facades\Auth;
@@ -39,10 +40,19 @@ class TeamsController extends Controller
     {
         if (Auth::guard('editor')->user()->editor_role_id === 1){
 
-            $pagetitle = $request->page_title ? $request->page_title : $request->team_name;
-            $metadescription = $request->meta_description ? $request->meta_description : $request->team_name;
+            $team_name = Purifier::clean($request->team_name);
+            $page_title = Purifier::clean($request->page_title);
+            $meta_description = Purifier::clean($request->meta_description);
 
-            $slug = Str::slug($request->team_name, "-");
+            if (!$team_name ) {
+                session()->flash('error','Invalid team details');
+                return back();
+            }
+
+            $pagetitle = $page_title ? $page_title : $team_name;
+            $metadescription = $meta_description ? $meta_description : $team_name;
+
+            $slug = Str::slug($team_name, "-");
 
             if ($request->hasFile('featured_image')) {
                 //process image
@@ -59,7 +69,7 @@ class TeamsController extends Controller
             $team = Team::create([
                 'sport_type_id'=> $request->sport_type_id,
                 'url_slug'=> $slug,
-                'team_name'=> $request->team_name,
+                'team_name'=> $team_name,
                 'summary'=> $request->summary,
                 'featured_image'=> $fileNameToStore,
                 'page_title'=> $pagetitle,
@@ -107,13 +117,21 @@ class TeamsController extends Controller
 
             $team = Team::findOrFail($request->team_id);
 
-            $pagetitle = $request->page_title ? $request->page_title : $request->team_name;
-            $metadescription = $request->meta_description ? $request->meta_description : $request->team_name;
-            $slug = Str::slug($request->team_name, "-");
+            $team_name = Purifier::clean($request->team_name);
+            $page_title = Purifier::clean($request->page_title);
+            $meta_description = Purifier::clean($request->meta_description);
+
+            if (!$team_name ) {
+                session()->flash('error','Invalid team details');
+                return back();
+            }
+
+            $pagetitle = $page_title ? $page_title : $team_name;
+            $metadescription = $meta_description ? $meta_description : $team_name;
 
                 $update = $team->update([
                     'sport_type_id'=> $request->sport_type_id,
-                    'team_name'=> $request->team_name,
+                    'team_name'=> $team_name,
                     'summary'=> $request->summary,
                     'page_title'=> $pagetitle,
                     'meta_description'=> $metadescription,

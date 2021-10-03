@@ -96,8 +96,8 @@ class LoginController extends Controller
     {
         //validation rules.
         $rules = [
-            'email'    => 'required|email|exists:editors|min:5|max:191',
-            'password' => 'required|string|min:4|max:255',
+            'email'    => 'required|email|min:5|max:191',
+            'password' => 'required|string|min:8|max:255',
         ];
 
         //custom validation error messages.
@@ -116,7 +116,7 @@ class LoginController extends Controller
      */
     private function loginFailed()
     {
-        session()->flash('message','Incorrect Password');
+        session()->flash('message','These credentials does not match our records');
         return back();
     }
 }

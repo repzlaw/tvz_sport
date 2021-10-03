@@ -79,6 +79,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/players">{{ __('Players') }}</a>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/forums">{{ __('Forums') }}</a>
+                        </li>
+
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
@@ -110,7 +115,7 @@
                                     @endif
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="/user/profile">
+                                    <a class="dropdown-item" href="/profile">
                                         <i class="fa fa-user text-primary mr-2"></i>
                                         {{ __('Profile') }}
                                     </a>

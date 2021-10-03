@@ -31,7 +31,7 @@
                                 @foreach ($logs as $key =>$log)
                                     <tr>
                                         <td>{{$key+1}}</td>
-                                        <td>{{$log->editor->username}}</td>
+                                        <td>{{$log->editor ? $log->editor->username : '-'}}</td>
                                         <td>{{$log->email}}</td>
                                         <td>{{$log->login_ip}}</td>
                                         <td>{{$log->browser_info}}</td>

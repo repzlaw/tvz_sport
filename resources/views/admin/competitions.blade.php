@@ -168,7 +168,6 @@ $('#create-button').on('click',function(event){
 
 //modal to edit competition
 function edit(competition){
-    // console.log(competition);
     $('#meta_description').val(competition.meta_description);
     $('#page_title').val(competition.page_title);
     $('#sport_type_id').val(competition.sport_type_id);

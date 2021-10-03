@@ -129,6 +129,18 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.forum.all') }}">
+            <i class="fab fa-forumbee mr-2"></i>
+              Forum 
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ route('admin.forum-category.all') }}">
+            <i class="fab fa-forumbee mr-2"></i>
+              Forum Categories
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{{ route('admin.ban-policy.all') }}">
             <i class="fa fa-balance-scale-left mr-2"></i>
               Ban Policies

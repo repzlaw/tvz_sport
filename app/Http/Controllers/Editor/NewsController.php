@@ -37,62 +37,62 @@ class NewsController extends Controller
     }
 
     //create news function
-    public function createNews(StoreNewsRequest $request)
-    {
-        // dd($request->all());
-        $teams = $request->input('teams');
-        $players = $request->input('players');
+    // public function createNews(StoreNewsRequest $request)
+    // {
+    //     // dd($request->all());
+    //     $teams = $request->input('teams');
+    //     $players = $request->input('players');
 
-        $teamsID = [];
-        $playersID = [];
+    //     $teamsID = [];
+    //     $playersID = [];
 
-        if ($teams) {
-            $teamsID= explode(",", $teams);
-        }
+    //     if ($teams) {
+    //         $teamsID= explode(",", $teams);
+    //     }
 
-        if ($players) {
-            $playersID= explode(",", $players);
-        }
-        $pagetitle = $request->page_title ? $request->page_title : $request->news_title;
-        $metadescription = $request->meta_description ? $request->meta_description : $request->news_title;
+    //     if ($players) {
+    //         $playersID= explode(",", $players);
+    //     }
+    //     $pagetitle = $request->page_title ? $request->page_title : $request->news_title;
+    //     $metadescription = $request->meta_description ? $request->meta_description : $request->news_title;
 
-        $slug = Str::slug($request->news_title, "-");
+    //     $slug = Str::slug($request->news_title, "-");
 
-        $post = CompetitionNews::create([
-                'sport_type_id'=> $request->sport_type,
-                'url_slug'=> $slug,
-                'headline'=> $request->news_title,
-                'content'=> $request->news_body,
-                'enable_comment'=> $request->enable_comment,
-                'posted_by'=> Auth::guard('editor')->user()->id,
-                'page_title'=> $pagetitle,
-                'meta_description'=> $metadescription,
-        ]);
+    //     $post = CompetitionNews::create([
+    //             'sport_type_id'=> $request->sport_type,
+    //             'url_slug'=> $slug,
+    //             'headline'=> $request->news_title,
+    //             'content'=> $request->news_body,
+    //             'enable_comment'=> $request->enable_comment,
+    //             'posted_by'=> Auth::guard('editor')->user()->id,
+    //             'page_title'=> $pagetitle,
+    //             'meta_description'=> $metadescription,
+    //     ]);
 
-        if ( $post) {
-            cache()->forget('homepage-latest-news');
-            //insert record into playernews table
-            if ($playersID) {
-                foreach ($playersID as $key => $id) {
-                    $playernews = PlayerNewsRelationship::create([
-                        'player_id'=>$id,
-                        'competition_news_id'=> $post->id
-                    ]);
-                }
-            }
-            //insert record into team news table
-            if ($teamsID) {
-                foreach ($teamsID as $key => $id) {
-                    $teamnews = TeamNewsRelationship::create([
-                        'team_id'=>$id,
-                        'competition_news_id'=> $post->id
-                    ]);
-                }
-            }
-            $message = 'Post Successfully Created!';
-        }
-        return redirect('/editor/news/edit/'.$post->id)->with(['message' => $message]);
-    }
+    //     if ( $post) {
+    //         cache()->forget('homepage-latest-news');
+    //         //insert record into playernews table
+    //         if ($playersID) {
+    //             foreach ($playersID as $key => $id) {
+    //                 $playernews = PlayerNewsRelationship::create([
+    //                     'player_id'=>$id,
+    //                     'competition_news_id'=> $post->id
+    //                 ]);
+    //             }
+    //         }
+    //         //insert record into team news table
+    //         if ($teamsID) {
+    //             foreach ($teamsID as $key => $id) {
+    //                 $teamnews = TeamNewsRelationship::create([
+    //                     'team_id'=>$id,
+    //                     'competition_news_id'=> $post->id
+    //                 ]);
+    //             }
+    //         }
+    //         $message = 'Post Successfully Created!';
+    //     }
+    //     return redirect('/editor/news/edit/'.$post->id)->with(['message' => $message]);
+    // }
 
     // return edit news view
     public function editNewsView($id)
@@ -106,68 +106,68 @@ class NewsController extends Controller
     }
 
     //edit news
-    public function editNews(Request $request)
-    {
-        $request->validate([
-            'news_body' => 'required',
-            'postId' => 'required',
-            'news_title' => 'required',
-            'sport_type' => 'required',
-            'enable_comment' => 'required',
-        ]);
-        // dd($request->all());
-        $teams = $request->input('teams');
-        $players = $request->input('players');
+    // public function editNews(Request $request)
+    // {
+    //     $request->validate([
+    //         'news_body' => 'required',
+    //         'postId' => 'required',
+    //         'news_title' => 'required',
+    //         'sport_type' => 'required',
+    //         'enable_comment' => 'required',
+    //     ]);
+    //     // dd($request->all());
+    //     $teams = $request->input('teams');
+    //     $players = $request->input('players');
         
-        $teamsID = [];
-        $playersID = [];
+    //     $teamsID = [];
+    //     $playersID = [];
         
-        if ($teams) {
-            $teamsID= explode(",", $teams);
-        }
+    //     if ($teams) {
+    //         $teamsID= explode(",", $teams);
+    //     }
         
-        if ($players) {
-            $playersID= explode(",", $players);
-        }
+    //     if ($players) {
+    //         $playersID= explode(",", $players);
+    //     }
 
-        $post = CompetitionNews::findOrFail($request->postId);
+    //     $post = CompetitionNews::findOrFail($request->postId);
 
-        $pagetitle = $request->page_title ? $request->page_title : $request->news_title;
-        $metadescription = $request->meta_description ? $request->meta_description : $request->news_title;
+    //     $pagetitle = $request->page_title ? $request->page_title : $request->news_title;
+    //     $metadescription = $request->meta_description ? $request->meta_description : $request->news_title;
 
-        $post->update([
-            'sport_type_id'=> $request->sport_type,
-            'headline'=> $request->news_title,
-            'content'=> $request->news_body,
-            'enable_comment'=> $request->enable_comment,
-            'page_title'=> $pagetitle,
-            'meta_description'=> $metadescription,
-        ]);
-        if ($post) {
-            if ($teamsID) {
-                foreach ($teamsID as $key => $id) {
-                    $teamnews = TeamNewsRelationship::firstOrNew([
-                        'team_id'=>$id,
-                        'competition_news_id'=> $post->id
-                    ]);
-                    $teamnews->save();
-                }
-            }
+    //     $post->update([
+    //         'sport_type_id'=> $request->sport_type,
+    //         'headline'=> $request->news_title,
+    //         'content'=> $request->news_body,
+    //         'enable_comment'=> $request->enable_comment,
+    //         'page_title'=> $pagetitle,
+    //         'meta_description'=> $metadescription,
+    //     ]);
+    //     if ($post) {
+    //         if ($teamsID) {
+    //             foreach ($teamsID as $key => $id) {
+    //                 $teamnews = TeamNewsRelationship::firstOrNew([
+    //                     'team_id'=>$id,
+    //                     'competition_news_id'=> $post->id
+    //                 ]);
+    //                 $teamnews->save();
+    //             }
+    //         }
 
-            if ($playersID) {
-                foreach ($playersID as $key => $id) {
-                    $playernews = PlayerNewsRelationship::firstOrNew([
-                        'player_id'=>$id,
-                        'competition_news_id'=> $post->id
-                    ]);
-                    $playernews->save();
-                }
-            }
-            $message = 'Post Successfully Updated!';
-        }
+    //         if ($playersID) {
+    //             foreach ($playersID as $key => $id) {
+    //                 $playernews = PlayerNewsRelationship::firstOrNew([
+    //                     'player_id'=>$id,
+    //                     'competition_news_id'=> $post->id
+    //                 ]);
+    //                 $playernews->save();
+    //             }
+    //         }
+    //         $message = 'Post Successfully Updated!';
+    //     }
 
-        return redirect()->back()->with(['message' => $message]);
-    }
+    //     return redirect()->back()->with(['message' => $message]);
+    // }
 
     //delete news
     public function deleteNews($id)

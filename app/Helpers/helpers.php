@@ -1,5 +1,6 @@
 <?php
 
+// use DateTime;
 use App\Models\Team;
 use App\Models\Friend;
 use App\Models\Player;
@@ -246,6 +247,32 @@ function getBrowser()
     );
 }
 
+//get parent model
+function getCommentModel($mod)
+{
+    $model = '';
+    $parentModel = '';
+
+    if ($mod === 'news') {
+        $model = 'App\Models\NewsCommentUpvote';
+        $parentModel = 'App\Models\NewsComment';
+    } else if($mod === 'player') {
+        $model = 'App\Models\PlayerCommentUpvote';
+        $parentModel = 'App\Models\PlayerComment';
+    } else if($mod === 'team') {
+        $model = 'App\Models\TeamCommentUpvote';
+        $parentModel = 'App\Models\TeamComment';
+    } else if($mod === 'match') {
+        $model = 'App\Models\MatchCommentUpvote';
+        $parentModel = 'App\Models\MatchComment';
+    }
+    if ($model) {
+        return response()->json(['model'=>$model, 'parentModel'=>$parentModel]);
+    }
+    return abort(404,"Page not found");
+
+}
+
 //func to check if a user has upvoted a comment
 function checkUpvoted($mod, $comment_id, $user_id){
     if (Auth::check()) {
@@ -294,4 +321,42 @@ function activeGuard(){
         if(auth()->guard($guard)->check()) return $guard;
     }
     return null;
+}
+
+//get user account duration
+function dateDuration($date){
+    $datetime1 = new DateTime($date);
+    $datetime2 = new DateTime(now());
+    $interval = $datetime1->diff($datetime2);
+    $days = $interval->format('%a');
+        return $days;
+}
+
+//validate using recaptcha v3
+function captchaV3Validation($recaptcha,$secret){
+    $url = 'https://www.google.com/recaptcha/api/siteverify';
+    $remoteip = $_SERVER['REMOTE_ADDR'];
+    $data = [
+        'secret' => $secret,
+        'response' => $recaptcha,
+        'remoteip' => $remoteip
+    ];
+    $options = [
+        'http' => [
+            'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method' => 'POST',
+            'content' => http_build_query($data)
+            ]
+        ];
+    $context = stream_context_create($options);
+    $result = file_get_contents($url, false, $context);
+    $resultJson = json_decode($result);
+
+    if ($resultJson->success != true) {
+        return false;
+    }
+    
+    $result = ($resultJson->score >= 0.3 || $resultJson->success == true ) ? true : false;
+    return $result;
+    
 }

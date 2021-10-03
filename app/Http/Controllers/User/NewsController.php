@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Models\SportType;
-use Illuminate\Support\Str;
-use App\Models\CompetitionNews;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreNewsRequest;
-use App\Models\PlayerNewsRelationship;
-use App\Models\TeamNewsRelationship;
-use App\Http\Controllers\Controller;
 use HTMLPurifier;
 use HTMLPurifier_Config;
+use App\Models\SportType;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\CompetitionNews;
+use Mews\Purifier\Facades\Purifier;
+use App\Http\Controllers\Controller;
+use App\Models\TeamNewsRelationship;
+use Illuminate\Support\Facades\Auth;
+use App\Models\PlayerNewsRelationship;
+use App\Http\Requests\StoreNewsRequest;
 
 class NewsController extends Controller
 {
@@ -49,11 +50,16 @@ class NewsController extends Controller
     //create news function
     public function createNews(StoreNewsRequest $request)
     {
-        $config = HTMLPurifier_Config::createDefault();
-        $purifier = new HTMLPurifier($config);
-        $clean_html = $purifier->purify($request->news_body);
+        $news_body = Purifier::clean($request->news_body);
+        $page_title = Purifier::clean($request->page_title);
+        $news_title = Purifier::clean($request->news_title);
+        $meta_description = Purifier::clean($request->meta_description);
 
-        // dd($clean_html);
+        if (!$news_body || !$news_title) {
+            session()->flash('error','Invalid news content');
+            return back();
+        }
+
         $teams = $request->input('teams');
         $players = $request->input('players');
 
@@ -67,16 +73,16 @@ class NewsController extends Controller
         if ($players) {
             $playersID= explode(",", $players);
         }
-        $pagetitle = $request->page_title ? $request->page_title : $request->news_title;
-        $metadescription = $request->meta_description ? $request->meta_description : $request->news_title;
+        $pagetitle = $page_title ? $page_title : $news_title;
+        $metadescription = $meta_description ? $meta_description : $news_title;
 
         $slug = Str::slug($request->news_title, "-");
 
         $post = CompetitionNews::create([
                 'sport_type_id'=> $request->sport_type,
                 'url_slug'=> $slug,
-                'headline'=> $request->news_title,
-                'content'=> $clean_html,
+                'headline'=> $news_title,
+                'content'=> $news_body,
                 'enable_comment'=> $request->enable_comment,
                 'posted_by'=> Auth::id(),
                 'page_title'=> $pagetitle,
@@ -130,9 +136,14 @@ class NewsController extends Controller
             'sport_type' => 'required',
             'enable_comment' => 'required',
         ]);
-        $config = HTMLPurifier_Config::createDefault();
-        $purifier = new HTMLPurifier($config);
-        $clean_html = $purifier->purify($request->news_body);
+        $news_body = Purifier::clean($request->news_body);
+
+        if (!$news_body) {
+            session()->flash('error','Invalid news content');
+            return back();
+        }
+        // dd($news_body);
+
         // dd($request->all());
         $teams = $request->input('teams');
         $players = $request->input('players');
@@ -156,7 +167,7 @@ class NewsController extends Controller
         $post->update([
             'sport_type_id'=> $request->sport_type,
             'headline'=> $request->news_title,
-            'content'=> $clean_html,
+            'content'=> $news_body,
             'enable_comment'=> $request->enable_comment,
             'page_title'=> $pagetitle,
             'meta_description'=> $metadescription,

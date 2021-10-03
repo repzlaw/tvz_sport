@@ -180,6 +180,7 @@ return [
         App\Providers\FortifyServiceProvider::class,
         // Yajra\DataTables\DataTablesServiceProvider::class,
         PragmaRX\Google2FALaravel\ServiceProvider::class,
+        Mews\Purifier\PurifierServiceProvider::class,
 
     ],
 
@@ -235,6 +236,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         // 'DataTables' => Yajra\DataTables\Facades\DataTables::class,
         'Google2FA' => PragmaRX\Google2FALaravel\Facade::class,
+        'Purifier' => Mews\Purifier\Facades\Purifier::class,
 
 
     ],

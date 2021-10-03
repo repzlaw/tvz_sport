@@ -23,7 +23,7 @@
                                     </a>
                                     <span  data-competitionId="{{ $post->sport_type_id }}">
                                     <div>
-                                        {!! html_entity_decode($post->news->content) !!}
+                                        {!! $post->news->content !!}
                                     </div>
                                         <input type="hidden" name="page_title" id="post_page_title" value="{{$post->page_title}}">
                                         <input type="hidden" name="meta_description" id="post_meta_description" value="{{$post->meta_description}}">    
