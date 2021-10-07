@@ -28,7 +28,6 @@
                               style="text-decoration: none;">
                                   {{$thread->title}} 
                                   <span class="float-right"> {{$thread->created_at}}</span>
-                                  {{-- <i class="fa fa-angle-right text-info fa-lg float-right" id="edit-button" >~ {{$category->created_at}}</i> --}}
                             </a>
                           </li>
                         @empty

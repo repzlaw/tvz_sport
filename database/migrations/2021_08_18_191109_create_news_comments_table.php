@@ -24,7 +24,7 @@ class CreateNewsCommentsTable extends Migration
             $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'));
             $table->longText('content');
             $table->enum('language',['English','Portuguese','Spanish','Russian'])->default('English');
-            $table->enum('status',['blocked','visible'])->default('visible');
+            $table->enum('status',['blocked','visible','reported'])->default('visible');
             $table->integer('numRecommends')->default(0);
             $table->string('username');
             $table->string('display_name')->nullable();

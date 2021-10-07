@@ -35,6 +35,7 @@ use App\Http\Controllers\CompetitionFollowersController;
 use App\Http\Controllers\Admin\ForumCategoriesController;
 use App\Http\Controllers\Admin\SupportDepartmentsController;
 use App\Http\Controllers\Admin\AdminPasswordSecurityController;
+use App\Http\Controllers\Admin\ReportedController;
 use App\Http\Controllers\Admin\UserSuspensionHistoriesController;
 use App\Http\Controllers\Editor\EditorPasswordSecurityController;
 use App\Http\Controllers\User\NewsController as UserNewsController;
@@ -106,6 +107,10 @@ Route::prefix('/teams')->name('team.')->group(function(){
     //create team comment reply
     Route::post('/save-reply', [TeamController::class,'saveReply'])->name('comment.reply.create')->middleware(['auth','verified','spam']);
 
+    //report comment route
+    Route::get('/report/{id}', [TeamController::class,'reportComment'])->name('report')->middleware(['verified']);
+    Route::post('/report/create', [TeamController::class,'createReport'])->name('report.create')->middleware(['verified']);
+
 });
 
 //players routes
@@ -140,6 +145,10 @@ Route::prefix('/players')->name('player.')->group(function(){
     //create player comment reply
     Route::post('/save-reply', [PlayerController::class,'saveReply'])->name('comment.reply.create')->middleware(['auth','verified','spam']);
 
+    //report comment route
+    Route::get('/report/{id}', [TeamController::class,'reportComment'])->name('report')->middleware(['verified']);
+    Route::post('/report/create', [TeamController::class,'createReport'])->name('report.create')->middleware(['verified']);
+
 });
 
 //individual news route
@@ -152,6 +161,11 @@ Route::prefix('/news')->name('news.')->group(function(){
 
     //create news comment reply
     Route::post('/save-reply', [NewsController::class,'saveReply'])->name('comment.reply.create')->middleware(['verified','spam']);
+
+    //report comment route
+    Route::get('/report/{id}', [NewsController::class,'reportComment'])->name('report')->middleware(['verified']);
+    Route::post('/report/create', [NewsController::class,'createReport'])->name('report.create')->middleware(['verified']);
+
 });
 
 //websites events page
@@ -171,7 +185,7 @@ Route::prefix('/v1/comments')->name('comment.')->group(function(){
     Route::get('/reply/delete', [CommentsController::class,'deleteReply'])->name('reply.delete');
     Route::get('/check-upvote', [CommentsController::class,'checkUpvote'])->name('check.upvote');
     Route::get('/upvote', [CommentsController::class,'upvoteComment'])->name('upvote');
-    Route::get('/individual', [CommentsController::class,'getUserComment'])->name('single.user')->middleware(['auth','verified']);
+    Route::get('/individual', [CommentsController::class,'getUserComment'])->name('single.user')->middleware(['verified']);
 
 });
 
@@ -222,6 +236,7 @@ Route::prefix('/user')->middleware(['verified'])->group(function () {
         //delete team related to news
         Route::get('/team/delete/{id}', [UserNewsController::class,'deleteTeam'])->name('team.delete');
 
+        
     });
 
     //settings route
@@ -255,13 +270,18 @@ Route::prefix('/forums')->name('forum.')->group(function () {
         Route::post('/edit', [ForumThreadController::class,'edit'])->name('edit')->middleware(['verified','spam']);
         Route::post('/upvote', [ForumThreadController::class,'upvoteThread'])->name('upvote')->middleware(['verified']);
         Route::post('/downvote', [ForumThreadController::class,'downvoteThread'])->name('downvote')->middleware(['verified']);
+        Route::get('/report/{thread_slug}', [ForumThreadController::class,'reportThread'])->name('report')->middleware(['verified']);
+        Route::post('/report/create', [ForumThreadController::class,'createReport'])->name('report.create')->middleware(['verified']);
+
     });
 
     Route::prefix('/posts')->name('post.')->group(function () {
         Route::post('/create', [ForumPostController::class,'create'])->name('create')->middleware(['verified','spam']);
         Route::post('/edit', [ForumPostController::class,'edit'])->name('edit')->middleware(['verified','spam']);
         Route::post('/upvote', [ForumPostController::class,'upvotePost'])->name('upvote')->middleware(['verified']);
-    
+        Route::get('/report/{post_slug}', [ForumPostController::class,'reportPost'])->name('report')->middleware(['verified']);
+        Route::post('/report/create', [ForumPostController::class,'createReport'])->name('report.create')->middleware(['verified']);
+
     });
 });
 
@@ -478,26 +498,35 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     });
 
     //forum routes
-    Route::prefix('/forums')->name('forum.')->group(function () {
+    Route::prefix('/forums')->name('forum.')->middleware(['admin'])->group(function () {
         Route::get('/', [AdminForumController::class,'index'])->name('all');
         Route::get('/{forum_slug}', [AdminForumController::class,'getSingleCategory'])->name('get.single');
 
         Route::prefix('/threads')->name('thread.')->group(function () {
             Route::get('/{thread_slug}', [AdminForumThreadController::class,'getSingleThread'])->name('get.single');
-            Route::post('/create', [AdminForumThreadController::class,'create'])->name('create')->middleware(['verified','spam']);
-            Route::post('/edit', [AdminForumThreadController::class,'edit'])->name('edit')->middleware(['verified','spam']);
-            Route::post('/upvote', [AdminForumThreadController::class,'upvoteThread'])->name('upvote')->middleware(['verified']);
-            Route::post('/downvote', [AdminForumThreadController::class,'downvoteThread'])->name('downvote')->middleware(['verified']);
+            Route::post('/create', [AdminForumThreadController::class,'create'])->name('create');
+            Route::post('/edit', [AdminForumThreadController::class,'edit'])->name('edit');
+            Route::post('/upvote', [AdminForumThreadController::class,'upvoteThread'])->name('upvote');
+            Route::post('/downvote', [AdminForumThreadController::class,'downvoteThread'])->name('downvote');
         });
 
         Route::prefix('/posts')->name('post.')->group(function () {
-            Route::post('/create', [AdminForumPostController::class,'create'])->name('create')->middleware(['verified','spam']);
-            Route::post('/edit', [AdminForumPostController::class,'edit'])->name('edit')->middleware(['verified','spam']);
-            Route::post('/upvote', [AdminForumPostController::class,'upvotePost'])->name('upvote')->middleware(['verified']);
-        
+            Route::post('/create', [AdminForumPostController::class,'create'])->name('create');
+            Route::post('/edit', [AdminForumPostController::class,'edit'])->name('edit');
+            Route::post('/upvote', [AdminForumPostController::class,'upvotePost'])->name('upvote');
+            Route::post('/change-status', [AdminForumPostController::class,'changeStatus'])->name('status');
         });
     });
 
+    //reported routes
+    Route::prefix('/reported')->name('reported.')->middleware(['admin','2fa'])->group(function(){
+        Route::get('/threads', [ReportedController::class, 'getThread'])->name('thread.get');
+        Route::get('/posts', [ReportedController::class,'getPost'])->name('post.get');
+        Route::get('/news-comment', [ReportedController::class,'getNewsComment'])->name('news.get');
+        Route::get('/players-comment', [ReportedController::class,'getPlayersComment'])->name('player.get');
+        Route::get('/teams-comment', [ReportedController::class,'getTeamsComment'])->name('team.get');
+
+    });
 });
 
 //All the editor routes will be defined here...

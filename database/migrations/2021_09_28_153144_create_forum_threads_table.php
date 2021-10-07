@@ -23,6 +23,7 @@ class CreateForumThreadsTable extends Migration
             $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'));
             $table->string('url_slug')->unique();
             $table->foreignId('forum_category_id')->references('id')->on('forum_categories');
+            $table->enum('status',['published','draft','underreview','trash','reported'])->default('published');
             $table->integer('numRecommends')->default(0);
             $table->timestamps();
         });

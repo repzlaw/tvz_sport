@@ -16,6 +16,7 @@ class CreateBanPoliciesTable extends Migration
         Schema::create('ban_policies', function (Blueprint $table) {
             $table->id();
             $table->longText('reason');
+            $table->enum('type',['ban','thread','post','comment'])->default('ban');
             $table->timestamps();
         });
     }

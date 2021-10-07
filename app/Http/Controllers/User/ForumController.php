@@ -25,8 +25,8 @@ class ForumController extends Controller
         $id = end($explode);
         $captcha_site_key_v3= Configuration::where('key','captcha_site_key_v3')->first();
 
-        $cat = ForumCategory::where('id', $id)->firstOrFail();
-        $threads = ForumThread::where('forum_category_id',$id)->latest()->paginate(30);
+        $cat = ForumCategory::where(['id'=> $id])->firstOrFail();
+        $threads = ForumThread::where(['forum_category_id'=>$id, 'status'=>'published'])->latest()->paginate(30);
         return view('user/forum/individual-category')->with(['category' => $cat, 'threads'=> $threads,
                                                              'captcha_site_key_v3'=>$captcha_site_key_v3->value]);
 

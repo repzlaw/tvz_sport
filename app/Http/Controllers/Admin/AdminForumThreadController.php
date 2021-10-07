@@ -94,7 +94,7 @@ class AdminForumThreadController extends Controller
         $id = end($explode);
 
         $thread = ForumThread::where('id', $id)->with('user.picture')->firstOrFail();
-        $posts = ForumPost::where(['forum_thread_id'=>$id, 'status'=>'published'])->with('user.picture')->paginate(30);
+        $posts = ForumPost::where(['forum_thread_id'=>$id])->with('user.picture')->paginate(30);
         $captcha_site_key_v3= Configuration::where('key','captcha_site_key_v3')->first();
 
         return view('admin/forum/individual-thread')->with(['thread' => $thread, 'posts'=> $posts,

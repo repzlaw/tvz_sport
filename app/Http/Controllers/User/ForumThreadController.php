@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Models\BanPolicy;
 use App\Models\ForumPost;
 use App\Models\ForumThread;
 use Illuminate\Support\Str;
@@ -12,7 +13,10 @@ use Mews\Purifier\Facades\Purifier;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreThreadRequest;
+use App\Http\Requests\ReportThreadRequest;
 use App\Http\Requests\UpdateForumThreadRequest;
+use App\Models\ForumCategory;
+use App\Models\ReportedThread;
 
 class ForumThreadController extends Controller
 {
@@ -197,5 +201,39 @@ class ForumThreadController extends Controller
             return response()->json(['status'=>true, 'numRecommends'=>$numRecommends]);
         }
         
+    }
+
+    //report thread
+    public function reportThread($slug)
+    {
+        $explode = explode('-',$slug);
+        $id = end($explode);
+        $policies= BanPolicy::where('type','thread')->get();
+        // dd($id);
+        
+        return view('user.forum.report-thread')->with(['policies'=> $policies, 'thread_id'=>$id]);
+    }
+
+    //create report
+    public function createReport(ReportThreadRequest $request)
+    {
+        $report = ReportedThread::create([
+                    'policy_id'=>$request->policy_id,
+                    'user_notes'=>$request->user_notes,
+                    'thread_id'=>$request->forum_thread_id,
+                    'user_id'=>Auth::id(),
+        ]);
+
+        if($report){
+            $thread = ForumThread::findOrFail($request->forum_thread_id);
+            $threads = $thread->update([
+                'status'=>'reported',
+            ]);
+            $forum = ForumCategory::findOrFail($thread->forum_category_id);
+            return redirect()->route('forum.get.single', ['forum_slug' => $forum->url_slug.'-'.$forum->id ])
+                        ->with('message', 'Thread reported succesfully');
+        }
+
+        // dd($request->all());
     }
 }

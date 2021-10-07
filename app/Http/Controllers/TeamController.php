@@ -4,19 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Team;
 use App\Models\User;
+use App\Models\BanPolicy;
 use App\Models\SportType;
 use App\Models\TeamComment;
 use Illuminate\Support\Str;
 use App\Models\TeamFollower;
 use App\Models\TeamUserEdit;
 use Illuminate\Http\Request;
+use App\Models\Configuration;
 use Mews\Purifier\Facades\Purifier;
 use App\Models\TeamNewsRelationship;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreTeamRequest;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\ReportCommentRequest;
 use App\Http\Requests\StoreTeamCommentRequest;
 use App\Http\Requests\StoreTeamCommentReplyRequest;
+use App\Models\ReportedTeamComment;
 
 class TeamController extends Controller
 {
@@ -86,10 +90,12 @@ class TeamController extends Controller
         $sport_types = SportType::all();
 
         $followers = TeamFollower::where('team_id', $id)->count();
+        $captcha_site_key_v3= Configuration::where('key','captcha_site_key_v3')->first();
 
 
         return view('individual-team')->with(['team' => $team, 'sports'=> $sport_types,
-                                             'posts'=>$posts,'followers'=>$followers]);
+                                             'posts'=>$posts,'followers'=>$followers,
+                                            'captcha_site_key_v3'=>$captcha_site_key_v3->value]);
 
     }
 
@@ -198,71 +204,127 @@ class TeamController extends Controller
     public function saveComment(StoreTeamCommentRequest $request)
     {
         // dd($request->all());
-        $comment = Purifier::clean($request->comment);
+        if (!preg_match('/[^A-Za-z0-9]/', $request->comment)) 
+        {
+            $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
+            $recaptcha = $request->get('recaptcha');
+            $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
+            if(!$captcha){
+                    return back()->withErrors(['captcha' => 'ReCaptcha Error']);
+            }
 
-        if (!$comment) {
-            session()->flash('error','Invalid comment');
-            return back();
-        }
-        $news = Team::findOrFail($request->team_id);
-        $comment_count = $news->comment_count + 1;
-        $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
-        $uuid= ((string) Str::uuid());
+            $comment = Purifier::clean($request->comment);
 
-        $comment = TeamComment::create([
-            'uuid'=> $uuid,
-            'team_id'=> $request->team_id,
-            'content'=> $comment,
-            'language'=> $request->language,
-            'user_id'=> $user->id,
-            'username'=> $user->username,
-            'display_name'=> $user->display_name,
-            'profile_pic'=> $user->picture? $user->picture->file_path : null,
-        ]);
-        if ($comment) {
-            //update comment count
-            $news->update(['comment_count'=>$comment_count]);
-            $message = 'Comment Saved';
+            if (!$comment) {
+                session()->flash('error','Invalid comment');
+                return back();
+            }
+            $news = Team::findOrFail($request->team_id);
+            $comment_count = $news->comment_count + 1;
+            $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
+            $uuid= ((string) Str::uuid());
+
+            $comment = TeamComment::create([
+                'uuid'=> $uuid,
+                'team_id'=> $request->team_id,
+                'content'=> $comment,
+                'language'=> $request->language,
+                'user_id'=> $user->id,
+                'username'=> $user->username,
+                'display_name'=> $user->display_name,
+                'profile_pic'=> $user->picture? $user->picture->file_path : null,
+            ]);
+            if ($comment) {
+                //update comment count
+                $news->update(['comment_count'=>$comment_count]);
+                $message = 'Comment Saved';
+            }else{
+                $message = 'Comment failed';
+            }
+
+            return redirect()->back()->with(['message'=>$message]);
         }else{
-            $message = 'Comment failed';
+            return back()->withErrors(['language' => 'Input only english letters and numbers']);
         }
-
-        return redirect()->back()->with(['message'=>$message]);
 
     }
 
     //save users comments replies 
     public function saveReply(StoreTeamCommentReplyRequest $request)
     {
-        $comment = Purifier::clean($request->comment);
+        if (!preg_match('/[^A-Za-z0-9]/', $request->comment)) 
+        {
+            $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
+            $recaptcha = $request->get('recaptcha');
+            $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
+            if(!$captcha){
+                    return back()->withErrors(['captcha' => 'ReCaptcha Error']);
+            }
 
-        if (!$comment) {
-            session()->flash('error','Invalid comment');
-            return back();
-        }
-        $news = Team::findOrFail($request->team_id);
-        $comment_count = $news->comment_count + 1;
-        $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
-        $uuid= ((string) Str::uuid());
+            $comment = Purifier::clean($request->comment);
 
-        $comment = TeamComment::create([
-            'uuid'=> $uuid,
-            'parent_comment_id'=> $request->comment_id,
-            'team_id'=> $request->team_id,
-            'content'=> $comment,
-            'language'=> $request->language,
-            'user_id'=> $user->id,
-            'username'=> $user->username,
-            'display_name'=> $user->display_name,
-            'profile_pic'=> $user->picture? $user->picture->file_path : null,
-        ]);
-        if ($comment) {
-            //update comment count
-            $news->update(['comment_count'=>$comment_count]);
-            $message = 'Reply Saved';
+            if (!$comment) {
+                session()->flash('error','Invalid comment');
+                return back();
+            }
+            $news = Team::findOrFail($request->team_id);
+            $comment_count = $news->comment_count + 1;
+            $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
+            $uuid= ((string) Str::uuid());
+
+            $comment = TeamComment::create([
+                'uuid'=> $uuid,
+                'parent_comment_id'=> $request->comment_id,
+                'team_id'=> $request->team_id,
+                'content'=> $comment,
+                'language'=> $request->language,
+                'user_id'=> $user->id,
+                'username'=> $user->username,
+                'display_name'=> $user->display_name,
+                'profile_pic'=> $user->picture? $user->picture->file_path : null,
+            ]);
+            if ($comment) {
+                //update comment count
+                $news->update(['comment_count'=>$comment_count]);
+                $message = 'Reply Saved';
+            }else{
+                $message = 'Reply failed';
+            }
+            return redirect()->back()->with(['message'=>$message]);
         }else{
-            $message = 'Reply failed';
+            return back()->withErrors(['language' => 'Input only english letters and numbers']);
         }
-        return redirect()->back()->with(['message'=>$message]);
+    }
+
+    //report comment
+    public function reportComment($id)
+    {
+        $policies= BanPolicy::where('type','comment')->get();
+        
+        return view('user.team.report-comment')->with(['policies'=> $policies, 'comment_id'=>$id]);
+    }
+
+    //create report
+    public function createReport(ReportCommentRequest $request)
+    {
+        $report = ReportedTeamComment::create([
+            'policy_id'=>$request->policy_id,
+            'user_notes'=>$request->user_notes,
+            'comment_id'=>$request->comment_id,
+            'user_id'=>Auth::id(),
+        ]);
+        
+        if($report){
+            $post = TeamComment::findOrFail($request->comment_id);
+            $posts = $post->update([
+                'status'=>'reported',
+            ]);
+            $news = Team::findOrFail($post->team_id);
+            // dd($request->all());
+
+            return redirect()->route('team.get.single', ['team_slug' => $news->url_slug.'-'.$news->id ])
+                            ->with('message', 'Comment reported succesfully');
+        }
+
     }
 }

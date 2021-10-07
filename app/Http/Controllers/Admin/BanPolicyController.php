@@ -31,10 +31,12 @@ class BanPolicyController extends Controller
     {
         $request->validate([
             'reason' => 'required',
+            'type' => 'required',
         ]);
 
         $policy = BanPolicy::create([
             'reason' => $request->input('reason'),
+            'type' => $request->input('type'),
         ]);
 
         if ($policy) {
@@ -50,12 +52,14 @@ class BanPolicyController extends Controller
         $request->validate([
             'reason' => 'required',
             'policy_id' => 'required',
+            'type' => 'required',
         ]);
 
         $policy = BanPolicy::findOrFail($request->policy_id);
 
         $policy = $policy->update([
             'reason' => $request->input('reason'),
+            'type' => $request->input('type'),
         ]);
 
         if ($policy) {

@@ -4,16 +4,20 @@ namespace App\Http\Controllers\User;
 
 use HTMLPurifier;
 use HTMLPurifier_Config;
+use App\Models\BanPolicy;
 use App\Models\SportType;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\CompetitionNews;
 use Mews\Purifier\Facades\Purifier;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ReportCommentRequest;
 use App\Models\TeamNewsRelationship;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PlayerNewsRelationship;
 use App\Http\Requests\StoreNewsRequest;
+use App\Models\NewsComment;
+use App\Models\ReportedNewsComment;
 
 class NewsController extends Controller
 {
@@ -260,4 +264,5 @@ class NewsController extends Controller
         return redirect()->back()->with(['message' => 'team deleted from news']);
     }
 
+    
 }

@@ -23,7 +23,7 @@ class CreateForumPostsTable extends Migration
             $table->foreignId('forum_thread_id')->references('id')->on('forum_threads');
             $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'));
             $table->integer('numRecommends')->default(0);
-            $table->enum('status',['published','draft','underreview','trash'])->default('published');
+            $table->enum('status',['published','draft','underreview','trash','reported'])->default('published');
             $table->timestamps();
         });
     }

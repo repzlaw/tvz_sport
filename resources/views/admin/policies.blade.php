@@ -19,6 +19,8 @@
                         @forelse ($policies as $policy)
                         <li class="list-group-item">
                                 {{$policy->reason}}
+                                <h6 class="ml-4 text badge badge-pill badge-success badge-success">{{$policy->type}}</h6>
+
                                 <i class="fa fa-edit text-info fa-lg float-right" id="edit-button" onclick="edit({{$policy}})"></i>
                         </li>
                         @empty
@@ -50,7 +52,19 @@
             <form action="{{ route('admin.ban-policy.create')}}" method="post" class="form-group" enctype="multipart/form-data">
                     {{ csrf_field() }}
               <div class="form-group">
-                
+                <div class="input-group mb-4" >
+                  <div class="input-group-prepend">
+                      <span class="input-group-text">Type</span>
+                  </div>
+                  <select class="form-control custom-select" name="type" required >
+                      {{-- <option value="">-- Select Policies -- </option>  --}}
+                      <option value="ban">Ban </option> 
+                      <option value="comment">Comment </option> 
+                      <option value="thread">Thread </option> 
+                      <option value="post">Post </option> 
+                                              
+                  </select>
+              </div>
                   <textarea name="reason" rows="5" class="form-control"  placeholder="Write policy here ..." value="{{ old('reason') }}" required></textarea>
                 <!-- <input type="file" name="featured_image" id="featured_image" class="form-control" placeholder="Upload Team Image ..." value="{{ old('featured_image') }}" required> -->
                 <!-- <br>
@@ -81,10 +95,21 @@
             <form action="{{ route('admin.ban-policy.edit')}}" method="post" class="form-group" enctype="multipart/form-data">
                     {{ csrf_field() }}
               <div class="form-group">
-                
-                  <textarea name="reason" id="reason" rows="5" class="form-control"  placeholder="Write policy here ..." value="{{ old('reason') }}" required></textarea>
+                <div class="input-group mb-4" >
+                  <div class="input-group-prepend">
+                      <span class="input-group-text">Type</span>
+                  </div>
+                  <select class="form-control custom-select" name="type" id="ban_type" required >
+                      {{-- <option value="">-- Select Policies -- </option>  --}}
+                      <option value="ban">Ban </option> 
+                      <option value="comment">Comment </option> 
+                      <option value="thread">Thread </option> 
+                      <option value="post">Post </option> 
+                  </select>
+              </div>
+              <textarea name="reason" id="reason" rows="5" class="form-control"  placeholder="Write policy here ..." value="{{ old('reason') }}" required></textarea>
 
-                <input  type="hidden" name="policy_id" id="policy_id" class="form-control">
+              <input  type="hidden" name="policy_id" id="policy_id" class="form-control">
 
                 <!-- <input type="file" name="featured_image" id="featured_image" class="form-control" placeholder="Upload Team Image ..." value="{{ old('featured_image') }}" required> -->
                 <!-- <br>
@@ -117,6 +142,7 @@ function edit(policy){
     // console.log(policy);
     $('#reason').val(policy.reason);
     $('#policy_id').val(policy.id);
+    $('#ban_type').val(policy.type);
     $('#edit-modal').modal();
 }
 

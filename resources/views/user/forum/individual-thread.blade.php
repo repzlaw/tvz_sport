@@ -27,7 +27,7 @@
                               @else
                                 <img
                                 src="/storage/images/profile/no_image.png"
-                                alt="{{ Auth::user()->username}}"
+                                alt="{{$thread->user->display_name ? $thread->user->display_name : $thread->user->username}}"
                                 style="height: 30px; width:30px;  border-radius: 15px;"/>
                               @endif
                               <b class="ml-1 " style="color:black">{{$thread->user->display_name ? $thread->user->display_name : $thread->user->username}}</b>
@@ -49,7 +49,7 @@
                                   @if (Auth::id()=== $thread->user->id)
                                   |  <a href="javascript:void(0)" onclick="editThreadModal({{$thread}})" class="edit">Edit</a>  
                                   @endif
-                                  |  <a href="javascript:void(0)" onclick="editThreadModal({{$thread}})" class="edit">Report</a> 
+                                  |  <a href="{{route('forum.thread.report',['thread_slug'=>$thread->url_slug.'-'.$thread->id])}}">Report</a> 
                                 @else
                                   <a href="/login" class="text-danger">Login to upvote thread</a>
                                 @endauth
@@ -101,18 +101,20 @@
                                 </a>
                                  | <b class="ml-1 " style="color:black"> {{$post->created_at}}</b>
                               </span> 
-
                             </div>
                                 {{$post->body}}
                             <div class="mt-2">
                               <div class="interaction">
-                                <a href="javascript:void(0)" onclick="upvotePost({{$post->id}})" ><i class="far fa-thumbs-up"></i></a>
-                                <a href="javascript:void(0)" style="text-decoration: none;" class="ml-1 mt-2" id="num_post{{$post->id}}">{{$post->numRecommends}} </a>
-                                @if (Auth::id()=== $post->user->id)
-                                  | <a href="javascript:void(0)" onclick="editModal({{$post}})" class="edit">Edit</a>  
-                                @endif
-                                 |  <a href="javascript:void(0)" onclick="editPostModal({{$thread}})" class="edit">Report</a> 
-
+                                @auth()
+                                  <a href="javascript:void(0)" onclick="upvotePost({{$post->id}})" ><i class="far fa-thumbs-up"></i></a>
+                                  <a href="javascript:void(0)" style="text-decoration: none;" class="ml-1 mt-2" id="num_post{{$post->id}}">{{$post->numRecommends}} </a>
+                                  @if (Auth::id()=== $post->user->id)
+                                    | <a href="javascript:void(0)" onclick="editModal({{$post}})" class="edit">Edit</a>  
+                                  @endif
+                                  |  <a href="{{route('forum.post.report',['post_slug'=>$post->id])}}">Report</a> 
+                                @else
+                                  <a href="/login" class="text-danger">Login to upvote post</a>
+                                @endauth
                               </div>
                             </div>
                           </div>
@@ -124,13 +126,9 @@
                       @endforelse  
                       {{ $posts->links() }}
                   </ul>
-                  
               </div>
-
           </div>
-
         </div>
-
     </div>
     </div>
 </div>

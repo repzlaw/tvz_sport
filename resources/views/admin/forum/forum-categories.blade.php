@@ -18,7 +18,7 @@
                     <ul class="list-group list-group-flush">
                         @forelse ($categories as $category)
                           <li class="list-group-item">
-                            <a href="{{route('forum.get.single',['forum_slug'=>$category->url_slug.'-'.$category->id])}}" 
+                            <a href="{{route('admin.forum.get.single',['forum_slug'=>$category->url_slug.'-'.$category->id])}}" 
                               style="text-decoration: none;">
                                   {{$category->name}} 
                                   <span class="float-right" > {{$category->created_at}}</span>

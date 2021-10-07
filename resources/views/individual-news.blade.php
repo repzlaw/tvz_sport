@@ -46,6 +46,8 @@
                                     @else
                                         <form action="{{ route('news.comment.create')}}" method="post" class="form-group" enctype="multipart/form-data">
                                             {{ csrf_field() }}
+                                            @honeypot
+                                            <input type="hidden" name="recaptcha" id="recaptcha" class="recaptchaResponse">
                                             <div class="interaction mt-3 mb-3 row">
                                                 <div class="col-9 col-sm-9" style="padding-right: 0;">
                                                     <textarea placeholder="Add comment ..." name="comment" type="text" 
@@ -123,6 +125,18 @@
 @endsection
 
 @section('scripts')
+<script src="https://www.google.com/recaptcha/api.js?render={{ $captcha_site_key_v3 }}"></script>
+<script>
+         grecaptcha.ready(function() {
+             grecaptcha.execute("{{ $captcha_site_key_v3 }}", {action: 'newscomment'}).then(function(token) {
+                if (token) {
+                  document
+                  .querySelectorAll(".recaptchaResponse")
+                  .forEach(elem => (elem.value = token));
+                }
+             });
+         });
+</script>
 <script>
     let language = 'en-us';
     let orderby = 'asc';
@@ -152,6 +166,15 @@
             data:{pages:page, c: {{$news->id}}, lang: language, cat:'news', orderby:orderby}
         })
         .done(function(msg){
+            grecaptcha.ready(function() {
+             grecaptcha.execute("{{ $captcha_site_key_v3 }}", {action: 'newscomment'}).then(function(token) {
+                if (token) {
+                  document
+                  .querySelectorAll(".recaptchaResponse")
+                  .forEach(elem => (elem.value = token));
+                }
+             });
+         });
             $("#comment_text").show();
 
             if (msg.comments.data.length) {
@@ -212,6 +235,8 @@
                                                     border-top-left-radius: 0.25rem; flex: 1;">
                                         <form action="{{ route('news.comment.reply.create')}}" method="post" class="form-group" enctype="multipart/form-data">
                                             {{ csrf_field() }}
+                                            @honeypot
+                                            <input type="hidden" name="recaptcha" class="recaptchaResponse">
                                             <div class="interaction mt-3 mb-3 row">
                                                 <div class="col-9 col-sm-9" style="padding-right: 0;">
                                                     @guest()
@@ -254,13 +279,13 @@
                 msg.comments.data.forEach(com => {
                     if (auth_user_id) {
                         // checkUpvote(com.id)
-                        if (auth_user_id === com.user_id) {
+                        // if (auth_user_id === com.user_id) {
                             // let delete_comment = `<p class="ml-4 mt-2" onclick="deleteComment(${com.id},${com.user_id})"><a href="javascript:void(0)" id="delete_comment${com.id}">delete</a> </p>`;
                             // $("#reply_row"+com.id).append(delete_comment);
-                        }else{
-                            let report_comment = `<p class="ml-4 mt-2" onclick="reportComment(${com.id},${com.user_id})"><a href="javascript:void(0)" id="report_comment${com.id}">report</a> </p>`;
+                        // }else{
+                            let report_comment = `<p class="ml-4 mt-2" onclick="reportComment(${com.id},${com.user_id})"><a href="/news/report/${com.id}" id="report_comment${com.id}">report</a> </p>`;
                             $("#reply_row"+com.id).append(report_comment);
-                        }
+                        // }
                     }
                     if (com.reply.length) {
                         let view = `<p class="ml-4 mt-2" onclick="viewReplies(${com.id})"><a href="javascript:void(0)" id="view_reply${com.id}">view replies</a> </p>`;
@@ -297,11 +322,8 @@
                                                         @auth()
                                                             <p class="ml-4 mt-2" onclick="upvoteComment(${rep.uuid},'${com.uuid}')"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${rep.id}"></i></a></p>
                                                             <a href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${rep.id}">${rep.numRecommends}</a>
-                                                            ${auth_user_id === rep.user_id ? 
-                                                                `<span/>`
-                                                              // `<p class="ml-4 mt-2" onclick="deleteReply(${rep.id},${rep.user_id})"><a href="javascript:void(0)" id="delete_reply${rep.id}">delete</a> </p>` 
-                                                                :  `<p class="ml-4 mt-2" onclick="reportComment(${rep.id},${rep.user_id})"><a href="javascript:void(0)" id="report_reply${rep.id}">report</a> </p>`
-                                                            }
+                                                            <p class="ml-4 mt-2"><a href="/news/report/${rep.id}" id="report_reply${rep.id}">report</a> </p>
+                                                            
                                                         @else
                                                             <div class="ml-3 mt-2">${rep.numRecommends} upvote</div>
                                                         @endauth
@@ -310,7 +332,11 @@
 
                                             </div>
                             `;
-                            
+                            // ${auth_user_id === rep.user_id ? 
+                            //                                     `<span/>`
+                            //                                   // `<p class="ml-4 mt-2" onclick="deleteReply(${rep.id},${rep.user_id})"><a href="javascript:void(0)" id="delete_reply${rep.id}">delete</a> </p>` 
+                            //                                     :  `<p class="ml-4 mt-2" onclick="reportComment(${rep.id},${rep.user_id})"><a href="javascript:void(0)" id="report_reply${rep.id}">report</a> </p>`
+                            //                                 } 
                         });
                         $("#reply_section"+com.id).html(news_reply);
                         if (auth_user_id) {

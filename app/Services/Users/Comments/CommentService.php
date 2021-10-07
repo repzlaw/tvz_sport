@@ -10,7 +10,7 @@ class CommentService
 {
     //get news comments
     public function newsComments($id, $lang, $orderColumn, $ordertype, $language, $page){
-        $comments = NewsComment::where(['competition_news_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
+        $comments = NewsComment::where(['competition_news_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang, 'status'=>'visible'])
                                             ->orderBy($orderColumn,$ordertype)
                                             ->select('id','uuid','competition_news_id','username','profile_pic','display_name',
                                                     'parent_comment_id','user_id','content','created_at',
@@ -18,7 +18,7 @@ class CommentService
                                             ->simplePaginate($page);
 
         foreach ($comments as $key => $com) {
-            $replies = NewsComment::where(['parent_comment_id'=> $com->id])
+            $replies = NewsComment::where(['parent_comment_id'=> $com->id, 'status'=>'visible'])
                                     ->get(['id','uuid','competition_news_id','username','profile_pic','display_name',
                                         'parent_comment_id','user_id','content','created_at','numRecommends',
                                         ]);
@@ -32,7 +32,7 @@ class CommentService
     //get players comments
     public function playerComments($id, $lang, $orderColumn, $ordertype, $language, $page)
     {
-        $comments = PlayerComment::where(['player_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
+        $comments = PlayerComment::where(['player_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang, 'status'=>'visible'])
                                             ->orderBy($orderColumn,$ordertype)
                                             ->select('id','uuid','player_id','username','profile_pic','display_name',
                                                     'parent_comment_id','user_id','content','created_at',
@@ -40,7 +40,7 @@ class CommentService
                                             ->simplePaginate($page);
 
         foreach ($comments as $key => $com) {
-            $replies = PlayerComment::where(['parent_comment_id'=> $com->id])
+            $replies = PlayerComment::where(['parent_comment_id'=> $com->id, 'status'=>'visible'])
                                         ->get(['id','uuid','player_id','username','profile_pic','display_name',
                                                 'parent_comment_id','user_id','content','created_at','numRecommends',
                                                 ]);
@@ -55,7 +55,7 @@ class CommentService
     //get players comments
     public function teamComments($id, $lang, $orderColumn, $ordertype, $language, $page)
     {
-        $comments = TeamComment::where(['team_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
+        $comments = TeamComment::where(['team_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang, 'status'=>'visible'])
                                             ->orderBy($orderColumn,$ordertype)
                                             ->select('id','uuid','team_id','username','profile_pic','display_name',
                                                     'parent_comment_id','user_id','content','created_at',
@@ -63,7 +63,7 @@ class CommentService
                                             ->simplePaginate($page);
 
         foreach ($comments as $key => $com) {
-            $replies = TeamComment::where(['parent_comment_id'=> $com->id])
+            $replies = TeamComment::where(['parent_comment_id'=> $com->id, 'status'=>'visible'])
                                     ->get(['id','uuid','team_id','username','profile_pic','display_name',
                                                 'parent_comment_id','user_id','content','created_at','numRecommends',
                                                 ]);
@@ -78,7 +78,7 @@ class CommentService
     //get players comments
     public function matchComments($id, $lang, $orderColumn, $ordertype, $language, $page)
     {
-        $comments = MatchComment::where(['match_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang])
+        $comments = MatchComment::where(['match_id'=>$id, 'parent_comment_id'=> null, 'language'=>$lang, 'status'=>'visible'])
                                             ->orderBy($orderColumn,$ordertype)
                                             ->select('id','uuid','match_id','username','profile_pic','display_name',
                                                     'parent_comment_id','user_id','content','created_at',
@@ -86,7 +86,7 @@ class CommentService
                                             ->simplePaginate($page);
                 
         foreach ($comments as $key => $com) {
-            $replies = MatchComment::where(['parent_comment_id'=> $com->id])
+            $replies = MatchComment::where(['parent_comment_id'=> $com->id, 'status'=>'visible'])
                                     ->get(['id','uuid','match_id','username','profile_pic','display_name',
                                                 'parent_comment_id','user_id','content','created_at','numRecommends',
                                             ]);

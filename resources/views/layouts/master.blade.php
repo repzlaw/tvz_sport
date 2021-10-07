@@ -158,7 +158,45 @@
               Suspension History
             </a>
           </li>
-          
+
+          <li class="dropdown">
+            <a class="dropdown-toggle nav-link"
+              data-toggle="dropdown"
+              href="#">
+              <i class="fa fa-flag mr-2"></i>
+                Reported
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- links -->
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.reported.thread.get') }}">
+                  Reported Threads
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.reported.post.get') }}">
+                  Reported posts
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.reported.news.get') }}">
+                  Reported News comments
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.reported.team.get') }}">
+                  Reported Team comments
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.reported.player.get') }}">
+                  Reported Player comments
+                </a>
+              </li>
+            </ul>
+          </li>
+
           <li class="dropdown">
             <a class="dropdown-toggle nav-link"
               data-toggle="dropdown"

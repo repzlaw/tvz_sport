@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Models\BanPolicy;
 use App\Models\ForumPost;
 use Illuminate\Support\Str;
+use App\Models\ReportedPost;
 use Illuminate\Http\Request;
 use App\Models\Configuration;
+use App\Models\ForumCategory;
 use App\Models\ForumPostUpvote;
 use Mews\Purifier\Facades\Purifier;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\ReportPostRequest;
 use App\Http\Requests\StoreForumPostRequest;
 use App\Http\Requests\UpdateForumPostRequest;
+use App\Models\ForumThread;
 
 class ForumPostController extends Controller
 {
@@ -163,6 +168,41 @@ class ForumPostController extends Controller
             return response()->json(['status'=>true, 'numRecommends'=>$numRecommends]);
         }
         
+    }
+
+    //report thread
+    public function reportPost($slug)
+    {
+        // $explode = explode('-',$slug);
+        // $id = end($explode);
+        $policies= BanPolicy::where('type','post')->get();
+        // dd($slug);
+        
+        return view('user.forum.report-post')->with(['policies'=> $policies, 'post_id'=>$slug]);
+    }
+
+    //create report
+    public function createReport(ReportPostRequest $request)
+    {
+        // dd($request->all());
+        $report = ReportedPost::create([
+                    'policy_id'=>$request->policy_id,
+                    'user_notes'=>$request->user_notes,
+                    'post_id'=>$request->forum_post_id,
+                    'user_id'=>Auth::id(),
+        ]);
+
+        if($report){
+            $post = ForumPost::findOrFail($request->forum_post_id);
+            $posts = $post->update([
+                'status'=>'reported',
+            ]);
+            $forum = ForumThread::findOrFail($post->forum_thread_id);
+
+            return redirect()->route('forum.thread.get.single', ['thread_slug' => $forum->url_slug.'-'.$forum->id ])
+                            ->with('message', 'Post reported succesfully');
+        }
+
     }
 
 }

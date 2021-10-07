@@ -163,4 +163,18 @@ class AdminForumPostController extends Controller
         }
         
     }
+
+    //change post status
+    public function changeStatus(Request $request)
+    {
+        $request->validate(['status'=>'required|string',
+                            'post_id'=>'required'
+                            ]);
+        $post = Forumpost::findOrFail($request->post_id);
+        $post->update([
+                'status'=>$request->status
+        ]);
+
+        return back()->with('message', 'updated successfully');
+    }
 }
