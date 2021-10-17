@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\MatchEvent;
 use App\Models\Competitions;
 use Illuminate\Http\Request;
 use App\Models\CompetitionNews;
-use App\Models\MatchEvent;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
 
 class HomeController extends Controller
@@ -28,6 +29,9 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // $response = Http::get('http://127.0.0.1:8000/api/v1/comments/save-news-comment')->json();
+
+        // dd( $response);
         
         $expiresAt = Carbon::now()->endOfDay()->addSecond();
         //get upcoming events

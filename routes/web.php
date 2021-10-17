@@ -63,8 +63,6 @@ Route::get('/', [ControllersHomeController::class,'index'])->name('home');
 Route::post('/2faVerify',[Google2faController::class,'g2faVerify'])->name('2faVerify');
 Route::post('/2fa-logout',[Google2faController::class,'logout'])->name('2fa.logout');
 
-
-
 //event routes
 Route::prefix('/event')->name('event.')->group(function(){
     //get individual event details
@@ -290,7 +288,6 @@ Route::get('/poland-vs-belguim-1', function () {
     return view('individual-match');
 });
 
-
 Route::view('home','home')->middleware(['verified']);
 
 //logout route
@@ -299,7 +296,6 @@ Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 // Auth::routes();
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
 
 //All the admin routes will be defined here...
 Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){

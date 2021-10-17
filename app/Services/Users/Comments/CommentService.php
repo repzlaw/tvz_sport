@@ -17,13 +17,31 @@ class CommentService
                                                     'numRecommends')
                                             ->simplePaginate($page);
 
+        // foreach ($comments as $key => $com) {
+        //     $replies = NewsComment::where(['parent_comment_id'=> $com->id, 'status'=>'visible'])
+        //                             ->get(['id','uuid','competition_news_id','username','profile_pic','display_name',
+        //                                 'parent_comment_id','user_id','content','created_at','numRecommends',
+        //                                 ]);
+        //     $com->reply = $replies;
+        // }
+
+
+        $replies = NewsComment::where(['competition_news_id'=>$id, ['parent_comment_id', '!=', null], 'language'=>$lang, 'status'=>'visible'])
+                                            ->orderBy($orderColumn,$ordertype)
+                                            ->select('id','uuid','competition_news_id','username','profile_pic','display_name',
+                                                    'parent_comment_id','user_id','content','created_at',
+                                                    'numRecommends')
+                                            ->get();
         foreach ($comments as $key => $com) {
-            $replies = NewsComment::where(['parent_comment_id'=> $com->id, 'status'=>'visible'])
-                                    ->get(['id','uuid','competition_news_id','username','profile_pic','display_name',
-                                        'parent_comment_id','user_id','content','created_at','numRecommends',
-                                        ]);
-            $com->reply = $replies;
+            $reply = [];
+            foreach ($replies as $key => $rep) {
+                if ($com->id === $rep->parent_comment_id) {
+                    array_push($reply, $rep);
+                }
+            }
+            $com->reply = $reply;
         }
+
         $summary = (object) ['lang_iso'=>$language, 'language'=>$lang];
 
         return response()->json(['summary'=>$summary,'comments'=> $comments]);

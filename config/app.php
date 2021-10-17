@@ -181,6 +181,7 @@ return [
         // Yajra\DataTables\DataTablesServiceProvider::class,
         PragmaRX\Google2FALaravel\ServiceProvider::class,
         Mews\Purifier\PurifierServiceProvider::class,
+        // Jenssegers\Mongodb\MongodbServiceProvider::class,
 
     ],
 

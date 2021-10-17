@@ -151,5 +151,10 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->save();
     }
 
+    //over ride get key function
+    public function getKey()
+    {
+        return $this->uuid;
+    }
     
 }
