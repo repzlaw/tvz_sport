@@ -227,9 +227,9 @@
                             </div>
                             <select class="form-control custom-select" name="language" onchange="getLanguage(this.value)"required>
                                 <option value="en-us">English</option>
-                                <option value="pt">Portuguese</option>
+                                {{-- <option value="pt">Portuguese</option>
                                 <option value="es">Spanish</option>
-                                <option value="ru">Russian</option>                         
+                                <option value="ru">Russian</option>                          --}}
                             </select>
                         </div>
                         <div class="input-group mb-4" style="width: 250px; ">

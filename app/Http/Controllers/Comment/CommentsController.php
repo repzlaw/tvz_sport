@@ -6,6 +6,7 @@ use App\Models\NewsComment;
 use App\Models\TeamComment;
 use App\Models\MatchComment;
 use Illuminate\Http\Request;
+use App\Models\Configuration;
 use App\Models\PlayerComment;
 use App\Models\CompetitionNews;
 use App\Models\NewsCommentUpvote;
@@ -14,11 +15,12 @@ use App\Models\MatchCommentUpvote;
 use App\Models\PlayerCommentUpvote;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use App\Http\Requests\GetCommentRequest;
 use App\Http\Requests\StoreUpvoteRequest;
 use App\Http\Requests\DeleteCommentRequest;
-use App\Http\Requests\GetIndividualCommentRequest;
 use App\Services\Users\Comments\CommentService;
+use App\Http\Requests\GetIndividualCommentRequest;
 
 class CommentsController extends Controller
 {
@@ -33,54 +35,24 @@ class CommentsController extends Controller
         $this->CommentService = $CommentService;
     }
 
-
     //get comments based on specified parameters
     public function getComments(GetCommentRequest $request)
     {
-        $id = $request->get('c');
-        $category = $request->get('cat');
-        $language = $request->get('lang');
-        $orderColumn = 'created_at';
-        $ordertype = 'desc';
-        $order = $request->get('orderby');
-        if ($order === 'oldest') {
-            $ordertype = 'asc';
-        }elseif ($order === 'upvote') {
-            $orderColumn = 'numRecommends';
-        }
-        $page = 50;
-        if ($request->has('pages')) {
-            $page = $page * $request->get('pages');
-        }
-        
-        //get language specified
-        $lang= '';
-        if ($language == 'en-US' || $language == 'en-us') {
-            $lang = 'English';
-        }elseif ($language === 'pt') {
-            $lang = 'Portuguese';
-        }elseif ($language === 'es') {
-            $lang = 'Spanish';
-        }elseif ($language === 'ru') {
-            $lang = 'Russian';
-        }
+        // dd($request->ip());
+        $api_url = Configuration::where('key','comment_api_url')->first();
+        $api_key = Configuration::where('key','comment_api_key')->first();
 
-        //get comments based on category specified
-        if ($lang) {
-            if ($category === 'news') {
-                $comments = $this->CommentService->newsComments($id, $lang, $orderColumn, $ordertype, $language, $page);
-                return $comments;
-            } elseif ($category === 'players') {
-                $comments = $this->CommentService->playerComments($id, $lang, $orderColumn, $ordertype, $language, $page);
-                return $comments;
-            } elseif ($category === 'teams') {
-                $comments = $this->CommentService->teamComments($id, $lang, $orderColumn, $ordertype, $language, $page);
-                return $comments;
-            } elseif ($category === 'matches') {
-                $comments = $this->CommentService->matchComments($id, $lang, $orderColumn, $ordertype, $language, $page);
-                return $comments;
-            }
-        }
+        $response = Http::withHeaders([
+                'api_key' => $api_key->value
+            ])->get($api_url->value.'v1/comments/',[
+                'pages' => $request->get('pages'),
+                'c' => $request->get('c'),
+                'lang' => $request->get('lang'),
+                'cat' => $request->get('cat'),
+                'orderby' => $request->get('orderby'),
+        ])->json();
+        return $response;
+
     }
     
     //delete comment
@@ -156,40 +128,20 @@ class CommentsController extends Controller
     {
         $mod = $request->get('cat');
         $comment_uuid = $request->get('comment_id');
-        $model =  getCommentModel($mod);
-        $model = $model->getData();
-        $comment = $model->parentModel::where('uuid',$comment_uuid)->firstOrFail();
-        $comment_id = $comment->id;
-        $user_id = Auth::id();
 
-        $check = checkUpvoted($mod, $comment_id, $user_id);
-        $check = $check->getData();
-        if ($check->status) {
-            $upvote = $check->model::where(['user_id'=>$user_id, 'comment_id'=>$comment_id])->delete();
+        $api_url = Configuration::where('key','comment_api_url')->first();
+        $api_key = Configuration::where('key','comment_api_key')->first();
 
-            //update numrecord column 
-            $num = $check->parentModel::findOrFail($comment_id);
-            $numRecommends =$num->numRecommends - 1;
-            $numrecord = $num->update([
-                'numRecommends'=> $numRecommends,
-            ]);
-            return response()->json(['status'=>false, 'numRecommends'=>$numRecommends]);
-        }else {
-            $upvote = $check->model::firstOrNew([
-                            'user_id'=>$user_id,
-                            'comment_id'=>$comment_id,
-            ]);
-            $upvote->save();
-
-            //update numrecord column 
-            $num = $check->parentModel::findOrFail($comment_id);
-            $numRecommends =$num->numRecommends + 1;
-
-            $numrecord = $num->update([
-                'numRecommends'=> $numRecommends,
-            ]);
-            return response()->json(['status'=>true, 'numRecommends'=>$numRecommends]);
-        }
+        $response = Http::withHeaders([
+            'api_key' => $api_key->value
+        ])->get($api_url->value."v1/comments/upvote-comment", [
+            'mod'=> $mod,
+            'comment_uuid'=> $comment_uuid,
+            'user_id'=> Auth::id(),
+        ])->json();
+        
+        return $response;
+    
     }
 
     //get single user comment

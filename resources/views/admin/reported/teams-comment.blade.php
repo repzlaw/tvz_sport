@@ -19,27 +19,24 @@
                                         <th width="3%">#</th>
                                         <th>policy</th>
                                         <th>reason</th>
-                                        {{-- <th>title</th> --}}
                                         <th>body</th>
                                         <th width="10%">reported by</th>
                                         <th>date & time</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($posts as $key =>$post)
+                                    @foreach ($posts['posts'] as $key =>$post)
                                         <tr>
                                            <td>{{$key+1}} </td>
-                                            <td>{{$post->reason}}</td>
-                                            <td>{{$post->user_notes}}</td>
-                                            {{-- <td>{{$post->title}}</td> --}}
-                                            <td>{{$post->content}}</td>
-                                            <td>{{$post->username}}</td>
-                                            <td>{{$post->created_at}}</td>
+                                           <td>{{$post['policy_id']}} </td>
+                                           <td>{{$post['user_notes']}} </td>
+                                           <td>{{$post['comment']['content']}} </td>
+                                           <td>{{$post['user_id']}} </td>
+                                           <td>{{$post['created_at']}} </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
-                            
                         @else
                             <div class="alert alert-info text-center">
                                 <b>No team comment reported</b>

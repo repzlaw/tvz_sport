@@ -43,6 +43,14 @@ class ConfigurationSeeder extends Seeder
                 'key' => 'captcha_register',
                 'value' => 0
             ),
+            array(
+                'key' => 'comment_api_url',
+                'value' => 'http://127.0.0.1:8000/api/'
+            ),
+            array(
+                'key' => 'comment_api_key',
+                'value' => null
+            ),
         );
 
         foreach ($setting as $value) {

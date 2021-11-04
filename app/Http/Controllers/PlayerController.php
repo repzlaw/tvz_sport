@@ -15,12 +15,13 @@ use App\Models\PlayerFollower;
 use App\Models\PlayerUserEdit;
 use Mews\Purifier\Facades\Purifier;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use App\Models\ReportedPlayerComment;
 use App\Models\PlayerNewsRelationship;
 use App\Http\Requests\StorePlayerRequest;
 use App\Http\Requests\ReportCommentRequest;
 use App\Http\Requests\StorePlayerCommentRequest;
 use App\Http\Requests\StorePlayerCommentReplyRequest;
-use App\Models\ReportedPlayerComment;
 
 class PlayerController extends Controller
 {
@@ -237,47 +238,52 @@ class PlayerController extends Controller
     public function saveComment(StorePlayerCommentRequest $request)
     {
         // dd($request->all());
-        if (!preg_match('/[^A-Za-z0-9]/', $request->comment)) 
+        if (!preg_match('/[^A-Za-z0-9 ]/', $request->comment)) 
         {
-        // string contains only english letters & digits
-        $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
-        $recaptcha = $request->get('recaptcha');
-        $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
-        if(!$captcha){
-                return back()->withErrors(['captcha' => 'ReCaptcha Error']);
-        }
+            // string contains only english letters & digits
+            $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
+            $recaptcha = $request->get('recaptcha');
+            $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
+            if(!$captcha){
+                    return back()->withErrors(['captcha' => 'ReCaptcha Error']);
+            }
 
-        $comment = Purifier::clean($request->comment);
+            $comment = Purifier::clean($request->comment);
 
-        if (!$comment) {
-            session()->flash('error','Invalid comment');
-            return back();
-        }
-        $news = Player::findOrFail($request->player_id);
-        $comment_count = $news->comment_count + 1;
-        $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
-        
-        $uuid= ((string) Str::uuid());
+            if (!$comment) {
+                session()->flash('error','Invalid comment');
+                return back();
+            }
+            $news = Player::findOrFail($request->player_id);
+            $comment_count = $news->comment_count + 1;
+            $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
+            
+            $uuid= ((string) Str::uuid());
 
-        $comment = PlayerComment::create([
-            'uuid'=> $uuid,
-            'player_id'=> $request->player_id,
-            'content'=> $comment,
-            'language'=> $request->language,
-            'user_id'=> $user->id,
-            'username'=> $user->username,
-            'display_name'=> $user->display_name,
-            'profile_pic'=> $user->picture? $user->picture->file_path : null,
-        ]);
-        if ($comment) {
-            //update comment count
-            $news->update(['comment_count'=>$comment_count]);
-            $message = 'Comment Saved';
-        }else{
-            $message = 'Comment failed';
-        }
+            $api_url = Configuration::where('key','comment_api_url')->first();
+            $api_key = Configuration::where('key','comment_api_key')->first();
 
-        return redirect()->back()->with(['message'=>$message]);
+            $response = Http::withHeaders([
+                'api_key' => $api_key->value
+            ])->post($api_url->value."v1/comments/save-player-comment", [
+                'uuid'=> $uuid,
+                'player_id'=> $request->player_id,
+                'content'=> $comment,
+                'language'=> $request->language,
+                'user_id'=> $user->id,
+                'username'=> $user->username,
+                'display_name'=> $user->display_name,
+                'profile_pic'=> $user->picture? $user->picture->file_path : null,
+            ]);
+
+            if ($response->json()['result'] =='ok') {
+                //update comment count
+                $news->update(['comment_count'=>$comment_count]);
+                $message = 'Comment Saved';
+            }else{
+                $message = 'Comment failed';
+            }
+            return redirect()->back()->with(['message'=>$message]);
         }else{
             return back()->withErrors(['language' => 'Input only english letters and numbers']);
         }
@@ -287,7 +293,7 @@ class PlayerController extends Controller
     //save users comments replies 
     public function saveReply(StorePlayerCommentReplyRequest $request)
     {
-        if (!preg_match('/[^A-Za-z0-9]/', $request->comment)) 
+        if (!preg_match('/[^A-Za-z0-9 ]/', $request->comment)) 
         {
             $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
             $recaptcha = $request->get('recaptcha');
@@ -307,7 +313,12 @@ class PlayerController extends Controller
             $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
             $uuid= ((string) Str::uuid());
 
-            $comment = PlayerComment::create([
+            $api_url = Configuration::where('key','comment_api_url')->first();
+            $api_key = Configuration::where('key','comment_api_key')->first();
+
+            $response = Http::withHeaders([
+                'api_key' => $api_key->value
+            ])->post($api_url->value."v1/comments/save-player-reply", [
                 'uuid'=> $uuid,
                 'parent_comment_id'=> $request->comment_id,
                 'player_id'=> $request->player_id,
@@ -318,7 +329,19 @@ class PlayerController extends Controller
                 'display_name'=> $user->display_name,
                 'profile_pic'=> $user->picture? $user->picture->file_path : null,
             ]);
-            if ($comment) {
+
+            // $comment = PlayerComment::create([
+            //     'uuid'=> $uuid,
+            //     'parent_comment_id'=> $request->comment_id,
+            //     'player_id'=> $request->player_id,
+            //     'content'=> $comment,
+            //     'language'=> $request->language,
+            //     'user_id'=> $user->id,
+            //     'username'=> $user->username,
+            //     'display_name'=> $user->display_name,
+            //     'profile_pic'=> $user->picture? $user->picture->file_path : null,
+            // ]);
+            if ($response->json()['result'] =='ok') {
                 //update comment count
                 $news->update(['comment_count'=>$comment_count]);
                 $message = 'Reply Saved';
@@ -343,20 +366,30 @@ class PlayerController extends Controller
     //create report
     public function createReport(ReportCommentRequest $request)
     {
-        $report = ReportedPlayerComment::create([
+        $api_url = Configuration::where('key','comment_api_url')->first();
+        $api_key = Configuration::where('key','comment_api_key')->first();
+        $response = Http::withHeaders([
+            'api_key' => $api_key->value
+        ])->post($api_url->value."v1/comments/report-player-comment", [
             'policy_id'=>$request->policy_id,
             'user_notes'=>$request->user_notes,
             'comment_id'=>$request->comment_id,
-            'user_id'=>Auth::id(),
-        ]);
+            'user_id'=>Auth::user()->username,
+        ])->json();
+
+        // $report = ReportedPlayerComment::create([
+        //     'policy_id'=>$request->policy_id,
+        //     'user_notes'=>$request->user_notes,
+        //     'comment_id'=>$request->comment_id,
+        //     'user_id'=>Auth::id(),
+        // ]);
         
-        if($report){
-            $post = PlayerComment::findOrFail($request->comment_id);
-            $posts = $post->update([
-                'status'=>'reported',
-            ]);
-            $news = Player::findOrFail($post->player_id);
-            // dd($request->all());
+        if($response['result'] =='ok'){
+            // $post = PlayerComment::findOrFail($request->comment_id);
+            // $posts = $post->update([
+            //     'status'=>'reported',
+            // ]);
+            $news = Player::findOrFail($response['player_id']);
 
             return redirect()->route('player.get.single', ['player_slug' => $news->url_slug.'-'.$news->id ])
                             ->with('message', 'Comment reported succesfully');

@@ -29,10 +29,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // $response = Http::get('http://127.0.0.1:8000/api/v1/comments/save-news-comment')->json();
-
-        // dd( $response);
-        
         $expiresAt = Carbon::now()->endOfDay()->addSecond();
         //get upcoming events
         $upcomingevents= cache()->remember('homepage-latest-event', $expiresAt, function(){

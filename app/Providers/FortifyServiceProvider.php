@@ -111,15 +111,17 @@ class FortifyServiceProvider extends ServiceProvider
             $captcha_login= Configuration::where('key','captcha_login')->first();
             if ($captcha_enable) {
                 $captcha_enable = $captcha_enable->value;
-                if ($captcha_login) {
-                    $captcha_login = $captcha_login->value;
+                if ($captcha_enable) {
                     if ($captcha_login) {
-                        $request->validate([
-                            'g-recaptcha-response' => [
-                                'required',
-                                new Recaptcha()
-                            ],
-                        ]);
+                        $captcha_login = $captcha_login->value;
+                        if ($captcha_login) {
+                            $request->validate([
+                                'g-recaptcha-response' => [
+                                    'required',
+                                    new Recaptcha()
+                                ],
+                            ]);
+                        }
                     }
                 }
             }

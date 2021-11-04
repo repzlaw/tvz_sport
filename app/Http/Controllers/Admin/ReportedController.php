@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\ReportedThread;
 use Illuminate\Http\Request;
+use App\Models\Configuration;
+use App\Models\ReportedThread;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
 
 class ReportedController extends Controller
 {
@@ -36,41 +38,46 @@ class ReportedController extends Controller
     }
 
     public function getNewsComment()
-    {
-        $posts = DB::table('tvz_sport_comment.reported_news_comments as rt')
-                        ->join('tvz_sport_comment.news_comments as ft','rt.comment_id','ft.id')
-                        ->join('ban_policies as bp','rt.policy_id','bp.id')
-                        ->join('users as u','rt.user_id','u.id')
-                        ->select('u.username','bp.reason','rt.user_notes','ft.content','rt.created_at')
-                        ->latest()
-                        ->get();
+    { 
+        $api_url = Configuration::where('key','comment_api_url')->first();
+        $api_key = Configuration::where('key','comment_api_key')->first();
+
+        $posts = Http::withHeaders([
+            'api_key' => $api_key->value
+        ])->get($api_url->value."reported/news-comment")->json();
+        
+        // dd($posts);
+        // $posts = DB::table('tvz_sport_comment.reported_news_comments as rt')
+        //                 ->join('tvz_sport_comment.news_comments as ft','rt.comment_id','ft.id')
+        //                 ->join('ban_policies as bp','rt.policy_id','bp.id')
+        //                 ->join('users as u','rt.user_id','u.id')
+        //                 ->select('u.username','bp.reason','rt.user_notes','ft.content','rt.created_at')
+        //                 ->latest()
+        //                 ->get();
 
         return view('admin.reported.news-comment')->with(['posts'=>$posts]);
     }
 
     public function getPlayersComment()
     {
-        $posts = DB::table('tvz_sport_comment.reported_player_comments as rt')
-                        ->join('tvz_sport_comment.player_comments as ft','rt.comment_id','ft.id')
-                        ->join('ban_policies as bp','rt.policy_id','bp.id')
-                        ->join('users as u','rt.user_id','u.id')
-                        ->select('u.username','bp.reason','rt.user_notes','ft.content','rt.created_at')
-                        ->latest()
-                        ->get();
+        $api_url = Configuration::where('key','comment_api_url')->first();
+        $api_key = Configuration::where('key','comment_api_key')->first();
 
+        $posts = Http::withHeaders([
+            'api_key' => $api_key->value
+        ])->get($api_url->value."reported/players-comment")->json();
+        
         return view('admin.reported.players-comment')->with(['posts'=>$posts]);
     }
 
     public function getTeamsComment()
     {
-        $posts = DB::table('tvz_sport_comment.reported_team_comments as rt')
-                        ->join('tvz_sport_comment.team_comments as ft','rt.comment_id','ft.id')
-                        ->join('ban_policies as bp','rt.policy_id','bp.id')
-                        ->join('users as u','rt.user_id','u.id')
-                        ->select('u.username','bp.reason','rt.user_notes','ft.content','rt.created_at')
-                        ->latest()
-                        ->get();
+        $api_url = Configuration::where('key','comment_api_url')->first();
+        $api_key = Configuration::where('key','comment_api_key')->first();
 
+        $posts = Http::withHeaders([
+            'api_key' => $api_key->value
+        ])->get($api_url->value."reported/teams-comment")->json();
         return view('admin.reported.teams-comment')->with(['posts'=>$posts]);
     }
 }

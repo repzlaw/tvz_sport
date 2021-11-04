@@ -133,6 +133,39 @@
                             <a class="btn btn-outline-primary" href="/admin/2fa">2fa Settings</a>
                           </div>
                       </li>
+                      <li class="list-group-item">
+                        <div>
+                          <p>Comment APIs settings </p>
+
+                          <form action="{{ route('admin.setting.api-url-save')}}" method="post">
+                            {{ csrf_field() }}
+                            <div class="input-group mb-4 col-12 col-md-10" >
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"> API URL</span>
+                                </div>
+                                <input type="text" name="comment_api_url" class="form-control"  value="{{ $comment_api_url }}" required>
+                              <div class="input-group-append">
+                                <button class="btn btn-success" type="submit">Save</button>
+                              </div>
+                            </div>
+                          </form>
+
+                          <form action="{{ route('admin.setting.api-key-save')}}" method="post">
+                            {{ csrf_field() }}
+
+                            <div class="input-group mb-1 col-12 col-md-10" >
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"> API Key</span>
+                              </div>
+                              <input type="text" name="comment_api_key" class="form-control"  value="{{ $comment_api_key }}" required>
+                            <div class="input-group-append">
+                              <button class="btn btn-success" type="submit">Save</button>
+                            </div>
+                          </div>
+
+                          </form>
+                        </div>
+                    </li>
                       <li class="list-group-item"></li>
 
                     </ul>

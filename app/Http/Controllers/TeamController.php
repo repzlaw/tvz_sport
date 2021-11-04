@@ -12,15 +12,17 @@ use App\Models\TeamFollower;
 use App\Models\TeamUserEdit;
 use Illuminate\Http\Request;
 use App\Models\Configuration;
+use App\Models\ReportedTeamComment;
 use Mews\Purifier\Facades\Purifier;
 use App\Models\TeamNewsRelationship;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use App\Http\Requests\StoreTeamRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\ReportCommentRequest;
 use App\Http\Requests\StoreTeamCommentRequest;
 use App\Http\Requests\StoreTeamCommentReplyRequest;
-use App\Models\ReportedTeamComment;
 
 class TeamController extends Controller
 {
@@ -81,11 +83,16 @@ class TeamController extends Controller
     //get single team
     public function getSingle($slug)
     {
+
         $explode = explode('-',$slug);
         $id = end($explode);
         $team = Team::where('id', $id)->with('sportType')->firstOrFail();
 
-        $posts = TeamNewsRelationship::where('team_id', $id)->with('news')->orderBy('created_at','desc')->take(10)->get();
+        $posts = TeamNewsRelationship::where('team_id', $id)
+                                        ->whereHas('news', function(Builder $query){
+                                            $query->where(['status'=>'published']);
+                                        })
+                                        ->with('news')->orderBy('created_at','desc')->take(10)->get();
 
         $sport_types = SportType::all();
 
@@ -189,11 +196,16 @@ class TeamController extends Controller
     //get Team news
     public function getTeamNews($slug)
     {
+        // dd(23);
         $explode = explode('-',$slug);
 
         $id = end($explode);
 
-        $posts = TeamNewsRelationship::where('team_id', $id)->with('news')->orderBy('created_at','desc')->paginate(10);
+        $posts = TeamNewsRelationship::where(['team_id'=> $id])
+                                        ->whereHas('news', function(Builder $query){
+                                            $query->where(['status'=>'published']);
+                                        })
+                                        ->with('news')->orderBy('created_at','desc')->paginate(10);
 
         $team = Team::where('id', $id)->with(['sportType'])->firstOrFail();
 
@@ -204,7 +216,7 @@ class TeamController extends Controller
     public function saveComment(StoreTeamCommentRequest $request)
     {
         // dd($request->all());
-        if (!preg_match('/[^A-Za-z0-9]/', $request->comment)) 
+        if (!preg_match('/[^A-Za-z0-9 ]/', $request->comment)) 
         {
             $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
             $recaptcha = $request->get('recaptcha');
@@ -224,7 +236,12 @@ class TeamController extends Controller
             $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
             $uuid= ((string) Str::uuid());
 
-            $comment = TeamComment::create([
+            $api_url = Configuration::where('key','comment_api_url')->first();
+            $api_key = Configuration::where('key','comment_api_key')->first();
+
+            $response = Http::withHeaders([
+                'api_key' => $api_key->value
+            ])->post($api_url->value."v1/comments/save-team-comment", [
                 'uuid'=> $uuid,
                 'team_id'=> $request->team_id,
                 'content'=> $comment,
@@ -234,7 +251,8 @@ class TeamController extends Controller
                 'display_name'=> $user->display_name,
                 'profile_pic'=> $user->picture? $user->picture->file_path : null,
             ]);
-            if ($comment) {
+
+            if ($response->json()['result'] =='ok') {
                 //update comment count
                 $news->update(['comment_count'=>$comment_count]);
                 $message = 'Comment Saved';
@@ -252,7 +270,7 @@ class TeamController extends Controller
     //save users comments replies 
     public function saveReply(StoreTeamCommentReplyRequest $request)
     {
-        if (!preg_match('/[^A-Za-z0-9]/', $request->comment)) 
+        if (!preg_match('/[^A-Za-z0-9 ]/', $request->comment)) 
         {
             $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
             $recaptcha = $request->get('recaptcha');
@@ -272,7 +290,12 @@ class TeamController extends Controller
             $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
             $uuid= ((string) Str::uuid());
 
-            $comment = TeamComment::create([
+            $api_url = Configuration::where('key','comment_api_url')->first();
+            $api_key = Configuration::where('key','comment_api_key')->first();
+
+            $response = Http::withHeaders([
+                'api_key' => $api_key->value
+            ])->post($api_url->value."v1/comments/save-team-reply", [
                 'uuid'=> $uuid,
                 'parent_comment_id'=> $request->comment_id,
                 'team_id'=> $request->team_id,
@@ -283,7 +306,8 @@ class TeamController extends Controller
                 'display_name'=> $user->display_name,
                 'profile_pic'=> $user->picture? $user->picture->file_path : null,
             ]);
-            if ($comment) {
+
+            if ($response->json()['result'] =='ok') {
                 //update comment count
                 $news->update(['comment_count'=>$comment_count]);
                 $message = 'Reply Saved';
@@ -307,20 +331,31 @@ class TeamController extends Controller
     //create report
     public function createReport(ReportCommentRequest $request)
     {
-        $report = ReportedTeamComment::create([
+        $api_url = Configuration::where('key','comment_api_url')->first();
+        $api_key = Configuration::where('key','comment_api_key')->first();
+
+        $response = Http::withHeaders([
+            'api_key' => $api_key->value
+        ])->post($api_url->value."v1/comments/report-team-comment", [
             'policy_id'=>$request->policy_id,
             'user_notes'=>$request->user_notes,
             'comment_id'=>$request->comment_id,
-            'user_id'=>Auth::id(),
-        ]);
+            'user_id'=>Auth::user()->username,
+        ])->json();
+
+        // $report = ReportedTeamComment::create([
+        //     'policy_id'=>$request->policy_id,
+        //     'user_notes'=>$request->user_notes,
+        //     'comment_id'=>$request->comment_id,
+        //     'user_id'=>Auth::id(),
+        // ]);
         
-        if($report){
-            $post = TeamComment::findOrFail($request->comment_id);
-            $posts = $post->update([
-                'status'=>'reported',
-            ]);
-            $news = Team::findOrFail($post->team_id);
-            // dd($request->all());
+        if($response['result'] =='ok'){
+            // $post = TeamComment::findOrFail($request->comment_id);
+            // $posts = $post->update([
+            //     'status'=>'reported',
+            // ]);
+            $news = Team::findOrFail($response['team_id']);
 
             return redirect()->route('team.get.single', ['team_slug' => $news->url_slug.'-'.$news->id ])
                             ->with('message', 'Comment reported succesfully');

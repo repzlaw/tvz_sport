@@ -54,9 +54,9 @@
                                                     class="form-control-lg form-control mb-3" style="border-radius: 30px !important;" required></textarea>
                                                     <select name="language" required>
                                                         <option value="English">English</option>
-                                                        <option value="Portuguese">Portuguese</option>
+                                                        {{-- <option value="Portuguese">Portuguese</option>
                                                         <option value="Spanish">Spanish</option>
-                                                        <option value="Russian">Russian</option>
+                                                        <option value="Russian">Russian</option> --}}
                                                     </select>
                                                 </div>
                                                 <div class="col-3 col-sm-3 mt-3 float-right">
@@ -81,9 +81,9 @@
                                                     </div>
                                                     <select class="form-control custom-select" name="language" onchange="getLanguage(this.value)"required>
                                                         <option value="en-us">English</option>
-                                                        <option value="pt">Portuguese</option>
+                                                        {{-- <option value="pt">Portuguese</option>
                                                         <option value="es">Spanish</option>
-                                                        <option value="ru">Russian</option>                         
+                                                        <option value="ru">Russian</option>                          --}}
                                                     </select>
                                                 </div>
                                                 <div class="input-group mb-4" style="width: 250px; ">
@@ -176,7 +176,6 @@
              });
          });
             $("#comment_text").show();
-
             if (msg.comments.data.length) {
                 let AuthUser = {{ auth()->check() ? 'true' : 'false' }}
                 let auth_user_id = 0; 
@@ -196,7 +195,7 @@
                                     : "/storage/images/profile/no_image.png";
                     let slug = com.username;
                     
-                    comments += `<div id="comment_div${com.id}">
+                    comments += `<div id="comment_div${com._id}">
                                     <div class="ml-2 col-12 col-md-8" 
                                                     style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                                     opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
@@ -215,11 +214,11 @@
                                         </div>
                                     </div>
                                     <div class="col-12 mt-1">
-                                        <div class="row" id="reply_row${com.id}">
+                                        <div class="row" id="reply_row${com._id}">
                                             @auth()
-                                                <p class="ml-4 mt-2" onclick="upvoteComment(${com.id},'${com.uuid}')"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${com.id}"></i></a></p>
-                                                <a href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${com.id}">${com.numRecommends}</a>
-                                                <p class="ml-4 mt-2" onclick="replyForm(${com.id})"><a href="javascript:void(0)" id="show_reply${com.id}">reply</a> </p>
+                                                <p class="ml-4 mt-2" onclick="upvoteComment('${com._id}','${com.uuid}')"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${com._id}"></i></a></p>
+                                                <a href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${com._id}">${com.numRecommends}</a>
+                                                <p class="ml-4 mt-2" onclick="replyForm('${com._id}')"><a href="javascript:void(0)" id="show_reply${com._id}">reply</a> </p>
                                             @else
                                                 <div class="ml-3 mt-2">${com.numRecommends} upvote</div>
 
@@ -228,7 +227,7 @@
                                     </div>
                                 </div>
         
-                                <div id="reply_input${com.id}" class="ml-5" style="display:none">
+                                <div id="reply_input${com._id}" class="ml-5" style="display:none">
                                     <div class="ml-2 col-12 col-md-8"
                                                     style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                                     opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
@@ -248,9 +247,6 @@
         
                                                             <select name="language" required>
                                                                 <option value="English">English</option>
-                                                                <option value="Portuguese">Portuguese</option>
-                                                                <option value="Spanish">Spanish</option>
-                                                                <option value="Russian">Russian</option>
                                                             </select>
                                                 </div>
                                                 <div class="col-3 col-sm-3 mt-3 float-right">
@@ -259,13 +255,13 @@
                                                     </button>
                                                 </div> 
                                             </div>
-                                            <input type="hidden" name="comment_id" value="${com.id}">
+                                            <input type="hidden" name="comment_id" value="${com._id}">
                                             <input type="hidden" name="competition_news_id" value="${com.competition_news_id}">
                                         </form>
                                     </div>
                                     <br>
                                 </div>
-                                <div id="reply_section${com.id}" class="ml-5" style="display:none">
+                                <div id="reply_section${com._id}" class="ml-5" style="display:none">
         
                                 </div>
                                 <hr>
@@ -278,18 +274,18 @@
                 }
                 msg.comments.data.forEach(com => {
                     if (auth_user_id) {
-                        // checkUpvote(com.id)
+                        // checkUpvote(com._id)
                         // if (auth_user_id === com.user_id) {
-                            // let delete_comment = `<p class="ml-4 mt-2" onclick="deleteComment(${com.id},${com.user_id})"><a href="javascript:void(0)" id="delete_comment${com.id}">delete</a> </p>`;
-                            // $("#reply_row"+com.id).append(delete_comment);
+                            // let delete_comment = `<p class="ml-4 mt-2" onclick="deleteComment(${com._id},${com.user_id})"><a href="javascript:void(0)" id="delete_comment${com._id}">delete</a> </p>`;
+                            // $("#reply_row"+com._id).append(delete_comment);
                         // }else{
-                            let report_comment = `<p class="ml-4 mt-2" onclick="reportComment(${com.id},${com.user_id})"><a href="/news/report/${com.id}" id="report_comment${com.id}">report</a> </p>`;
-                            $("#reply_row"+com.id).append(report_comment);
+                            let report_comment = `<p class="ml-4 mt-2" onclick="reportComment('${com._id}',${com.user_id})"><a href="/news/report/${com._id}" id="report_comment${com._id}">report</a> </p>`;
+                            $("#reply_row"+com._id).append(report_comment);
                         // }
                     }
                     if (com.reply.length) {
-                        let view = `<p class="ml-4 mt-2" onclick="viewReplies(${com.id})"><a href="javascript:void(0)" id="view_reply${com.id}">view replies</a> </p>`;
-                        $("#reply_row"+com.id).append(view);
+                        let view = `<p class="ml-4 mt-2" onclick="viewReplies('${com._id}')"><a href="javascript:void(0)" id="view_reply${com._id}">view replies</a> </p>`;
+                        $("#reply_row"+com._id).append(view);
                         let news_reply = '';   
                         com.reply.forEach(rep => {
                             //get image to display
@@ -298,7 +294,7 @@
                                             : "/storage/images/profile/no_image.png";
                             let repslug = rep.username;
 
-                            news_reply += `<div id="reply_div${rep.id}">
+                            news_reply += `<div id="reply_div${rep._id}">
                                                 <div class="ml-2 col-12 col-md-8"
                                                                 style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                                                 opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
@@ -318,11 +314,11 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-12 mt-1">
-                                                    <div class="row" id="rep_row${rep.id}">
+                                                    <div class="row" id="rep_row${rep._id}">
                                                         @auth()
-                                                            <p class="ml-4 mt-2" onclick="upvoteComment(${rep.uuid},'${com.uuid}')"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${rep.id}"></i></a></p>
-                                                            <a href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${rep.id}">${rep.numRecommends}</a>
-                                                            <p class="ml-4 mt-2"><a href="/news/report/${rep.id}" id="report_reply${rep.id}">report</a> </p>
+                                                            <p class="ml-4 mt-2" onclick="upvoteComment('${rep._id}','${rep.uuid}')"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${rep._id}"></i></a></p>
+                                                            <a href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${rep._id}">${rep.numRecommends}</a>
+                                                            <p class="ml-4 mt-2"><a href="/news/report/${rep._id}" id="report_reply${rep._id}">report</a> </p>
                                                             
                                                         @else
                                                             <div class="ml-3 mt-2">${rep.numRecommends} upvote</div>
@@ -334,14 +330,14 @@
                             `;
                             // ${auth_user_id === rep.user_id ? 
                             //                                     `<span/>`
-                            //                                   // `<p class="ml-4 mt-2" onclick="deleteReply(${rep.id},${rep.user_id})"><a href="javascript:void(0)" id="delete_reply${rep.id}">delete</a> </p>` 
-                            //                                     :  `<p class="ml-4 mt-2" onclick="reportComment(${rep.id},${rep.user_id})"><a href="javascript:void(0)" id="report_reply${rep.id}">report</a> </p>`
+                            //                                   // `<p class="ml-4 mt-2" onclick="deleteReply('${rep._id}',${rep.user_id})"><a href="javascript:void(0)" id="delete_reply'${rep._id}'">delete</a> </p>` 
+                            //                                     :  `<p class="ml-4 mt-2" onclick="reportComment('${rep._id}',${rep.user_id})"><a href="javascript:void(0)" id="report_reply'${rep._id}'">report</a> </p>`
                             //                                 } 
                         });
-                        $("#reply_section"+com.id).html(news_reply);
+                        $("#reply_section"+com._id).html(news_reply);
                         if (auth_user_id) {
                             com.reply.forEach(rep => {
-                                // checkUpvote(rep.id)
+                                // checkUpvote(rep._id)
                             });
                         }
 
@@ -431,26 +427,6 @@
         }
     });
 
-    // report comment
-    function reportComment(){
-
-    }
-
-    //check if comment is upvoted
-    function checkUpvote(com_id){
-        $.ajax({
-            method:'GET',
-            url: '{{ route('comment.check.upvote')}}',
-            data:{comment_id:com_id, cat:'news'}
-        })
-        .done(function(res){
-            if (res) {
-                $("#upvote_comment_icon"+com_id).attr('class', 'fas fa-thumbs-up');
-            
-            }
-        })
-    }
-
     //upvote or remove vote
     function upvoteComment(com_id, uuid){
         $.ajax({
@@ -460,10 +436,10 @@
         })
         .done(function(res){
             $("#num_recommend"+com_id).text(res.numRecommends);
-            res.status ?
-                $("#upvote_comment_icon"+com_id).attr('class', 'fas fa-thumbs-up')
-            :
-                $("#upvote_comment_icon"+com_id).attr('class', 'far fa-thumbs-up')
+            // res.status ?
+            //     $("#upvote_comment_icon"+com_id).attr('class', 'fas fa-thumbs-up')
+            // :
+            //     $("#upvote_comment_icon"+com_id).attr('class', 'far fa-thumbs-up')
         })
     }
 </script>

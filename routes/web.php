@@ -144,8 +144,8 @@ Route::prefix('/players')->name('player.')->group(function(){
     Route::post('/save-reply', [PlayerController::class,'saveReply'])->name('comment.reply.create')->middleware(['auth','verified','spam']);
 
     //report comment route
-    Route::get('/report/{id}', [TeamController::class,'reportComment'])->name('report')->middleware(['verified']);
-    Route::post('/report/create', [TeamController::class,'createReport'])->name('report.create')->middleware(['verified']);
+    Route::get('/report/{id}', [PlayerController::class,'reportComment'])->name('report')->middleware(['verified']);
+    Route::post('/report/create', [PlayerController::class,'createReport'])->name('report.create')->middleware(['verified']);
 
 });
 
@@ -489,7 +489,10 @@ Route::prefix('/admin')->name('admin.')->namespace('Admin')->group(function(){
     Route::prefix('/settings')->name('setting.')->middleware(['admin','2fa'])->group(function(){
         Route::get('/', [SettingsController::class, 'index'])->name('all');
         Route::post('/save', [SettingsController::class, 'save'])->name('save');
+        Route::post('/api-url-save', [SettingsController::class, 'saveCommmentApiUrl'])->name('api-url-save');
+        Route::post('/api-key-save', [SettingsController::class, 'saveCommmentApiKey'])->name('api-key-save');
         Route::post('/security', [SettingsController::class, 'security'])->name('security');
+        Route::get('/ip-address', [SettingsController::class, 'ipAddress'])->name('ip.all');
 
     });
 

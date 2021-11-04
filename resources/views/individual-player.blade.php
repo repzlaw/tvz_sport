@@ -585,7 +585,7 @@
                     let slug = com.username;
 
                     comments += 
-                        `<div id="comment_div${com.id}">
+                        `<div id="comment_div${com._id}">
                             <div class="ml-2 col-12 col-md-8" 
                                             style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                             opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
@@ -605,11 +605,11 @@
                                 </div>
                             </div>
                             <div class="col-12 mt-1">
-                                <div class="row" id="reply_row${com.id}">
+                                <div class="row" id="reply_row${com._id}">
                                     @auth()
-                                        <p class="ml-4 mt-2" onclick="upvoteComment(${com.id},'${com.uuid}')"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${com.id}"></i></a></p>
-                                        <a href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${com.id}">${com.numRecommends}</a>
-                                        <p class="ml-4 mt-2" onclick="replyForm(${com.id})"><a href="javascript:void(0)" id="show_reply${com.id}">reply</a> </p>
+                                        <p class="ml-4 mt-2" onclick="upvoteComment('${com._id}','${com.uuid}')"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${com._id}"></i></a></p>
+                                        <a href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${com._id}">${com.numRecommends}</a>
+                                        <p class="ml-4 mt-2" onclick="replyForm('${com._id}')"><a href="javascript:void(0)" id="show_reply${com._id}">reply</a> </p>
                                     @else
                                         <div href="javascript:void(0)" class="ml-3 mt-2">${com.numRecommends} upvote</div>
                                     @endauth
@@ -617,7 +617,7 @@
                             </div>
                         </div>
         
-                        <div id="reply_input${com.id}" class="ml-5" style="display:none">
+                        <div id="reply_input${com._id}" class="ml-5" style="display:none">
                             <div class="ml-2 col-12 col-md-8"
                                             style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                             opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
@@ -645,13 +645,13 @@
                                             </button>
                                         </div> 
                                     </div>
-                                    <input type="hidden" name="comment_id" value="${com.id}">
+                                    <input type="hidden" name="comment_id" value="${com._id}">
                                     <input type="hidden" name="player_id" value="${com.player_id}">
                                 </form>
                             </div>
                             <br>
                         </div>
-                        <div id="reply_section${com.id}" class="ml-5" style="display:none">
+                        <div id="reply_section${com._id}" class="ml-5" style="display:none">
 
                         </div>
                         <hr>
@@ -663,19 +663,19 @@
                 }
                 msg.comments.data.forEach(com => {
                     if (auth_user_id) {
-                        let report_comment = `<p class="ml-4 mt-2"><a href="/players/report/${com.id}" id="report_comment${com.id}">report</a> </p>`;
-                            // let report_comment = `<p class="ml-4 mt-2" onclick="reportComment(${com.id},${com.user_id})"><a href="javascript:void(0)" id="report_comment${com.id}">report</a> </p>`;
-                            $("#reply_row"+com.id).append(report_comment);
-                        // checkUpvote(com.id)
+                        let report_comment = `<p class="ml-4 mt-2"><a href="/players/report/${com._id}" id="report_comment${com._id}">report</a> </p>`;
+                            // let report_comment = `<p class="ml-4 mt-2" onclick="reportComment(${com._id},${com.user_id})"><a href="javascript:void(0)" id="report_comment${com._id}">report</a> </p>`;
+                            $("#reply_row"+com._id).append(report_comment);
+                        // checkUpvote(com._id)
                         if (auth_user_id === com.user_id) {
-                            // let delete_comment = `<p class="ml-4 mt-2" onclick="deleteComment(${com.id},${com.user_id})"><a href="javascript:void(0)" id="delete_comment${com.id}">delete</a> </p>`;
-                            // $("#reply_row"+com.id).append(delete_comment);
+                            // let delete_comment = `<p class="ml-4 mt-2" onclick="deleteComment(${com._id},${com.user_id})"><a href="javascript:void(0)" id="delete_comment${com._id}">delete</a> </p>`;
+                            // $("#reply_row"+com._id).append(delete_comment);
                         }else{
                         }
                     }
                     if (com.reply.length) {
-                        let view = `<p class="ml-4 mt-2" onclick="viewReplies(${com.id})"><a href="javascript:void(0)" id="view_reply${com.id}">view replies</a> </p>`;
-                        $("#reply_row"+com.id).append(view);
+                        let view = `<p class="ml-4 mt-2" onclick="viewReplies('${com._id}')"><a href="javascript:void(0)" id="view_reply${com._id}">view replies</a> </p>`;
+                        $("#reply_row"+com._id).append(view);
                         let news_reply = '';   
                         com.reply.forEach(rep => {
                             //get image to display
@@ -685,7 +685,7 @@
                             let repslug = rep.username;
 
                             news_reply += 
-                                `<div id="reply_div${rep.id}">
+                                `<div id="reply_div${rep._id}">
                                     <div class="ml-2 col-12 col-md-8"
                                                     style="border-radius: 30px; box-shadow: 0 0 0 transparent; 
                                                     opacity: 1; background: #f8f9fa; border: 0; padding: 0.75rem 1.5rem; border-radius: 30px;
@@ -704,11 +704,11 @@
                                         </div>
                                     </div>
                                     <div class="col-12 mt-1">
-                                        <div class="row" id="rep_row${rep.id}">
+                                        <div class="row" id="rep_row${rep._id}">
                                             @auth()
-                                                <p class="ml-4 mt-2" onclick="upvoteComment(${com.id},'${com.uuid}')"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${rep.id}"></i></a></p>
-                                                <a href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${rep.id}">${rep.numRecommends}</a>
-                                                <p class="ml-4 mt-2"><a href="/players/report/${rep.id}" id="report_reply${rep.id}">report</a> </p>
+                                                <p class="ml-4 mt-2" onclick="upvoteComment('${rep._id}','${rep.uuid}')"><a href="javascript:void(0)" ><i class="far fa-thumbs-up" id="upvote_comment_icon${rep._id}"></i></a></p>
+                                                <a href="javascript:void(0)" class="ml-2 mt-2" id="num_recommend${rep._id}">${rep.numRecommends}</a>
+                                                <p class="ml-4 mt-2"><a href="/players/report/${rep._id}" id="report_reply${rep._id}">report</a> </p>
                                                 @else
                                                 <div href="javascript:void(0)" class="ml-3 mt-2">${rep.numRecommends} upvote</div>
                                                 @endauth
@@ -719,15 +719,15 @@
                                                 `;
                                                 // ${auth_user_id === rep.user_id ? 
                                                 //     `<span/>`
-                                                //     // `<p class="ml-4 mt-2" onclick="deleteReply(${rep.id},${rep.user_id})"><a href="javascript:void(0)" id="delete_reply${rep.id}">delete</a> </p>` 
-                                                //     :  `<p class="ml-4 mt-2" onclick="reportComment(${rep.id},${rep.user_id})"><a href="javascript:void(0)" id="report_reply${rep.id}">report</a> </p>`
+                                                //     // `<p class="ml-4 mt-2" onclick="deleteReply(${rep._id},${rep.user_id})"><a href="javascript:void(0)" id="delete_reply${rep._id}">delete</a> </p>` 
+                                                //     :  `<p class="ml-4 mt-2" onclick="reportComment(${rep._id},${rep.user_id})"><a href="javascript:void(0)" id="report_reply${rep._id}">report</a> </p>`
                                                 // }
                             
                         });
-                        $("#reply_section"+com.id).html(news_reply);
+                        $("#reply_section"+com._id).html(news_reply);
                         if (auth_user_id) {
                             com.reply.forEach(rep => {
-                                // checkUpvote(rep.id)
+                                // checkUpvote(rep._id)
                             });
                         }
 
@@ -840,10 +840,10 @@
         })
         .done(function(res){
             $("#num_recommend"+com_id).text(res.numRecommends);
-            res.status ?
-                $("#upvote_comment_icon"+com_id).attr('class', 'fas fa-thumbs-up')
-            :
-                $("#upvote_comment_icon"+com_id).attr('class', 'far fa-thumbs-up')
+            // res.status ?
+            //     $("#upvote_comment_icon"+com_id).attr('class', 'fas fa-thumbs-up')
+            // :
+            //     $("#upvote_comment_icon"+com_id).attr('class', 'far fa-thumbs-up')
         })
     }
 </script>

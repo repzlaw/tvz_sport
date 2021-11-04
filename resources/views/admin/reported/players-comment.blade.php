@@ -26,15 +26,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($posts as $key =>$post)
+                                    @foreach ($posts['posts'] as $key =>$post)
                                         <tr>
                                            <td>{{$key+1}} </td>
-                                            <td>{{$post->reason}}</td>
-                                            <td>{{$post->user_notes}}</td>
-                                            {{-- <td>{{$post->title}}</td> --}}
-                                            <td>{{$post->content}}</td>
-                                            <td>{{$post->username}}</td>
-                                            <td>{{$post->created_at}}</td>
+                                           <td>{{$post['policy_id']}} </td>
+                                           <td>{{$post['user_notes']}} </td>
+                                           <td>{{$post['comment']['content']}} </td>
+                                           <td>{{$post['user_id']}} </td>
+                                           <td>{{$post['created_at']}} </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

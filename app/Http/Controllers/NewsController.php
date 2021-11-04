@@ -17,6 +17,7 @@ use App\Models\ReportedNewsComment;
 use Mews\Purifier\Facades\Purifier;
 use App\Models\TeamNewsRelationship;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use App\Models\PlayerNewsRelationship;
 use App\Http\Requests\StoreNewsRequest;
 use Symfony\Component\Console\Input\Input;
@@ -59,8 +60,8 @@ class NewsController extends Controller
     //save users comments on news
     public function saveComment(StoreNewsCommentRequest $request)
     {
-        // dd($request->all());
-        if (!preg_match('/[^A-Za-z0-9]/', $request->comment)) 
+        
+        if (!preg_match('/[^A-Za-z0-9 ]/', $request->comment)) 
         {
             $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
             $recaptcha = $request->get('recaptcha');
@@ -81,7 +82,12 @@ class NewsController extends Controller
             $user = User::where('id',Auth::id())->with('picture')->firstOrFail();
             $uuid= ((string) Str::uuid());
 
-            $comment = NewsComment::create([
+            $api_url = Configuration::where('key','comment_api_url')->first();
+            $api_key = Configuration::where('key','comment_api_key')->first();
+
+            $response = Http::withHeaders([
+                'api_key' => $api_key->value
+            ])->post($api_url->value."v1/comments/save-news-comment", [
                 'uuid'=> $uuid,
                 'competition_news_id'=> $request->news_id,
                 'content'=> $comment,
@@ -91,7 +97,8 @@ class NewsController extends Controller
                 'display_name'=> $user->display_name,
                 'profile_pic'=> $user->picture? $user->picture->file_path : null,
             ]);
-            if ($comment) {
+            
+            if ($response->json()['result'] =='ok') {
                 //update comment count
                 $news->update(['comment_count'=>$comment_count]);
                 $message = 'Comment Saved';
@@ -109,7 +116,7 @@ class NewsController extends Controller
     public function saveReply(StoreNewsCommentReplyRequest $request)
     {
         // dd($request->all());
-        if (!preg_match('/[^A-Za-z0-9]/', $request->comment)) 
+        if (!preg_match('/[^A-Za-z0-9 ]/', $request->comment)) 
         {
             $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
             $recaptcha = $request->get('recaptcha');
@@ -131,7 +138,12 @@ class NewsController extends Controller
 
             $uuid= ((string) Str::uuid());
 
-            $comment = NewsComment::create([
+            $api_url = Configuration::where('key','comment_api_url')->first();
+            $api_key = Configuration::where('key','comment_api_key')->first();
+
+            $response = Http::withHeaders([
+                'api_key' => $api_key->value
+            ])->post($api_url->value."v1/comments/save-news-reply", [
                 'uuid'=> $uuid,
                 'parent_comment_id'=> $request->comment_id,
                 'competition_news_id'=> $request->competition_news_id,
@@ -142,7 +154,8 @@ class NewsController extends Controller
                 'display_name'=> $user->display_name,
                 'profile_pic'=> $user->picture? $user->picture->file_path : null,
             ]);
-            if ($comment) {
+            // dd($response->json());
+            if ($response->json()['result'] =='ok') {
                 //update comment count
                 $news->update(['comment_count'=>$comment_count]);
                 $message = 'Reply Saved';
@@ -160,7 +173,6 @@ class NewsController extends Controller
     public function reportComment($id)
     {
         $policies= BanPolicy::where('type','comment')->get();
-        
         return view('user.news.report-comment')->with(['policies'=> $policies, 'comment_id'=>$id]);
     }
 
@@ -168,19 +180,31 @@ class NewsController extends Controller
     public function createReport(ReportCommentRequest $request)
     {
         // dd($request->all());
-        $report = ReportedNewsComment::create([
-                    'policy_id'=>$request->policy_id,
-                    'user_notes'=>$request->user_notes,
-                    'comment_id'=>$request->comment_id,
-                    'user_id'=>Auth::id(),
-        ]);
+        $api_url = Configuration::where('key','comment_api_url')->first();
+        $api_key = Configuration::where('key','comment_api_key')->first();
 
-        if($report){
-            $post = NewsComment::findOrFail($request->comment_id);
-            $posts = $post->update([
-                'status'=>'reported',
-            ]);
-            $news = CompetitionNews::findOrFail($post->competition_news_id);
+        $response = Http::withHeaders([
+            'api_key' => $api_key->value
+        ])->post($api_url->value."v1/comments/report-news-comment", [
+            'policy_id'=>$request->policy_id,
+            'user_notes'=>$request->user_notes,
+            'comment_id'=>$request->comment_id,
+            'user_id'=>Auth::user()->username,
+        ])->json();
+// dd($response);
+        // $report = ReportedNewsComment::create([
+        //             'policy_id'=>$request->policy_id,
+        //             'user_notes'=>$request->user_notes,
+        //             'comment_id'=>$request->comment_id,
+        //             'user_id'=>Auth::id(),
+        // ]);
+
+        if($response['result'] =='ok'){
+        //     $post = NewsComment::findOrFail($request->comment_id);
+        //     $posts = $post->update([
+        //         'status'=>'reported',
+        //     ]);
+            $news = CompetitionNews::findOrFail($response['competition_news_id']);
 
             return redirect()->route('news.get.single', ['news_slug' => $news->url_slug.'-'.$news->id ])
                             ->with('message', 'Comment reported succesfully');

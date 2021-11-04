@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Configuration;
 use App\Models\SecurityQuestion;
 use App\Http\Controllers\Controller;
+use App\Models\IpAddress;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 
@@ -20,7 +21,8 @@ class SettingsController extends Controller
 
         return view('admin.settings')->with(['captcha_enable'=>$settings[0]->value, 'captcha_site_key'=>$settings[1]->value,
                                             'captcha_secret_key'=>$settings[2]->value,'captcha_login'=>$settings[3]->value,
-                                            'captcha_register'=>$settings[4]->value,'securityQuestions'=>$securityQuestions]);
+                                            'captcha_register'=>$settings[4]->value,'securityQuestions'=>$securityQuestions,
+                                            'comment_api_url'=>$settings[7]->value, 'comment_api_key'=>$settings[8]->value]);
     }
 
     //save setting
@@ -74,5 +76,34 @@ class SettingsController extends Controller
         ]);
 
         return back()->with(['message'=>'settings saved successfully']);
+    }
+
+    //save comment api url
+    public function saveCommmentApiUrl(Request $request)
+    {
+        $request->validate([
+            'comment_api_url'=>'required',
+        ]);
+
+        $set = Configuration::where('key','comment_api_url')->first();
+        $setting = $set->update([
+            'value'=> $request->comment_api_url,
+        ]);
+        return back()->with(['message'=>'Api url saved successfully']);
+
+    }
+
+    //save comment api key
+    public function saveCommmentApiKey(Request $request)
+    {
+        $request->validate([
+            'comment_api_key'=>'required',
+        ]);
+
+        $set = Configuration::where('key','comment_api_key')->first();
+        $setting = $set->update([
+            'value'=> $request->comment_api_key,
+        ]);
+        return back()->with(['message'=>'Api key saved successfully']);
     }
 }

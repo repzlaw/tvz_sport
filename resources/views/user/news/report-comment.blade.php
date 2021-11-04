@@ -27,7 +27,7 @@
                                             <select class="form-control custom-select" name="policy_id" id="sport-type" required >
                                                 <option value="">-- Select Policies -- </option>
                                                 @foreach ($policies as $policy)
-                                                    <option value="{{$policy->id}}">{{$policy->reason}} </option>                           
+                                                    <option value="{{$policy->reason}}">{{$policy->reason}} </option>                           
                                                 @endforeach                          
                                             </select>
                                         </div>
