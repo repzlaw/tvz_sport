@@ -31,20 +31,20 @@ class UserObserver
     {
         //update comments pictures and display name when profile is edited
         //news comments
-        NewsComment::where('user_id', $user->id)
-                    ->update(['username' => $user->username, 'display_name'=> $user->display_name]);
+        // NewsComment::where('user_id', $user->id)
+        //             ->update(['username' => $user->username, 'display_name'=> $user->display_name]);
 
-        //team comments
-        TeamComment::where('user_id', $user->id)
-                    ->update(['username' => $user->username, 'display_name'=> $user->display_name]);
+        // //team comments
+        // TeamComment::where('user_id', $user->id)
+        //             ->update(['username' => $user->username, 'display_name'=> $user->display_name]);
 
-        //player comments
-        PlayerComment::where('user_id', $user->id)
-                    ->update(['username' => $user->username, 'display_name'=> $user->display_name]);
+        // //player comments
+        // PlayerComment::where('user_id', $user->id)
+        //             ->update(['username' => $user->username, 'display_name'=> $user->display_name]);
 
-        //match comments
-        MatchComment::where('user_id', $user->id)
-                    ->update(['username' => $user->username, 'display_name'=> $user->display_name]);
+        // //match comments
+        // MatchComment::where('user_id', $user->id)
+        //             ->update(['username' => $user->username, 'display_name'=> $user->display_name]);
     }
 
     /**

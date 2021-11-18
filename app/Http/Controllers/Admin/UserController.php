@@ -7,9 +7,11 @@ use App\Models\User;
 use App\Mail\BanUser;
 use App\Models\Admin;
 use App\Mail\UnbanUser;
+use HTMLPurifier_Config;
 use App\Models\BanPolicy;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\UserProfilePic;
 use App\Models\SuspensionHistory;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +19,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\EditUserRequest;
 use App\Http\Requests\StoreUserRequest;
-use HTMLPurifier_Config;
 
 class UserController extends Controller
 {
@@ -76,7 +77,7 @@ class UserController extends Controller
     public function createuser(StoreUserRequest $request)
     {
         $uuid= ((string) Str::uuid());
-
+        
         $user = User::create([
             'username'=> $request->username,
             'uuid'=> $uuid,
@@ -84,6 +85,14 @@ class UserController extends Controller
             'email'=> $request->email,
             'role_id'=> $request->user_type,
             'password'=> Hash::make($request->password),
+        ]);
+
+        $file_path = $request->country.'.'.'png';
+
+        $pics = UserProfilePic::create([
+                'user_id'=>$user->id,
+                'alt_name'=>$user->username,
+                'file_path'=>$file_path,
         ]);
 
         if ($user) {
@@ -113,7 +122,6 @@ class UserController extends Controller
         }
 
         return redirect()->back()->with(['message' => $message]);
-        // return redirect('/admin/users')->with(['message' => $message]);
 
     }
 

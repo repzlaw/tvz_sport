@@ -477,18 +477,22 @@
 @endsection
 
 @section('scripts')
-<script src="https://www.google.com/recaptcha/api.js?render={{ $captcha_site_key_v3 }}"></script>
-<script>
-    grecaptcha.ready(function() {
-        grecaptcha.execute("{{ $captcha_site_key_v3 }}", {action: 'playercomment'}).then(function(token) {
-        if (token) {
-            document
-            .querySelectorAll(".recaptchaResponse")
-            .forEach(elem => (elem.value = token));
-        }
-        });
-    });
-</script>
+    @if ($captcha_enable)
+        @if ($captcha_comment)
+            <script src="https://www.google.com/recaptcha/api.js?render={{ $captcha_site_key_v3 }}"></script>
+            <script>
+                grecaptcha.ready(function() {
+                    grecaptcha.execute("{{ $captcha_site_key_v3 }}", {action: 'playercomment'}).then(function(token) {
+                    if (token) {
+                        document
+                        .querySelectorAll(".recaptchaResponse")
+                        .forEach(elem => (elem.value = token));
+                    }
+                    });
+                });
+            </script>
+        @endif
+    @endif
     <script>
         //edit modal
         $('#edit-button').on('click',function(event){
@@ -553,15 +557,19 @@
             data:{pages:page, c: {{$player->id}}, lang: language, cat:'players', orderby:orderby}
         })
         .done(function(msg){
-            grecaptcha.ready(function() {
-                grecaptcha.execute("{{ $captcha_site_key_v3 }}", {action: 'newscomment'}).then(function(token) {
-                    if (token) {
-                    document
-                    .querySelectorAll(".recaptchaResponse")
-                    .forEach(elem => (elem.value = token));
-                    }
-                });
-            });
+            if ({{$captcha_enable}}) {
+                if ({{$captcha_comment}}) {
+                    grecaptcha.ready(function() {
+                        grecaptcha.execute("{{ $captcha_site_key_v3 }}", {action: 'newscomment'}).then(function(token) {
+                            if (token) {
+                            document
+                            .querySelectorAll(".recaptchaResponse")
+                            .forEach(elem => (elem.value = token));
+                            }
+                        });
+                    });
+                }
+            }
             $("#comment_text").show();
 
             if (msg.comments.data.length) {

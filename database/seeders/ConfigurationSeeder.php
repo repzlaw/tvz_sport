@@ -51,6 +51,10 @@ class ConfigurationSeeder extends Seeder
                 'key' => 'comment_api_key',
                 'value' => null
             ),
+            array(
+                'key' => 'captcha_comment',
+                'value' => 0
+            ),
         );
 
         foreach ($setting as $value) {

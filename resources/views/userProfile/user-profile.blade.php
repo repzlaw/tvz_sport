@@ -81,13 +81,13 @@
                                             alt="{{$user->username}}"
                                             style="height: 150px; width:150px; border: 4px solid #eee; border-radius: 15px;"/>
                                     @endif
-                                    @auth
+                                    {{-- @auth
                                         @if ($user->id === Auth::id())
                                             <div class="btn-actions-pane-right mt-3">
                                                 <p><a href="#" class="btn btn-outline-info btn-sm mr-3"  id="edit-image-button">Edit Image</a></p>
                                             </div>
                                         @endif
-                                    @endauth
+                                    @endauth --}}
                                 </div>
 
                                 <div class="col-sm-8">
@@ -101,14 +101,14 @@
                                             </div>
                                         </div>
                                         @if ($user->id === Auth::id())
-                                            <div class="col-md-12 mb-2">
+                                            {{-- <div class="col-md-12 mb-2">
                                                 <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <h6 class="ml-1 font-weight-bold">Username :</h6>
                                                 </div>
                                                     <h6 class="ml-2 text">{{$user->username}}</h6>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="input-group">
@@ -143,7 +143,6 @@
                                                 <h6 class="ml-2 text badge badge-pill badge-success badge-success">{{$user->status}}</h6>
                                             </div>
                                         </div>
-
                                         
                                     </div>
                                 </div>
@@ -207,7 +206,7 @@
                     {{ csrf_field() }}
               <div class="form-group">
                   
-                <div class="input-group mb-4" >
+                {{-- <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text"> Display name</span>
                     </div>
@@ -219,7 +218,7 @@
                         <span class="input-group-text"> Username</span>
                     </div>
                     <input  type="text" name="username" id="username" class="form-control" placeholder="username" value="{{ old('username') }}" required>
-                </div>
+                </div> --}}
                 <div class="input-group mb-4" >
                     <div class="input-group-prepend">
                         <span class="input-group-text"> Name</span>

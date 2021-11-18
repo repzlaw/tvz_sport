@@ -194,6 +194,7 @@ Route::prefix('/profile')->name('profile.')->group(function () {
     Route::post('/update-image', [UserProfileController::class, 'updateImage'])->name('edit.image')->middleware(['verified']);
     Route::get('/{user_slug}', [UserProfileController::class, 'userProfile'])->name('user-profile');
     Route::get('/follow/{id}', [UserProfileController::class,'followUser'])->name('follow')->middleware(['verified']);
+    
     //change password
     Route::post('/change-password', [UserProfileController::class, 'changePassword'])->name('change-password')->middleware(['verified']);
     Route::get('/change-password/verify', [UserTwoFactorController::class, 'passwordTwoFaIndex'])->name('verify.change-password')->middleware(['verified']);

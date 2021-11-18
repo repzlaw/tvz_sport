@@ -9,7 +9,7 @@ class ReportedTeamComment extends Model
 {
     use HasFactory;
     
-    protected $connection = 'mysql2';
+    //protected $connection = 'mysql2';
 
     protected $guarded =[];
 }

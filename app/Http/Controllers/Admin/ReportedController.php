@@ -43,7 +43,7 @@ class ReportedController extends Controller
         $api_key = Configuration::where('key','comment_api_key')->first();
 
         $posts = Http::withHeaders([
-            'api_key' => $api_key->value
+            'X-Api-Key' => $api_key->value
         ])->get($api_url->value."reported/news-comment")->json();
         
         // dd($posts);
@@ -64,7 +64,7 @@ class ReportedController extends Controller
         $api_key = Configuration::where('key','comment_api_key')->first();
 
         $posts = Http::withHeaders([
-            'api_key' => $api_key->value
+            'X-Api-Key' => $api_key->value
         ])->get($api_url->value."reported/players-comment")->json();
         
         return view('admin.reported.players-comment')->with(['posts'=>$posts]);
@@ -76,7 +76,7 @@ class ReportedController extends Controller
         $api_key = Configuration::where('key','comment_api_key')->first();
 
         $posts = Http::withHeaders([
-            'api_key' => $api_key->value
+            'X-Api-Key' => $api_key->value
         ])->get($api_url->value."reported/teams-comment")->json();
         return view('admin.reported.teams-comment')->with(['posts'=>$posts]);
     }

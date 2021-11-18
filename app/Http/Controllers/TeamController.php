@@ -98,11 +98,13 @@ class TeamController extends Controller
 
         $followers = TeamFollower::where('team_id', $id)->count();
         $captcha_site_key_v3= Configuration::where('key','captcha_site_key_v3')->first();
-
+        $captcha_enable = Configuration::where('key','captcha_enable')->first();
+        $captcha_comment = Configuration::where('key','captcha_comment')->first();
 
         return view('individual-team')->with(['team' => $team, 'sports'=> $sport_types,
                                              'posts'=>$posts,'followers'=>$followers,
-                                            'captcha_site_key_v3'=>$captcha_site_key_v3->value]);
+                                            'captcha_site_key_v3'=>$captcha_site_key_v3->value, 
+                                            'captcha_enable'=>$captcha_enable->value, 'captcha_comment'=>$captcha_comment->value]);
 
     }
 
@@ -218,11 +220,17 @@ class TeamController extends Controller
         // dd($request->all());
         if (!preg_match('/[^A-Za-z0-9 ]/', $request->comment)) 
         {
+            $captcha_enable = Configuration::where('key','captcha_enable')->first();
+            $captcha_comment = Configuration::where('key','captcha_comment')->first();
             $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
-            $recaptcha = $request->get('recaptcha');
-            $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
-            if(!$captcha){
-                    return back()->withErrors(['captcha' => 'ReCaptcha Error']);
+            if ($captcha_enable) {
+                if ($captcha_comment) {
+                    $recaptcha = $request->get('recaptcha');
+                    $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
+                    if(!$captcha){
+                            return back()->withErrors(['captcha' => 'ReCaptcha Error']);
+                    }
+                }
             }
 
             $comment = Purifier::clean($request->comment);
@@ -240,7 +248,7 @@ class TeamController extends Controller
             $api_key = Configuration::where('key','comment_api_key')->first();
 
             $response = Http::withHeaders([
-                'api_key' => $api_key->value
+                'X-Api-Key' => $api_key->value
             ])->post($api_url->value."v1/comments/save-team-comment", [
                 'uuid'=> $uuid,
                 'team_id'=> $request->team_id,
@@ -272,11 +280,17 @@ class TeamController extends Controller
     {
         if (!preg_match('/[^A-Za-z0-9 ]/', $request->comment)) 
         {
+            $captcha_enable = Configuration::where('key','captcha_enable')->first();
+            $captcha_comment = Configuration::where('key','captcha_comment')->first();
             $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
-            $recaptcha = $request->get('recaptcha');
-            $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
-            if(!$captcha){
-                    return back()->withErrors(['captcha' => 'ReCaptcha Error']);
+            if ($captcha_enable) {
+                if ($captcha_comment) {
+                    $recaptcha = $request->get('recaptcha');
+                    $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
+                    if(!$captcha){
+                        return back()->withErrors(['captcha' => 'ReCaptcha Error']);
+                    }
+                }
             }
 
             $comment = Purifier::clean($request->comment);
@@ -294,7 +308,7 @@ class TeamController extends Controller
             $api_key = Configuration::where('key','comment_api_key')->first();
 
             $response = Http::withHeaders([
-                'api_key' => $api_key->value
+                'X-Api-Key' => $api_key->value
             ])->post($api_url->value."v1/comments/save-team-reply", [
                 'uuid'=> $uuid,
                 'parent_comment_id'=> $request->comment_id,
@@ -335,7 +349,7 @@ class TeamController extends Controller
         $api_key = Configuration::where('key','comment_api_key')->first();
 
         $response = Http::withHeaders([
-            'api_key' => $api_key->value
+            'X-Api-Key' => $api_key->value
         ])->post($api_url->value."v1/comments/report-team-comment", [
             'policy_id'=>$request->policy_id,
             'user_notes'=>$request->user_notes,

@@ -39,10 +39,10 @@ class ProfileController extends Controller
         $user = User::findOrFail($request->user_id);
 
         $update = $user->update([
-            'username'=> $request->username,
+            // 'username'=> $request->username,
             'name'=> $request->name,
             'email'=> $request->email,
-            'display_name'=> $request->display_name,
+            // 'display_name'=> $request->display_name,
         ]);
 
         if ($update) {

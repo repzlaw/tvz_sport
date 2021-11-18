@@ -34,11 +34,13 @@
                           </form>
                         </li>
                         <li class="list-group-item">
+                          <p>Configure your recaptcha <b> version 2 </b> keys</p>
+
                           <form action="{{ route('admin.setting.save')}}" method="post">
                             {{ csrf_field() }}
-                            <div class="input-group mb-1 col-12 col-md-10" >
+                            <div class="input-group mb-3 col-12 col-md-10" >
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">reCAPTCHA Site Key</span>
+                                    <span class="input-group-text">reCAPTCHA Site Key V2</span>
                                 </div>
                                 <input type="text" name="captcha_site_key" class="form-control"  value="{{ $captcha_site_key }}" required>
                                 <div class="input-group-append">
@@ -46,13 +48,12 @@
                               </div>
                             </div>
                           </form>
-                        </li>
-                        <li class="list-group-item">
+
                           <form action="{{ route('admin.setting.save')}}" method="post">
                             {{ csrf_field() }}
-                            <div class="input-group mb-1 col-12 col-md-10" >
+                            <div class="input-group mb-3 col-12 col-md-10" >
                                 <div class="input-group-prepend">
-                                    <span class="input-group-text">reCAPTCHA Secret Key</span>
+                                    <span class="input-group-text">reCAPTCHA Secret Key V2</span>
                                 </div>
                                 <input type="text" name="captcha_secret_key" class="form-control"  value="{{ $captcha_secret_key }}" required>
                                 <div class="input-group-append">
@@ -60,6 +61,37 @@
                               </div>
                             </div>
                           </form>
+
+                        </li>
+                        <li class="list-group-item">
+                          <p>Configure your recaptcha  <b> version 3 </b> keys</p>
+
+                          <form action="{{ route('admin.setting.save')}}" method="post">
+                            {{ csrf_field() }}
+                            <div class="input-group mb-3 col-12 col-md-10" >
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">reCAPTCHA Site Key V3</span>
+                                </div>
+                                <input type="text" name="captcha_site_key_v3" class="form-control"  value="{{ $captcha_site_key_v3 }}" required>
+                                <div class="input-group-append">
+                                  <button class="btn btn-success" type="submit">Save</button>
+                              </div>
+                            </div>
+                          </form>
+
+                          <form action="{{ route('admin.setting.save')}}" method="post">
+                            {{ csrf_field() }}
+                            <div class="input-group mb-3 col-12 col-md-10" >
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">reCAPTCHA Secret Key V3</span>
+                                </div>
+                                <input type="text" name="captcha_secret_key_v3" class="form-control"  value="{{ $captcha_secret_key_v3 }}" required>
+                                <div class="input-group-append">
+                                  <button class="btn btn-success" type="submit">Save</button>
+                              </div>
+                            </div>
+                          </form>
+
                         </li>
                         <li class="list-group-item">
                           <h5 class="ml-3 mb-2">reCaptcha for forms</h5>
@@ -85,16 +117,18 @@
                                   <option value="1">enable </option>                           
                                 </select>
                               </div>
-                              {{-- <div class="col-12 col-md-3">
-                                <input type="checkbox" value="1" name="captcha_login"> 
-                                <span class="ml-2">Login form</span>
+
+                              <div class="input-group mb-1 col-12 col-md-4" >
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Comment</span>
+                                </div>
+                                <select class="form-control custom-select" name="captcha_comment" id="captcha_comment" required>
+                                  <option value="0">disable </option>                           
+                                  <option value="1">enable </option>                           
+                                </select>
                               </div>
-                              <div class="col-12 col-md-3">
-                                <input type="checkbox" value="1" name="captcha_register">
-                                <span class="ml-2">Registration form</span>
-                              </div> --}}
                             </div>
-                            <div class="float-right">
+                            <div class="float-right mt-3">
                               <button class="btn btn-success" type="submit">Save</button>
                             </div>
                           </form>
@@ -188,6 +222,7 @@
     $('#captcha_enable').val({{$captcha_enable}});
     $('#captcha_login').val({{$captcha_login}});
     $('#captcha_register').val({{$captcha_register}});
+    $('#captcha_comment').val({{$captcha_comment}});
 });
 
 

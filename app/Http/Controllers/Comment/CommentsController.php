@@ -38,12 +38,11 @@ class CommentsController extends Controller
     //get comments based on specified parameters
     public function getComments(GetCommentRequest $request)
     {
-        // dd($request->ip());
         $api_url = Configuration::where('key','comment_api_url')->first();
         $api_key = Configuration::where('key','comment_api_key')->first();
 
         $response = Http::withHeaders([
-                'api_key' => $api_key->value
+                'X-Api-Key' => $api_key->value
             ])->get($api_url->value.'v1/comments/',[
                 'pages' => $request->get('pages'),
                 'c' => $request->get('c'),
@@ -133,7 +132,7 @@ class CommentsController extends Controller
         $api_key = Configuration::where('key','comment_api_key')->first();
 
         $response = Http::withHeaders([
-            'api_key' => $api_key->value
+            'X-Api-Key' => $api_key->value
         ])->get($api_url->value."v1/comments/upvote-comment", [
             'mod'=> $mod,
             'comment_uuid'=> $comment_uuid,

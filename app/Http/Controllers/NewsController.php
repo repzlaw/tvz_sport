@@ -45,6 +45,8 @@ class NewsController extends Controller
 
         $news = CompetitionNews::where(['id'=>$id])->with(['user','playernews.player','teamnews.team'])->firstOrFail();
         $captcha_site_key_v3= Configuration::where('key','captcha_site_key_v3')->first();
+        $captcha_enable = Configuration::where('key','captcha_enable')->first();
+        $captcha_comment = Configuration::where('key','captcha_comment')->first();
 
         if ($news->status != 'published') {
             return abort(404,"Page not found"); 
@@ -54,7 +56,8 @@ class NewsController extends Controller
             return view('editor/news/individual-news')->with(['news'=>$news]);
         }
 
-        return view('individual-news')->with(['news'=>$news,'captcha_site_key_v3'=>$captcha_site_key_v3->value]);
+        return view('individual-news')->with(['news'=>$news,'captcha_site_key_v3'=>$captcha_site_key_v3->value, 
+                                            'captcha_enable'=>$captcha_enable->value, 'captcha_comment'=>$captcha_comment->value]);
     }
 
     //save users comments on news
@@ -63,11 +66,17 @@ class NewsController extends Controller
         
         if (!preg_match('/[^A-Za-z0-9 ]/', $request->comment)) 
         {
+            $captcha_enable = Configuration::where('key','captcha_enable')->first();
+            $captcha_comment = Configuration::where('key','captcha_comment')->first();
             $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
-            $recaptcha = $request->get('recaptcha');
-            $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
-            if(!$captcha){
-                    return back()->withErrors(['captcha' => 'ReCaptcha Error']);
+            if ($captcha_enable) {
+                if ($captcha_comment) {
+                    $recaptcha = $request->get('recaptcha');
+                    $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
+                    if(!$captcha){
+                            return back()->withErrors(['captcha' => 'ReCaptcha Error']);
+                    }
+                }
             }
 
             $comment = Purifier::clean($request->comment);
@@ -86,7 +95,7 @@ class NewsController extends Controller
             $api_key = Configuration::where('key','comment_api_key')->first();
 
             $response = Http::withHeaders([
-                'api_key' => $api_key->value
+                'X-Api-Key' => $api_key->value
             ])->post($api_url->value."v1/comments/save-news-comment", [
                 'uuid'=> $uuid,
                 'competition_news_id'=> $request->news_id,
@@ -118,11 +127,17 @@ class NewsController extends Controller
         // dd($request->all());
         if (!preg_match('/[^A-Za-z0-9 ]/', $request->comment)) 
         {
+            $captcha_enable = Configuration::where('key','captcha_enable')->first();
+            $captcha_comment = Configuration::where('key','captcha_comment')->first();
             $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
-            $recaptcha = $request->get('recaptcha');
-            $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
-            if(!$captcha){
-                    return back()->withErrors(['captcha' => 'ReCaptcha Error']);
+            if ($captcha_enable) {
+                if ($captcha_comment) {
+                    $recaptcha = $request->get('recaptcha');
+                    $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
+                    if(!$captcha){
+                            return back()->withErrors(['captcha' => 'ReCaptcha Error']);
+                    }
+                }
             }
 
             $comment = Purifier::clean($request->comment);
@@ -142,7 +157,7 @@ class NewsController extends Controller
             $api_key = Configuration::where('key','comment_api_key')->first();
 
             $response = Http::withHeaders([
-                'api_key' => $api_key->value
+                'X-Api-Key' => $api_key->value
             ])->post($api_url->value."v1/comments/save-news-reply", [
                 'uuid'=> $uuid,
                 'parent_comment_id'=> $request->comment_id,
@@ -184,7 +199,7 @@ class NewsController extends Controller
         $api_key = Configuration::where('key','comment_api_key')->first();
 
         $response = Http::withHeaders([
-            'api_key' => $api_key->value
+            'X-Api-Key' => $api_key->value
         ])->post($api_url->value."v1/comments/report-news-comment", [
             'policy_id'=>$request->policy_id,
             'user_notes'=>$request->user_notes,
@@ -192,18 +207,7 @@ class NewsController extends Controller
             'user_id'=>Auth::user()->username,
         ])->json();
 // dd($response);
-        // $report = ReportedNewsComment::create([
-        //             'policy_id'=>$request->policy_id,
-        //             'user_notes'=>$request->user_notes,
-        //             'comment_id'=>$request->comment_id,
-        //             'user_id'=>Auth::id(),
-        // ]);
-
         if($response['result'] =='ok'){
-        //     $post = NewsComment::findOrFail($request->comment_id);
-        //     $posts = $post->update([
-        //         'status'=>'reported',
-        //     ]);
             $news = CompetitionNews::findOrFail($response['competition_news_id']);
 
             return redirect()->route('news.get.single', ['news_slug' => $news->url_slug.'-'.$news->id ])

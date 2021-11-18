@@ -20,9 +20,12 @@ class SettingsController extends Controller
         $securityQuestions = SecurityQuestion::all();
 
         return view('admin.settings')->with(['captcha_enable'=>$settings[0]->value, 'captcha_site_key'=>$settings[1]->value,
-                                            'captcha_secret_key'=>$settings[2]->value,'captcha_login'=>$settings[3]->value,
-                                            'captcha_register'=>$settings[4]->value,'securityQuestions'=>$securityQuestions,
-                                            'comment_api_url'=>$settings[7]->value, 'comment_api_key'=>$settings[8]->value]);
+                                            'captcha_secret_key'=>$settings[2]->value, 'captcha_login'=>$settings[3]->value,
+                                            'captcha_register'=>$settings[4]->value, 'securityQuestions'=>$securityQuestions,
+                                            'captcha_site_key_v3'=>$settings[5]->value, 'captcha_secret_key_v3'=>$settings[6]->value,
+                                            'comment_api_url'=>$settings[7]->value, 'comment_api_key'=>$settings[8]->value,
+                                            'captcha_comment'=>$settings[9]->value,
+                                        ]);
     }
 
     //save setting
@@ -45,7 +48,17 @@ class SettingsController extends Controller
             $setting = $set->update([
                 'value'=> $request->captcha_secret_key,
             ]);
-        } else if ($request->has('captcha_login') && $request->has('captcha_register')) {
+        }  else if ($request->has('captcha_site_key_v3')) {
+            $set = Configuration::where('key','captcha_site_key_v3')->first();
+            $setting = $set->update([
+                'value'=> $request->captcha_site_key_v3,
+            ]);
+        } else if ($request->has('captcha_secret_key_v3')) {
+            $set = Configuration::where('key','captcha_secret_key_v3')->first();
+            $setting = $set->update([
+                'value'=> $request->captcha_secret_key_v3,
+            ]);
+        } else if ($request->has('captcha_login') && $request->has('captcha_register') && $request->has('captcha_comment')) {
             $set = Configuration::where('key','captcha_login')->first();
             $setting = $set->update([
                 'value'=> $request->captcha_login,
@@ -54,6 +67,11 @@ class SettingsController extends Controller
             $set = Configuration::where('key','captcha_register')->first();
             $setting = $set->update([
                 'value'=> $request->captcha_register,
+            ]);
+
+            $set = Configuration::where('key','captcha_comment')->first();
+            $setting = $set->update([
+                'value'=> $request->captcha_comment,
             ]);
         }
         if ($setting) {

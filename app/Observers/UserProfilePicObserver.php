@@ -20,20 +20,20 @@ class UserProfilePicObserver
     {
         //update comments pictures and display name when profile is edited
         //news comments
-        NewsComment::where('user_id', $userProfilePic->user_id)
-                    ->update(['profile_pic' => $userProfilePic->file_path]);
+        // NewsComment::where('user_id', $userProfilePic->user_id)
+        //             ->update(['profile_pic' => $userProfilePic->file_path]);
 
-        //team comments
-        TeamComment::where('user_id', $userProfilePic->id)
-                    ->update(['profile_pic' => $userProfilePic->file_path]);
+        // //team comments
+        // TeamComment::where('user_id', $userProfilePic->id)
+        //             ->update(['profile_pic' => $userProfilePic->file_path]);
 
-        //player comments
-        PlayerComment::where('user_id', $userProfilePic->id)
-                    ->update(['profile_pic' => $userProfilePic->file_path]);
+        // //player comments
+        // PlayerComment::where('user_id', $userProfilePic->id)
+        //             ->update(['profile_pic' => $userProfilePic->file_path]);
 
-        //match comments
-        MatchComment::where('user_id', $userProfilePic->id)
-                    ->update(['profile_pic' => $userProfilePic->file_path]);
+        // //match comments
+        // MatchComment::where('user_id', $userProfilePic->id)
+        //             ->update(['profile_pic' => $userProfilePic->file_path]);
     }
 
     /**
@@ -46,20 +46,20 @@ class UserProfilePicObserver
     {
         //update comments pictures and display name when profile is edited
         //news comments
-        NewsComment::where('user_id', $userProfilePic->user_id)
-                    ->update(['profile_pic' => $userProfilePic->file_path]);
+        // NewsComment::where('user_id', $userProfilePic->user_id)
+        //             ->update(['profile_pic' => $userProfilePic->file_path]);
 
-        //team comments
-        TeamComment::where('user_id', $userProfilePic->id)
-                    ->update(['profile_pic' => $userProfilePic->file_path]);
+        // //team comments
+        // TeamComment::where('user_id', $userProfilePic->id)
+        //             ->update(['profile_pic' => $userProfilePic->file_path]);
 
-        //player comments
-        PlayerComment::where('user_id', $userProfilePic->id)
-                    ->update(['profile_pic' => $userProfilePic->file_path]);
+        // //player comments
+        // PlayerComment::where('user_id', $userProfilePic->id)
+        //             ->update(['profile_pic' => $userProfilePic->file_path]);
 
-        //match comments
-        MatchComment::where('user_id', $userProfilePic->id)
-                    ->update(['profile_pic' => $userProfilePic->file_path]);
+        // //match comments
+        // MatchComment::where('user_id', $userProfilePic->id)
+        //             ->update(['profile_pic' => $userProfilePic->file_path]);
     }
 
     /**
