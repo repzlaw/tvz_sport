@@ -223,8 +223,8 @@ class TeamController extends Controller
             $captcha_enable = Configuration::where('key','captcha_enable')->first();
             $captcha_comment = Configuration::where('key','captcha_comment')->first();
             $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
-            if ($captcha_enable) {
-                if ($captcha_comment) {
+            if ($captcha_enable->value) {
+                if ($captcha_comment->value) {
                     $recaptcha = $request->get('recaptcha');
                     $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
                     if(!$captcha){
@@ -283,8 +283,8 @@ class TeamController extends Controller
             $captcha_enable = Configuration::where('key','captcha_enable')->first();
             $captcha_comment = Configuration::where('key','captcha_comment')->first();
             $captcha_secret_key_v3= Configuration::where('key','captcha_secret_key_v3')->first();
-            if ($captcha_enable) {
-                if ($captcha_comment) {
+            if ($captcha_enable->value) {
+                if ($captcha_comment->value) {
                     $recaptcha = $request->get('recaptcha');
                     $captcha = captchaV3Validation($recaptcha, $captcha_secret_key_v3->value);
                     if(!$captcha){
