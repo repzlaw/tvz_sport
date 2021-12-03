@@ -32,7 +32,7 @@ class ConfigurationSeeder extends Seeder
                 'value' => null
             ),
             array(
-                '_v3' => 'captcha_secret_key_v3',
+                'key' => 'captcha_secret_key_v3',
                 'value' => null
             ),
             array(
