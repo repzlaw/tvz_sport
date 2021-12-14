@@ -7,7 +7,7 @@
             <div class="card-hover-shadow-2x mb-3 mt-3 card">
                     <div class="card-header-tab card-header">
                         <div class="card-header-title font-size-lg text-capitalize font-weight-normal float-left">
-                            <h5>Create News</h5> 
+                            <h5>Create News</h5>
                         </div>
                     </div>
                     <div class="card-body">
@@ -20,8 +20,8 @@
                                     <select class="form-control custom-select" name="sport_type" required>
                                         {{-- <option value="">-- All Category -- </option>  --}}
                                         @foreach ($sports as $sport)
-                                        <option value="{{$sport->id}}">{{$sport->sport_type}} </option>                           
-                                        @endforeach                          
+                                        <option value="{{$sport->id}}">{{$sport->sport_type}} </option>
+                                        @endforeach
                                     </select>
                                 </div>
                                 <div class="input-group mb-4" style="width: 80%; margin: auto;">
@@ -41,8 +41,8 @@
                                         <span class="input-group-text">Enable comments</span>
                                     </div>
                                     <select class="form-control custom-select" name="enable_comment" required>
-                                        <option value="1">Yes</option>                    
-                                        <option value="0">No</option>                    
+                                        <option value="1">Yes</option>
+                                        <option value="0">No</option>
                                     </select>
                                 </div>
 
@@ -123,7 +123,7 @@ function selectPlayer(p){
     if (players.length === 0) {
         players.push(p);
         playersID.push(p.id);
-        
+
     }else{
         if (!playersID.includes(p.id)) {
             players.push(p);
@@ -142,7 +142,7 @@ function selectPlayer(p){
         $('#search-input').val('');
         $('#livesearch').html('');
     });
-    
+
     $('#players_id').val(playersID)
 }
 
@@ -164,7 +164,7 @@ function removePlayer (index) {
             $('#livesearch').html('');
         });
     }
-    $('#players_id').val(playersID)  
+    $('#players_id').val(playersID)
 }
 
 
@@ -194,7 +194,7 @@ function selectteam(p){
     if (teams.length === 0) {
         teams.push(p);
         teamsID.push(p.id);
-        
+
     }else{
         if (!teamsID.includes(p.id)) {
             teams.push(p);
@@ -234,10 +234,8 @@ function removeteam (index) {
         });
     }
     $('#teams_id').val(teamsID)
-    
+
 }
-
-
 
 </script>
 @endsection

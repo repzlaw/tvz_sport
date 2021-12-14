@@ -30,7 +30,7 @@ class StoreUserRequest extends FormRequest
             'password' => 'required',
             'user_type'=> 'required',
             'country'=> 'required',
-            
+
         ];
     }
 }
