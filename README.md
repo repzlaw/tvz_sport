@@ -63,8 +63,8 @@ TVZ SPORT is a web application that allows users to read sports news, look up te
 
 To start the Laravel development server, run:
 
-```bash
-php artisan serve
+    ```bash
+    php artisan serve
 
 
 ![TVZ SPORTS](https://res.cloudinary.com/sirdavies/image/upload/v1721473512/readme/Screenshot_2024-07-20_at_12.00.13_PM_daymne.png)
