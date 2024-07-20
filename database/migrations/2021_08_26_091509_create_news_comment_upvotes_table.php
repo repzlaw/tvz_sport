@@ -15,13 +15,13 @@ class CreateNewsCommentUpvotesTable extends Migration
      */
     public function up()
     {
-        Schema::connection('mysql2')->create('news_comment_upvotes', function (Blueprint $table) {
-            $db = DB::connection('mysql')->getDatabaseName();
-            $table->id();
-            $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'))->onDelete('cascade');
-            $table->foreignId('comment_id')->references('id')->on('news_comments')->onDelete('cascade');
-            $table->timestamps();
-        });
+        // Schema::connection('mysql2')->create('news_comment_upvotes', function (Blueprint $table) {
+        //     $db = DB::connection('mysql')->getDatabaseName();
+        //     $table->id();
+        //     $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'))->onDelete('cascade');
+        //     $table->foreignId('comment_id')->references('id')->on('news_comments')->onDelete('cascade');
+        //     $table->timestamps();
+        // });
     }
 
     /**

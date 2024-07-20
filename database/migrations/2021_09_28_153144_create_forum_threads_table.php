@@ -15,18 +15,18 @@ class CreateForumThreadsTable extends Migration
      */
     public function up()
     {
-        Schema::connection('mysql3')->create('forum_threads', function (Blueprint $table) {
-            $db = DB::connection('mysql')->getDatabaseName();
-            $table->id();
-            $table->string('title');
-            $table->longText('body');
-            $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'));
-            $table->string('url_slug')->unique();
-            $table->foreignId('forum_category_id')->references('id')->on('forum_categories');
-            $table->enum('status',['published','draft','underreview','trash','reported'])->default('published');
-            $table->integer('numRecommends')->default(0);
-            $table->timestamps();
-        });
+        // Schema::connection('mysql3')->create('forum_threads', function (Blueprint $table) {
+        //     $db = DB::connection('mysql')->getDatabaseName();
+        //     $table->id();
+        //     $table->string('title');
+        //     $table->longText('body');
+        //     $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'));
+        //     $table->string('url_slug')->unique();
+        //     $table->foreignId('forum_category_id')->references('id')->on('forum_categories');
+        //     $table->enum('status',['published','draft','underreview','trash','reported'])->default('published');
+        //     $table->integer('numRecommends')->default(0);
+        //     $table->timestamps();
+        // });
     }
 
     /**

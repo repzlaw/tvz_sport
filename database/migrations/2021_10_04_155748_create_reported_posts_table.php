@@ -15,15 +15,15 @@ class CreateReportedPostsTable extends Migration
      */
     public function up()
     {
-        Schema::connection('mysql3')->create('reported_posts', function (Blueprint $table) {
-            $db = DB::connection('mysql')->getDatabaseName();
-            $table->id();
-            $table->foreignId('post_id')->references('id')->on('forum_posts')->onDelete('cascade');
-            $table->foreignId('policy_id')->references('id')->on(new Expression($db . '.ban_policies'))->onDelete('cascade');
-            $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'))->onDelete('cascade');
-            $table->string('user_notes');
-            $table->timestamps();
-        });
+        // Schema::connection('mysql3')->create('reported_posts', function (Blueprint $table) {
+        //     $db = DB::connection('mysql')->getDatabaseName();
+        //     $table->id();
+        //     $table->foreignId('post_id')->references('id')->on('forum_posts')->onDelete('cascade');
+        //     $table->foreignId('policy_id');
+        //     $table->foreignId('user_id');
+        //     $table->string('user_notes');
+        //     $table->timestamps();
+        // });
     }
 
     /**

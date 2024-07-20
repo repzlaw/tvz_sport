@@ -15,15 +15,15 @@ class CreateReportedTeamCommentsTable extends Migration
      */
     public function up()
     {
-        Schema::connection('mysql2')->create('reported_team_comments', function (Blueprint $table) {
-            $db = DB::connection('mysql')->getDatabaseName();
-            $table->id();
-            $table->foreignId('comment_id')->references('id')->on('team_comments')->onDelete('cascade');
-            $table->foreignId('policy_id')->references('id')->on(new Expression($db . '.ban_policies'))->onDelete('cascade');
-            $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'))->onDelete('cascade');
-            $table->string('user_notes');
-            $table->timestamps();
-        });
+        // Schema::connection('mysql2')->create('reported_team_comments', function (Blueprint $table) {
+        //     $db = DB::connection('mysql')->getDatabaseName();
+        //     $table->id();
+        //     $table->foreignId('comment_id')->references('id')->on('team_comments')->onDelete('cascade');
+        //     $table->foreignId('policy_id')->references('id')->on(new Expression($db . '.ban_policies'))->onDelete('cascade');
+        //     $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'))->onDelete('cascade');
+        //     $table->string('user_notes');
+        //     $table->timestamps();
+        // });
     }
 
     /**

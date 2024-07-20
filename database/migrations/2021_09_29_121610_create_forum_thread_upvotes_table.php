@@ -15,14 +15,14 @@ class CreateForumThreadUpvotesTable extends Migration
      */
     public function up()
     {
-        Schema::connection('mysql3')->create('forum_thread_upvotes', function (Blueprint $table) {
-            $db = DB::connection('mysql')->getDatabaseName();
-            $table->id();
-            $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'))->onDelete('cascade');
-            $table->foreignId('forum_thread_id')->references('id')->on('forum_threads')->onDelete('cascade');
-            $table->enum('type',['upvote','downvote'])->default('upvote');
-            $table->timestamps();
-        });
+        // Schema::connection('mysql3')->create('forum_thread_upvotes', function (Blueprint $table) {
+        //     $db = DB::connection('mysql')->getDatabaseName();
+        //     $table->id();
+        //     $table->foreignId('user_id')->references('id')->on(new Expression($db . '.users'))->onDelete('cascade');
+        //     $table->foreignId('forum_thread_id')->references('id')->on('forum_threads')->onDelete('cascade');
+        //     $table->enum('type',['upvote','downvote'])->default('upvote');
+        //     $table->timestamps();
+        // });
     }
 
     /**

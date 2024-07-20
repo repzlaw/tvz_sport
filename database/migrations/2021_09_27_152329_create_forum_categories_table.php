@@ -14,15 +14,15 @@ class CreateForumCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::connection('mysql3')->create('forum_categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('url_slug')->unique();
-            $table->string('page_title')->nullable();
-            $table->string('meta_description')->nullable();
-            $table->string('meta_keywords')->nullable();
-            $table->timestamps();
-        });
+        // Schema::connection('mysql3')->create('forum_categories', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('name');
+        //     $table->string('url_slug')->unique();
+        //     $table->string('page_title')->nullable();
+        //     $table->string('meta_description')->nullable();
+        //     $table->string('meta_keywords')->nullable();
+        //     $table->timestamps();
+        // });
     }
 
     /**

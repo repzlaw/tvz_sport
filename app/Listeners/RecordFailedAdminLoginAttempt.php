@@ -53,10 +53,5 @@ class RecordFailedAdminLoginAttempt
             );
         }
         
-        // dd($event->guard);
-        // Mail::to('work@tvz.com', 'TVZ')->queue(new AdminFailedLogin($event));
-
-        
-
     }
 }
